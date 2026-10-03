@@ -44,7 +44,7 @@ export default function Sidebar() {
 
         <nav className="flex-1 px-4 space-y-2 mt-4">
           <Link
-            href="/"
+            href="/courses"
             className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
           >
             <Home size={20} />
@@ -79,34 +79,12 @@ export default function Sidebar() {
               <span>Teacher Mode</span>
             </Link>
           )}
-
-          {isLoggedIn ? (
-            <>
-              <Link
-                href="/profile"
-                className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-              >
-                <User size={20} />
-                <span>Profile</span>
-              </Link>
-              
-              <button onClick={handleLogout} className="flex w-full items-center space-x-3 px-4 py-3 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-lg transition-colors">
-                <LogOut size={20} />
-                <span>Sign Out</span>
-              </button>
-            </>
-          ) : (
-            <Link href="/login" className="flex w-full items-center space-x-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
-              <User size={20} />
-              <span>Sign In</span>
-            </Link>
-          )}
         </div>
       </aside>
 
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#1e2130] border-t border-white/10 z-50 px-2 py-3 pb-safe flex justify-around items-center">
-        <Link href="/" className="flex flex-col items-center p-2 text-gray-400 hover:text-white">
+        <Link href="/courses" className="flex flex-col items-center p-2 text-gray-400 hover:text-white">
           <Home size={22} />
           <span className="text-[10px] mt-1 font-medium">Home</span>
         </Link>

@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 export default function CoursesManager() {
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetch('/api/courses?admin=true')
@@ -39,6 +40,11 @@ export default function CoursesManager() {
     }
   };
 
+  const filteredCourses = courses.filter(c => 
+    c.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    c.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
       {/* Header Actions */}
@@ -63,6 +69,8 @@ export default function CoursesManager() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input 
             type="text" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search courses..." 
             className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors text-white"
           />
@@ -95,14 +103,14 @@ export default function CoursesManager() {
                     <Loader2 className="animate-spin text-blue-500 mx-auto" />
                   </td>
                 </tr>
-              ) : courses.length === 0 ? (
+              ) : filteredCourses.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
                     No courses found. Click "New Course" to create one.
                   </td>
                 </tr>
               ) : (
-                courses.map((course) => (
+                filteredCourses.map((course) => (
                   <tr key={course._id} className="hover:bg-white/5 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
