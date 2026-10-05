@@ -63,7 +63,7 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
         <div className="flex-1 bg-black flex flex-col items-center justify-center relative overflow-hidden">
           {currentVideoUrl ? (
             <div className="w-full h-full max-h-full flex items-center justify-center p-4 animate-in fade-in">
-              <SecureVideoPlayer src={currentVideoUrl} userEmail={user.email} />
+              <SecureVideoPlayer src={currentVideoUrl} userEmail={user.email || "Student"} />
             </div>
           ) : (
             <div className="text-gray-500 flex flex-col items-center animate-in fade-in">

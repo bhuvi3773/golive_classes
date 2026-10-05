@@ -8,7 +8,7 @@ export async function getUserFromCookie() {
   if (!token) return null;
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as { userId: string; role: string };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as { userId: string; role: string; email?: string; name?: string };
     return decoded;
   } catch (error) {
     return null;

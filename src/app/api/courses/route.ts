@@ -13,9 +13,9 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const isAdminView = searchParams.get('admin') === 'true';
 
-    let filter = { status: 'published' };
+    let filter: any = { status: 'published' };
     if (isAdminView && user?.role === 'admin') {
-      filter = {} as any; // Admin sees everything
+      filter = {}; // Admin sees everything
     }
 
     const courses = await Course.find(filter).sort({ createdAt: -1 });

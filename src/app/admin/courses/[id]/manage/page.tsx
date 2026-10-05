@@ -5,6 +5,20 @@ import { Plus, GripVertical, CheckCircle, Video, FileText, ChevronDown, UploadCl
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+type Lecture = {
+  id: number;
+  title: string;
+  type: string;
+  content: string | null;
+  originalName?: string;
+};
+
+type Section = {
+  id: number;
+  title: string;
+  lectures: Lecture[];
+};
+
 export default function CourseManagementDashboard({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const courseId = resolvedParams.id;
@@ -14,7 +28,7 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
   const [course, setCourse] = useState<any>(null);
 
   // Mock curriculum structure
-  const [sections, setSections] = useState([
+  const [sections, setSections] = useState<Section[]>([
     {
       id: 1,
       title: "Introduction",
