@@ -195,9 +195,18 @@ export default function NewCourseWizard() {
           ) : <div></div>}
 
           {step < totalSteps ? (
-            <button onClick={handleNext} className="bg-white text-black hover:bg-gray-200 px-6 py-2.5 rounded-sm font-bold transition-colors">
-              Continue
-            </button>
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={handleCreateCourse} 
+                disabled={saving}
+                className="text-gray-400 hover:text-white font-medium mr-2 transition-colors disabled:opacity-50"
+              >
+                Skip for now
+              </button>
+              <button onClick={handleNext} className="bg-white text-black hover:bg-gray-200 px-6 py-2.5 rounded-sm font-bold transition-colors">
+                Continue
+              </button>
+            </div>
           ) : (
             <button 
               onClick={handleCreateCourse} 

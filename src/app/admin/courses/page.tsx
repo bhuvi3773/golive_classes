@@ -143,7 +143,7 @@ export default function CoursesManager() {
                         <Link href={`/courses/${course._id}`} className="hover:text-white transition-colors" title="View">
                           <Eye size={18} />
                         </Link>
-                        <Link href={`/admin/courses/${course._id}/edit`} className="hover:text-blue-400 transition-colors" title="Edit">
+                        <Link href={`/admin/courses/${course._id}/manage`} className="hover:text-blue-400 transition-colors" title="Manage">
                           <Edit size={18} />
                         </Link>
                         <button onClick={() => handleDelete(course._id)} className="hover:text-red-400 transition-colors" title="Delete">

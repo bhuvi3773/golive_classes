@@ -14,7 +14,7 @@ export async function GET(req: Request) {
     const isAdminView = searchParams.get('admin') === 'true';
 
     let filter: any = { status: 'published' };
-    if (isAdminView && user?.role === 'admin') {
+    if (isAdminView && (user?.role === 'admin' || user?.role === 'superadmin')) {
       filter = {}; // Admin sees everything
     }
 
@@ -29,8 +29,11 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const user = await getUserFromCookie();
-    if (!user || user.role !== 'admin') {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (user.role !== 'admin' && user.role !== 'superadmin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await req.json();

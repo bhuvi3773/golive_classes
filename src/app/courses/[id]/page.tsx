@@ -2,7 +2,10 @@ import { PlayCircle, CheckCircle2, Lock, Clock, Award, FileText } from "lucide-r
 import Link from "next/link";
 import connectToDatabase from "@/lib/mongodb";
 import Course from "@/models/Course";
+import Progress from "@/models/Progress";
+import { getUserFromCookie } from "@/lib/auth";
 import { notFound } from "next/navigation";
+import CoursePurchaseCard from "@/components/CoursePurchaseCard";
 
 export default async function CourseDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const id = (await params).id;
@@ -15,6 +18,27 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
 
   const curriculum = course.curriculum || [];
   const totalLectures = curriculum.reduce((acc: number, sec: any) => acc + (sec.lectures?.length || 0), 0);
+
+  const user = await getUserFromCookie();
+  let completedLectures: number[] = [];
+  let isPurchased = false;
+  if (user) {
+    const progress = await Progress.findOne({ userId: user.userId, courseId: course._id });
+    if (progress) {
+      completedLectures = progress.completedLectures;
+    }
+    
+    // Check if user purchased this course
+    const authUser = await fetch(`http://localhost:3000/api/auth/me`, {
+      headers: { cookie: `auth-token=${(await import("next/headers")).cookies().then(c => c.get('auth-token')?.value || '')}` }
+    }).then(res => res.json()).catch(() => ({}));
+    
+    if (authUser?.user?.purchasedCourses?.includes(id)) {
+      isPurchased = true;
+    }
+  }
+
+  const progressPercentage = totalLectures > 0 ? Math.round((completedLectures.length / totalLectures) * 100) : 0;
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-20 animate-in fade-in slide-in-from-bottom-4">
@@ -49,7 +73,17 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
         {/* Course Content / Syllabus */}
         <div className="lg:col-span-2 space-y-8">
           <div className="glass-card p-8 border border-white/10">
-            <h2 className="text-2xl font-bold mb-6 text-white">Course Curriculum</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Course Curriculum</h2>
+              {user && totalLectures > 0 && (
+                <div className="flex flex-col items-end">
+                  <span className="text-sm font-bold text-blue-400 mb-1">{progressPercentage}% Complete</span>
+                  <div className="w-32 h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full bg-blue-500 rounded-full transition-all duration-1000" style={{ width: `${progressPercentage}%` }}></div>
+                  </div>
+                </div>
+              )}
+            </div>
             
             <div className="space-y-4">
               {curriculum.length === 0 ? (
@@ -70,7 +104,7 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
                             <FileText size={18} className="text-gray-400 shrink-0 mt-0.5" />
                           )}
                           <div>
-                            <p className="text-gray-300 font-medium">{lecture.title}</p>
+                            <p className={`font-medium ${completedLectures.includes(lecture.id) ? 'text-green-400 line-through opacity-80' : 'text-gray-300'}`}>{lecture.title}</p>
                           </div>
                         </div>
                       ))}
@@ -88,13 +122,11 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
         {/* Purchase Card */}
         <div className="lg:col-span-1">
           <div className="glass-card p-6 sticky top-24 border border-white/10">
-            <div className="text-center mb-6 border-b border-white/10 pb-6">
-              <span className="text-4xl font-extrabold text-white">${course.price}</span>
-            </div>
-            
-            <Link href={`/courses/${course._id}/play`} className="w-full btn-primary py-4 text-lg font-bold shadow-[0_0_20px_rgba(37,99,235,0.5)] bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all hover:scale-[1.02] block text-center">
-              Enroll for Free (Test Video)
-            </Link>
+            <CoursePurchaseCard 
+              courseId={id} 
+              price={course.price} 
+              isPurchasedInitial={isPurchased} 
+            />
             
             <p className="text-center text-xs text-gray-400 mt-4">Full Lifetime Access • 30-Day Money-Back Guarantee</p>
             

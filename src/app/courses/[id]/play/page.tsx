@@ -4,7 +4,11 @@ import Course from "@/models/Course";
 import { redirect } from "next/navigation";
 import SecureVideoPlayer from "@/components/SecureVideoPlayer";
 import Link from "next/link";
-import { CheckCircle, PlayCircle, FileText, ChevronLeft } from "lucide-react";
+import { CheckCircle, PlayCircle, FileText, ChevronLeft, Award } from "lucide-react";
+import Progress from "@/models/Progress";
+import MarkCompleteButton from "@/components/MarkCompleteButton";
+import QuizPlayer from "@/components/QuizPlayer";
+import AssignmentPlayer from "@/components/AssignmentPlayer";
 
 export const dynamic = 'force-dynamic';
 
@@ -24,25 +28,28 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
     redirect('/courses');
   }
 
+  let progress = await Progress.findOne({ userId: user.userId, courseId: course._id });
+  const completedLectures = progress?.completedLectures || [];
+
   const curriculum = course.curriculum || [];
   
-  let currentVideoUrl = "";
-  let currentVideoTitle = "No video available";
+  let activeLecture: any = null;
   let activeLectureId = resolvedSearchParams.lectureId;
   
-  // Find the selected video or default to the first available video
+  // Find the selected lecture or default to the first available lecture
   for (const section of curriculum) {
     for (const lecture of section.lectures) {
-      if (lecture.type === 'video' && lecture.content) {
-        if (!activeLectureId || activeLectureId == lecture.id) {
-          currentVideoUrl = lecture.content;
-          currentVideoTitle = lecture.title;
-          activeLectureId = lecture.id; // lock in the first one if not set
-          break;
-        }
+      if (!activeLectureId) {
+        activeLectureId = lecture.id;
+        activeLecture = lecture;
+        break;
+      }
+      if (activeLectureId == lecture.id) {
+        activeLecture = lecture;
+        break;
       }
     }
-    if (currentVideoUrl && (!resolvedSearchParams.lectureId || activeLectureId == resolvedSearchParams.lectureId)) break;
+    if (activeLecture) break;
   }
 
   return (
@@ -59,21 +66,52 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
 
       <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
         
-        {/* Main Video Area */}
-        <div className="flex-1 bg-black flex flex-col items-center justify-center relative overflow-hidden">
-          {currentVideoUrl ? (
-            <div className="w-full h-full max-h-full flex items-center justify-center p-4 animate-in fade-in">
-              <SecureVideoPlayer src={currentVideoUrl} userEmail={user.email || "Student"} />
-            </div>
+        {/* Main Content Area */}
+        <div className="flex-1 bg-black flex flex-col relative overflow-hidden">
+          {activeLecture?.type === 'quiz' ? (
+             <QuizPlayer 
+               quizData={activeLecture.quizData || { questions: [] }} 
+               courseId={course._id.toString()}
+               lectureId={Number(activeLectureId)}
+               isCompleted={completedLectures.includes(Number(activeLectureId))}
+             />
+          ) : activeLecture?.type === 'assignment' ? (
+             <AssignmentPlayer 
+               lecture={activeLecture} 
+               courseId={course._id.toString()}
+               lectureId={Number(activeLectureId)}
+               isCompleted={completedLectures.includes(Number(activeLectureId))}
+             />
+          ) : activeLecture?.type === 'video' && activeLecture?.content ? (
+             <div className="w-full h-full flex flex-col items-center justify-center animate-in fade-in relative">
+                <SecureVideoPlayer src={activeLecture.content} userEmail={user.email || "Student"} />
+                <div className="absolute top-4 left-4 z-10 bg-black/60 backdrop-blur text-white px-4 py-2 rounded-lg text-sm font-medium border border-white/10 pointer-events-none">
+                  Currently Playing: {activeLecture.title}
+                </div>
+                <div className="absolute bottom-4 right-4 z-20">
+                  <MarkCompleteButton 
+                    courseId={course._id.toString()} 
+                    lectureId={Number(activeLectureId)} 
+                    isCompleted={completedLectures.includes(Number(activeLectureId))} 
+                  />
+                </div>
+             </div>
           ) : (
-            <div className="text-gray-500 flex flex-col items-center animate-in fade-in">
-              <PlayCircle size={48} className="mb-4 opacity-50" />
-              <p>No video content uploaded yet.</p>
-            </div>
+             <div className="flex-1 text-gray-500 flex flex-col items-center justify-center animate-in fade-in">
+               <FileText size={48} className="mb-4 opacity-50" />
+               <p className="text-lg text-white mb-2">{activeLecture?.title || "No content"}</p>
+               <p>Content for this lecture is not available.</p>
+               {activeLecture && (
+                 <div className="mt-8">
+                  <MarkCompleteButton 
+                    courseId={course._id.toString()} 
+                    lectureId={Number(activeLectureId)} 
+                    isCompleted={completedLectures.includes(Number(activeLectureId))} 
+                  />
+                 </div>
+               )}
+             </div>
           )}
-          <div className="absolute top-4 left-4 bg-black/60 backdrop-blur text-white px-4 py-2 rounded-lg text-sm font-medium border border-white/10">
-            Currently Playing: {currentVideoTitle}
-          </div>
         </div>
 
         {/* Sidebar Curriculum List */}
@@ -96,15 +134,15 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
                       className={`w-full text-left px-3 py-3 rounded-lg flex items-start gap-3 transition-colors ${activeLectureId == lecture.id ? 'bg-blue-500/10 border border-blue-500/30 text-blue-400' : 'hover:bg-white/5 text-gray-400'}`}
                     >
                       <div className="mt-0.5">
-                        <CheckCircle size={16} className={activeLectureId == lecture.id ? 'text-blue-500' : 'text-gray-600'} />
+                        <CheckCircle size={16} className={completedLectures.includes(lecture.id) ? 'text-green-500' : activeLectureId == lecture.id ? 'text-blue-500' : 'text-gray-600'} />
                       </div>
                       <div className="flex-1">
                         <p className={`text-sm font-medium leading-tight ${activeLectureId == lecture.id ? 'text-blue-300' : 'text-gray-300'}`}>
                           {lIdx + 1}. {lecture.title}
                         </p>
                         <div className="flex items-center gap-1 mt-1 text-xs opacity-70">
-                          {lecture.type === 'video' ? <PlayCircle size={12} /> : <FileText size={12} />}
-                          <span>{lecture.type === 'video' ? 'Video' : 'Article'}</span>
+                          {lecture.type === 'video' ? <PlayCircle size={12} /> : lecture.type === 'quiz' ? <Award size={12} /> : lecture.type === 'assignment' ? <FileText size={12} /> : <FileText size={12} />}
+                          <span className="capitalize">{lecture.type || 'Article'}</span>
                         </div>
                       </div>
                     </Link>

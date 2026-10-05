@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import connectToDatabase from '@/lib/mongodb';
 import User from '@/models/User';
-import jwt from 'jsonwebtoken';
-import { cookies } from 'next/headers';
+import { sendVerificationEmail } from '@/lib/email';
+import crypto from 'crypto';
 
 export async function POST(req: Request) {
   try {
@@ -38,30 +38,32 @@ export async function POST(req: Request) {
     // Create user with requested role (default to student if not provided)
     const role = requestedRole === 'instructor' ? 'admin' : 'student';
 
+    // Generate secure 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+    // Hash OTP before storing
+    const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
+
     const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
       role,
+      isVerified: false,
+      verificationCode: hashedOtp,
+      verificationCodeExpiresAt: otpExpires,
+      verificationAttempts: 0,
+      authProvider: 'email',
     });
 
-    // Create JWT Token
-    const token = jwt.sign(
-      { userId: newUser._id, role: newUser.role },
-      process.env.JWT_SECRET || 'fallback-secret',
-      { expiresIn: '7d' }
+    // Send OTP via email
+    await sendVerificationEmail(email, otp);
+
+    return NextResponse.json(
+      { message: 'Registration successful. Verification code sent.', email: newUser.email }, 
+      { status: 201 }
     );
-
-    // Set cookie using Next.js App Router
-    const cookieStore = await cookies();
-    cookieStore.set('auth-token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      path: '/',
-    });
-
-    return NextResponse.json({ message: 'User registered successfully', role }, { status: 201 });
   } catch (error: any) {
     console.error("Register Error:", error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

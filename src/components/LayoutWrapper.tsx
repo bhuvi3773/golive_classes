@@ -13,7 +13,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   return (
     <div className="flex min-h-screen">
       {showSidebar && <Sidebar />}
-      <main className={`flex-1 ${showSidebar ? 'md:ml-64' : ''} transition-all duration-300 min-h-screen flex flex-col relative`}>
+      <main className={`flex-1 ${showSidebar ? 'md:ml-[72px]' : ''} transition-all duration-300 min-h-screen flex flex-col relative`}>
         {showSidebar && <TopHeader />}
         <div className={`flex-1 ${showSidebar ? 'p-6 md:p-10' : ''}`}>
           {children}

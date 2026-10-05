@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { Plus, GripVertical, CheckCircle, Video, FileText, ChevronDown, UploadCloud, X } from "lucide-react";
+import { Plus, GripVertical, CheckCircle, Video, FileText, ChevronDown, UploadCloud, X, Award } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import QuizBuilder from "@/components/admin/QuizBuilder";
+import AssignmentBuilder from "@/components/admin/AssignmentBuilder";
 
 type Lecture = {
   id: number;
@@ -40,7 +42,7 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
   ]);
 
   const [isUploading, setIsUploading] = useState(false);
-  const [activeUpload, setActiveUpload] = useState<{lectureId: number, type: 'video' | 'article'} | null>(null);
+  const [activeUpload, setActiveUpload] = useState<{lectureId: number, type: 'video' | 'article' | 'quiz' | 'assignment'} | null>(null);
 
   useEffect(() => {
     fetch(`/api/courses/${courseId}`)
@@ -56,6 +58,12 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
 
   const addSection = () => {
     setSections([...sections, { id: Date.now(), title: "New Section", lectures: [] }]);
+  };
+
+  const updateCourseField = (field: string, value: any) => {
+    if (course) {
+      setCourse({ ...course, [field]: value });
+    }
   };
 
   const addLecture = (sectionId: number) => {
@@ -133,6 +141,32 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
     setActiveUpload(null);
   };
 
+  const handleSaveQuiz = (sectionId: number, lectureId: number, quizData: any) => {
+    setSections(sections.map(sec => {
+      if (sec.id === sectionId) {
+        return {
+          ...sec,
+          lectures: sec.lectures.map(lec => lec.id === lectureId ? { ...lec, quizData, content: "Quiz Setup Completed", type: 'quiz' } : lec)
+        };
+      }
+      return sec;
+    }));
+    setActiveUpload(null);
+  };
+
+  const handleSaveAssignment = (sectionId: number, lectureId: number, assignmentData: any) => {
+    setSections(sections.map(sec => {
+      if (sec.id === sectionId) {
+        return {
+          ...sec,
+          lectures: sec.lectures.map(lec => lec.id === lectureId ? { ...lec, assignmentData, content: "Assignment Setup Completed", type: 'assignment' } : lec)
+        };
+      }
+      return sec;
+    }));
+    setActiveUpload(null);
+  };
+
   const removeContent = (sectionId: number, lectureId: number) => {
     setSections(sections.map(sec => {
       if (sec.id === sectionId) {
@@ -145,7 +179,24 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
     }));
   };
 
-  const toggleUpload = (lectureId: number, type: 'video' | 'article') => {
+  const deleteSection = (sectionId: number) => {
+    if (confirm('Are you sure you want to delete this entire section?')) {
+      setSections(sections.filter(sec => sec.id !== sectionId));
+    }
+  };
+
+  const deleteLecture = (sectionId: number, lectureId: number) => {
+    if (confirm('Are you sure you want to delete this lecture?')) {
+      setSections(sections.map(sec => {
+        if (sec.id === sectionId) {
+          return { ...sec, lectures: sec.lectures.filter(lec => lec.id !== lectureId) };
+        }
+        return sec;
+      }));
+    }
+  };
+
+  const toggleUpload = (lectureId: number, type: 'video' | 'article' | 'quiz' | 'assignment') => {
     if (activeUpload?.lectureId === lectureId && activeUpload?.type === type) {
       setActiveUpload(null); // toggle off
     } else {
@@ -158,7 +209,10 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
       const res = await fetch(`/api/courses/${courseId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ curriculum: sections })
+        body: JSON.stringify({ 
+          ...course,
+          curriculum: sections 
+        })
       });
       if (res.ok) {
         alert("Course saved successfully!");
@@ -177,18 +231,22 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
       const res = await fetch(`/api/courses/${courseId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'published', curriculum: sections })
+        body: JSON.stringify({ 
+          ...course,
+          status: 'pending', 
+          curriculum: sections 
+        })
       });
       if (res.ok) {
-        alert("Course published successfully! It is now visible to students.");
+        alert("Course submitted for review successfully! It will be visible to students once approved by an admin.");
         router.push('/admin/courses');
       } else {
         const errorData = await res.json();
-        alert(`Failed to publish course: ${errorData.error || res.statusText}`);
+        alert(`Failed to submit course: ${errorData.error || res.statusText}`);
       }
     } catch (err: any) {
       console.error(err);
-      alert(`Error publishing course: ${err.message}`);
+      alert(`Error submitting course: ${err.message}`);
     }
   };
 
@@ -240,9 +298,9 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
           </button>
           <button 
             onClick={publishCourse}
-            className="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded-md font-bold transition-colors shadow-lg shadow-green-600/20"
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-md font-bold transition-colors shadow-lg shadow-blue-600/20"
           >
-            Publish Course
+            Submit for Review
           </button>
         </div>
       </div>
@@ -261,7 +319,7 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
               {sections.map((section, sIdx) => (
                 <div key={section.id} className="bg-white/[0.02] border border-white/10 rounded-lg overflow-hidden">
                   {/* Section Header */}
-                  <div className="bg-[#1e2130] p-4 flex items-center gap-3 border-b border-white/10">
+                  <div className="bg-[#1e2130] p-4 flex items-center gap-3 border-b border-white/10 group">
                     <span className="font-bold text-sm text-gray-400">Section {sIdx + 1}:</span>
                     <input 
                       type="text" 
@@ -269,6 +327,9 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
                       onChange={(e) => updateTitle(section.id, null, e.target.value)}
                       className="bg-transparent text-white font-bold text-base focus:outline-none focus:border-b focus:border-blue-500 w-full"
                     />
+                    <button onClick={() => deleteSection(section.id)} className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-400 transition-opacity p-2">
+                      <X size={18} />
+                    </button>
                   </div>
 
                   {/* Lectures */}
@@ -288,7 +349,7 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
                           {lecture.content && (
                             <div className="flex items-center gap-1 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20 mr-2">
                               <span className="text-xs text-blue-400 truncate max-w-[150px]" title={lecture.content}>
-                                {lecture.type === 'video' ? `🎥 ${lecture.originalName || 'Video Attached'}` : `📝 Article`}
+                                {lecture.type === 'video' ? `🎥 ${lecture.originalName || 'Video Attached'}` : lecture.type === 'quiz' ? `🏆 Quiz Added` : lecture.type === 'assignment' ? `📝 Assignment` : `📄 Article`}
                               </span>
                               <button 
                                 onClick={() => removeContent(section.id, lecture.id)}
@@ -312,7 +373,21 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
                             >
                               <FileText size={14} /> + Article
                             </button>
-                            <button className="p-1.5 hover:bg-white/5 rounded text-gray-400"><ChevronDown size={16} /></button>
+                            <button 
+                              onClick={() => toggleUpload(lecture.id, 'quiz')}
+                              className={`flex items-center gap-1 text-xs px-2 py-1.5 rounded border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'quiz' ? 'bg-blue-500/20 text-blue-400 border-blue-500/50' : 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-300'}`}
+                            >
+                              <Award size={14} /> + Quiz
+                            </button>
+                            <button 
+                              onClick={() => toggleUpload(lecture.id, 'assignment')}
+                              className={`flex items-center gap-1 text-xs px-2 py-1.5 rounded border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'assignment' ? 'bg-blue-500/20 text-blue-400 border-blue-500/50' : 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-300'}`}
+                            >
+                              <FileText size={14} /> + Assignment
+                            </button>
+                            <button onClick={() => deleteLecture(section.id, lecture.id)} className="p-1.5 hover:bg-red-500/10 hover:text-red-400 rounded text-gray-500 transition-colors">
+                              <X size={16} />
+                            </button>
                           </div>
                         </div>
 
@@ -344,7 +419,7 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
                                   )}
                                 </label>
                               </div>
-                            ) : (
+                            ) : activeUpload.type === 'article' ? (
                               <div>
                                 <h4 className="text-sm font-medium text-white mb-2">Write Article Content</h4>
                                 <textarea 
@@ -361,6 +436,16 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
                                   </button>
                                 </div>
                               </div>
+                            ) : activeUpload.type === 'quiz' ? (
+                              <QuizBuilder 
+                                initialData={(lecture as any).quizData}
+                                onSave={(data) => handleSaveQuiz(section.id, lecture.id, data)}
+                              />
+                            ) : (
+                              <AssignmentBuilder 
+                                initialData={(lecture as any).assignmentData}
+                                onSave={(data) => handleSaveAssignment(section.id, lecture.id, data)}
+                              />
                             )}
                           </div>
                         )}
@@ -387,7 +472,119 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
           </div>
         )}
 
-        {activeTab !== 'curriculum' && (
+        {activeTab === 'goals' && course && (
+          <div className="max-w-4xl animate-in fade-in">
+            <h2 className="text-2xl font-bold text-white mb-2">Intended learners</h2>
+            <p className="text-gray-400 mb-8 pb-6 border-b border-white/10">
+              The descriptions you write here will help students decide if your course is the right one for them.
+            </p>
+            
+            <div className="space-y-8">
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">What will students learn in your course?</h3>
+                <p className="text-sm text-gray-400 mb-4">You must enter at least 1 learning objective or outcome.</p>
+                <textarea 
+                  value={course.goals?.join('\n') || ''}
+                  onChange={(e) => updateCourseField('goals', e.target.value.split('\n'))}
+                  placeholder="Example: Define the roles and responsibilities of a project manager"
+                  rows={4}
+                  className="w-full bg-[#1e2130] border border-gray-600 rounded-lg p-4 text-sm text-gray-200 focus:outline-none focus:border-blue-500"
+                ></textarea>
+                <p className="text-xs text-gray-500 mt-1">Enter one goal per line.</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">What are the requirements or prerequisites for taking your course?</h3>
+                <textarea 
+                  value={course.requirements?.join('\n') || ''}
+                  onChange={(e) => updateCourseField('requirements', e.target.value.split('\n'))}
+                  placeholder="Example: No programming experience needed."
+                  rows={3}
+                  className="w-full bg-[#1e2130] border border-gray-600 rounded-lg p-4 text-sm text-gray-200 focus:outline-none focus:border-blue-500"
+                ></textarea>
+                <p className="text-xs text-gray-500 mt-1">Enter one requirement per line.</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">Who is this course for?</h3>
+                <textarea 
+                  value={course.targetAudience?.join('\n') || ''}
+                  onChange={(e) => updateCourseField('targetAudience', e.target.value.split('\n'))}
+                  placeholder="Example: Beginner Python developers curious about data science"
+                  rows={3}
+                  className="w-full bg-[#1e2130] border border-gray-600 rounded-lg p-4 text-sm text-gray-200 focus:outline-none focus:border-blue-500"
+                ></textarea>
+                <p className="text-xs text-gray-500 mt-1">Enter one audience per line.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'landing' && course && (
+          <div className="max-w-4xl animate-in fade-in">
+            <h2 className="text-2xl font-bold text-white mb-2">Course landing page</h2>
+            <p className="text-gray-400 mb-8 pb-6 border-b border-white/10">
+              Your course landing page is crucial to your success. If it's done right, it can also help you gain visibility in search engines like Google.
+            </p>
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-bold text-gray-300 mb-2">Course title</label>
+                <input 
+                  type="text" 
+                  value={course.title || ''}
+                  onChange={(e) => updateCourseField('title', e.target.value)}
+                  className="w-full bg-[#1e2130] border border-gray-600 rounded-lg p-4 text-sm text-gray-200 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-300 mb-2">Course description</label>
+                <textarea 
+                  value={course.description || ''}
+                  onChange={(e) => updateCourseField('description', e.target.value)}
+                  rows={6}
+                  className="w-full bg-[#1e2130] border border-gray-600 rounded-lg p-4 text-sm text-gray-200 focus:outline-none focus:border-blue-500"
+                ></textarea>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-bold text-gray-300 mb-2">Category</label>
+                  <select 
+                    value={course.category || ''}
+                    onChange={(e) => updateCourseField('category', e.target.value)}
+                    className="w-full bg-[#1e2130] border border-gray-600 rounded-lg p-4 text-sm text-gray-200 focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Web Development">Web Development</option>
+                    <option value="DevOps">DevOps</option>
+                    <option value="Data Science">Data Science</option>
+                    <option value="Design">Design</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-300 mb-2">Course image (Thumbnail URL)</label>
+                <input 
+                  type="text" 
+                  value={course.thumbnail || ''}
+                  onChange={(e) => updateCourseField('thumbnail', e.target.value)}
+                  placeholder="https://..."
+                  className="w-full bg-[#1e2130] border border-gray-600 rounded-lg p-4 text-sm text-gray-200 focus:outline-none focus:border-blue-500"
+                />
+                {course.thumbnail && (
+                  <div className="mt-4 w-64 h-36 bg-black rounded-lg overflow-hidden border border-white/10">
+                    <img src={course.thumbnail} alt="Thumbnail preview" className="w-full h-full object-cover" />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'pricing' && (
           <div className="h-full flex items-center justify-center text-gray-500">
             <p>This section is under development. Please use the Curriculum tab to upload videos.</p>
           </div>

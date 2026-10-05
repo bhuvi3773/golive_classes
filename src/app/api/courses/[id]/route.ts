@@ -10,8 +10,11 @@ export async function DELETE(
   try {
     const user = await getUserFromCookie();
 
-    if (!user || user.role !== 'admin') {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (user.role !== 'admin' && user.role !== 'superadmin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     await connectToDatabase();
@@ -60,8 +63,11 @@ export async function PUT(
   try {
     const user = await getUserFromCookie();
 
-    if (!user || user.role !== 'admin') {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (user.role !== 'admin' && user.role !== 'superadmin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     await connectToDatabase();

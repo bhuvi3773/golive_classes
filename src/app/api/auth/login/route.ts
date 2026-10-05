@@ -31,6 +31,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Account not found. Please sign up first.' }, { status: 401 });
     }
 
+    if (user.isBlocked) {
+      return NextResponse.json({ error: 'This account has been suspended by an administrator.' }, { status: 403 });
+    }
+
+    if (user.authProvider === 'google' && !user.password) {
+      return NextResponse.json({ error: 'This account was created with Google. Please use "Continue with Google" to log in.' }, { status: 401 });
+    }
+
+    if (!user.isVerified) {
+      return NextResponse.json({ error: 'Please verify your email before logging in.', requireVerification: true, email: user.email }, { status: 403 });
+    }
+
     // Verify requested role matches actual role
     const isRequestingAdmin = requestedRole === 'instructor';
     const isActualAdmin = user.role === 'admin';
@@ -43,6 +55,9 @@ export async function POST(req: Request) {
     }
 
     // Verify password
+    if (!user.password) {
+      return NextResponse.json({ error: 'This account was created with Google. Please use "Continue with Google" to log in.' }, { status: 401 });
+    }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json({ error: 'Incorrect password. Please try again.' }, { status: 401 });
@@ -63,6 +78,10 @@ export async function POST(req: Request) {
       maxAge: 60 * 60 * 24 * 7, // 1 week
       path: '/',
     });
+
+    // Update last login
+    user.lastLoginAt = new Date();
+    await user.save();
 
     return NextResponse.json({ message: 'Logged in successfully', role: user.role }, { status: 200 });
   } catch (error: any) {

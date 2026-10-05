@@ -6,8 +6,11 @@ export interface ICourse extends Document {
   category: string;
   price: number;
   thumbnail: string;
-  status: 'draft' | 'published';
+  status: 'draft' | 'pending' | 'published' | 'rejected';
   curriculum?: any[]; // Store sections and lectures
+  goals?: string[];
+  requirements?: string[];
+  targetAudience?: string[];
   createdAt: Date;
 }
 
@@ -17,8 +20,11 @@ const CourseSchema: Schema = new Schema({
   category: { type: String, required: true },
   price: { type: Number, required: true },
   thumbnail: { type: String, default: '' },
-  status: { type: String, enum: ['draft', 'published'], default: 'draft' },
+  status: { type: String, enum: ['draft', 'pending', 'published', 'rejected'], default: 'draft' },
   curriculum: { type: Schema.Types.Mixed, default: [] },
+  goals: { type: [String], default: [] },
+  requirements: { type: [String], default: [] },
+  targetAudience: { type: [String], default: [] },
   createdAt: { type: Date, default: Date.now },
 });
 
