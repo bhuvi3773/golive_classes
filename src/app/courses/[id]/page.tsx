@@ -92,9 +92,9 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
               <span className="text-4xl font-extrabold text-white">${course.price}</span>
             </div>
             
-            <button className="w-full btn-primary py-4 text-lg font-bold shadow-[0_0_20px_rgba(37,99,235,0.5)] bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all hover:scale-[1.02]">
-              Buy Now
-            </button>
+            <Link href={`/courses/${course._id}/play`} className="w-full btn-primary py-4 text-lg font-bold shadow-[0_0_20px_rgba(37,99,235,0.5)] bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all hover:scale-[1.02] block text-center">
+              Enroll for Free (Test Video)
+            </Link>
             
             <p className="text-center text-xs text-gray-400 mt-4">Full Lifetime Access • 30-Day Money-Back Guarantee</p>
             
