@@ -15,22 +15,22 @@ export default async function SuperAdminLayout({
   }
 
   return (
-    <div className="flex h-screen bg-[#0a0c16] overflow-hidden">
+    <div className="flex h-screen bg-slate-50 overflow-hidden">
       {/* Super Admin Sidebar */}
-      <aside className="w-64 bg-[#12141f] border-r border-white/10 hidden md:flex flex-col">
+      <aside className="w-64 bg-[#12141f] border-r border-slate-200 hidden md:flex flex-col">
         <div className="p-6">
           <Link href="/superadmin">
-            <span className="text-2xl font-bold text-white flex items-center gap-2">
+            <span className="text-2xl font-bold text-slate-900 flex items-center gap-2">
               <ShieldCheck className="text-red-500" /> GoLive<span className="text-red-500">HQ</span>
             </span>
           </Link>
-          <p className="text-xs text-gray-500 mt-1 uppercase tracking-wider font-bold">Super Admin</p>
+          <p className="text-xs text-slate-400 mt-1 uppercase tracking-wider font-bold">Super Admin</p>
         </div>
 
         <nav className="flex-1 px-4 space-y-2 mt-4">
           <Link
             href="/superadmin"
-            className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:text-white bg-red-500/10 text-red-400 rounded-lg transition-colors border border-red-500/20"
+            className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:text-white bg-red-500/10 text-red-400 rounded-lg transition-colors border border-red-500/20"
           >
             <BookOpen size={20} />
             <span>Course Reviews</span>
@@ -38,23 +38,23 @@ export default async function SuperAdminLayout({
 
           <Link
             href="/superadmin/users"
-            className="flex items-center space-x-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+            className="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
           >
             <Users size={20} />
             <span>User Management</span>
           </Link>
 
           <Link
-            href="#"
-            className="flex items-center space-x-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors cursor-not-allowed opacity-50"
+            href="/superadmin/settings"
+            className="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
           >
             <Settings size={20} />
             <span>Platform Settings</span>
           </Link>
         </nav>
         
-        <div className="p-4 border-t border-white/10">
-           <Link href="/courses" className="flex items-center justify-center space-x-2 text-sm text-gray-500 hover:text-white py-2">
+        <div className="p-4 border-t border-slate-200">
+           <Link href="/courses" className="flex items-center justify-center space-x-2 text-sm text-slate-400 hover:text-slate-900 py-2">
              <span>Back to Main Site</span>
            </Link>
         </div>

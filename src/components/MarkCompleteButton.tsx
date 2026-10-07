@@ -32,7 +32,7 @@ export default function MarkCompleteButton({ courseId, lectureId, isCompleted }:
       className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${
         isCompleted 
           ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-          : 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]'
+          : 'bg-slate-900 hover:bg-slate-800 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]'
       }`}
     >
       <CheckCircle size={16} />

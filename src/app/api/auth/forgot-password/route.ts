@@ -3,9 +3,15 @@ import connectToDatabase from '@/lib/mongodb';
 import User from '@/models/User';
 import crypto from 'crypto';
 import { sendPasswordResetEmail } from '@/lib/email';
+import { checkRateLimit, getIP } from '@/lib/rateLimit';
 
 export async function POST(req: Request) {
   try {
+    const ip = getIP(req);
+    if (!checkRateLimit(ip, 3, 60000)) { // 3 requests per minute
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
+
     let { email } = await req.json();
     email = String(email);
 

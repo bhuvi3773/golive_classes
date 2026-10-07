@@ -17,6 +17,13 @@ export async function POST(req: Request) {
     }
 
     await connectToDatabase();
+    
+    // Check if user owns the course
+    const { default: User } = await import('@/models/User');
+    const userRecord = await User.findById(user.userId);
+    if (!userRecord || !userRecord.purchasedCourses || !userRecord.purchasedCourses.some((id: any) => id.toString() === courseId)) {
+      return NextResponse.json({ error: 'You must purchase this course to save progress.' }, { status: 403 });
+    }
 
     // Find or create progress record for this user and course
     let progress = await Progress.findOne({ userId: user.userId, courseId });

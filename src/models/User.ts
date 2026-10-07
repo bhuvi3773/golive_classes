@@ -7,6 +7,7 @@ export interface IUser extends Document {
   role: 'student' | 'admin' | 'superadmin';
   purchasedCourses: mongoose.Types.ObjectId[];
   wishlist: mongoose.Types.ObjectId[];
+  viewedCategories: string[];
   createdAt: Date;
   
   // Profile Setup Fields
@@ -40,6 +41,7 @@ const UserSchema: Schema = new Schema({
   role: { type: String, enum: ['student', 'admin', 'superadmin'], default: 'student' },
   purchasedCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
+  viewedCategories: [{ type: String }],
   
   // Profile Setup Fields
   avatar: { type: String, default: '' },

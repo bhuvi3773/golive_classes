@@ -5,8 +5,15 @@ import User from '@/models/User';
 import { sendVerificationEmail } from '@/lib/email';
 import crypto from 'crypto';
 
+import { checkRateLimit, getIP } from '@/lib/rateLimit';
+
 export async function POST(req: Request) {
   try {
+    const ip = getIP(req);
+    if (!checkRateLimit(ip, 5, 60000)) { // 5 requests per minute
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
+
     let { name, email, password, role: requestedRole } = await req.json();
 
     // STRICT TYPE CASTING TO PREVENT NOSQL INJECTIONS
@@ -35,8 +42,8 @@ export async function POST(req: Request) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user with requested role (default to student if not provided)
-    const role = requestedRole === 'instructor' ? 'admin' : 'student';
+    // Create user with requested role (default to student, only super admin can promote to instructor)
+    const role = 'student';
 
     // Generate secure 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();

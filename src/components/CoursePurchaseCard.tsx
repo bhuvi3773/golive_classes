@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { PlayCircle, Heart } from "lucide-react";
 
 export default function CoursePurchaseCard({ courseId, price, isPurchasedInitial }: { courseId: string, price: number, isPurchasedInitial: boolean }) {
@@ -36,10 +37,26 @@ export default function CoursePurchaseCard({ courseId, price, isPurchasedInitial
     }
   };
 
+  const router = useRouter();
+  
+  const handleBuy = async () => {
+    try {
+      const res = await fetch('/api/auth/me', { cache: 'no-store' });
+      const data = await res.json();
+      if (data.user) {
+        router.push(`/checkout/${courseId}`);
+      } else {
+        router.push('/login');
+      }
+    } catch (err) {
+      router.push('/login');
+    }
+  };
+
   return (
     <>
-      <div className="text-center mb-6 border-b border-white/10 pb-6">
-        <span className="text-4xl font-extrabold text-white">${price}</span>
+      <div className="text-center mb-6 border-b border-slate-200 pb-6">
+        <span className="text-4xl font-extrabold text-slate-900">${price}</span>
       </div>
       
       {isPurchased ? (
@@ -50,12 +67,12 @@ export default function CoursePurchaseCard({ courseId, price, isPurchasedInitial
         </Link>
       ) : (
         <div className="flex gap-2">
-          <button className="flex-1 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-500/25">
+          <button onClick={handleBuy} className="flex-1 bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-slate-900/20">
             Buy Now
           </button>
           <button 
             onClick={toggleWishlist}
-            className={`px-6 rounded-xl border flex items-center justify-center transition-colors ${inWishlist ? 'border-red-500 text-red-500 bg-red-500/10' : 'border-white/10 hover:bg-white/5 text-gray-400'}`}
+            className={`px-6 rounded-xl border flex items-center justify-center transition-colors ${inWishlist ? 'border-red-500 text-red-500 bg-red-500/10' : 'border-slate-200 hover:bg-slate-100 text-slate-500'}`}
             title={inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
           >
             <Heart size={24} fill={inWishlist ? "currentColor" : "none"} />

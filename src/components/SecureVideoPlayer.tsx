@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import { Play, Pause, Volume2, VolumeX, Maximize, Settings, RotateCcw, RotateCw } from "lucide-react";
 
 interface SecureVideoPlayerProps {
@@ -8,7 +8,12 @@ interface SecureVideoPlayerProps {
   userEmail: string;
 }
 
-export default function SecureVideoPlayer({ src, userEmail }: SecureVideoPlayerProps) {
+export interface SecureVideoPlayerRef {
+  getCurrentTime: () => number;
+  seekTo: (time: number) => void;
+}
+
+const SecureVideoPlayer = forwardRef<SecureVideoPlayerRef, SecureVideoPlayerProps>(({ src, userEmail }, ref) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -17,6 +22,16 @@ export default function SecureVideoPlayer({ src, userEmail }: SecureVideoPlayerP
   const [duration, setDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(1);
+
+  useImperativeHandle(ref, () => ({
+    getCurrentTime: () => videoRef.current?.currentTime || 0,
+    seekTo: (time: number) => {
+      if (videoRef.current) {
+        videoRef.current.currentTime = time;
+        setCurrentTime(time);
+      }
+    }
+  }));
 
   // Move watermark every 10 seconds to prevent cropping
   useEffect(() => {
@@ -142,7 +157,7 @@ export default function SecureVideoPlayer({ src, userEmail }: SecureVideoPlayerP
         
         {/* Progress Bar */}
         <div className="w-full mb-3 pointer-events-auto flex items-center gap-3">
-          <span className="text-xs text-white font-medium w-10 text-right">{formatTime(currentTime)}</span>
+          <span className="text-xs text-slate-900 font-medium w-10 text-right">{formatTime(currentTime)}</span>
           <input 
             type="range" 
             min="0" 
@@ -151,23 +166,23 @@ export default function SecureVideoPlayer({ src, userEmail }: SecureVideoPlayerP
             onChange={handleSeek}
             className="flex-1 h-1.5 bg-white/30 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all"
           />
-          <span className="text-xs text-white font-medium w-10">{formatTime(duration)}</span>
+          <span className="text-xs text-slate-900 font-medium w-10">{formatTime(duration)}</span>
         </div>
 
         {/* Bottom Controls Row */}
         <div className="flex items-center justify-between pointer-events-auto">
           <div className="flex items-center gap-4">
-            <button onClick={(e) => { e.stopPropagation(); togglePlay(); }} className="text-white hover:text-blue-400 transition-colors">
+            <button onClick={(e) => { e.stopPropagation(); togglePlay(); }} className="text-slate-900 hover:text-blue-400 transition-colors">
               {isPlaying ? <Pause size={22} /> : <Play size={22} />}
             </button>
-            <button onClick={(e) => { e.stopPropagation(); skip(-10); }} className="text-white hover:text-blue-400 transition-colors" title="Skip backward 10s">
+            <button onClick={(e) => { e.stopPropagation(); skip(-10); }} className="text-slate-900 hover:text-blue-400 transition-colors" title="Skip backward 10s">
               <RotateCcw size={18} />
             </button>
-            <button onClick={(e) => { e.stopPropagation(); skip(10); }} className="text-white hover:text-blue-400 transition-colors" title="Skip forward 10s">
+            <button onClick={(e) => { e.stopPropagation(); skip(10); }} className="text-slate-900 hover:text-blue-400 transition-colors" title="Skip forward 10s">
               <RotateCw size={18} />
             </button>
             <div className="flex items-center gap-2 ml-2 group/vol">
-              <button onClick={(e) => { e.stopPropagation(); handleVolumeChange({ target: { value: isMuted ? 1 : 0 } } as any); }} className="text-white hover:text-blue-400 transition-colors">
+              <button onClick={(e) => { e.stopPropagation(); handleVolumeChange({ target: { value: isMuted ? 1 : 0 } } as any); }} className="text-slate-900 hover:text-blue-400 transition-colors">
                 {isMuted || volume === 0 ? <VolumeX size={20} /> : <Volume2 size={20} />}
               </button>
               <input 
@@ -184,10 +199,10 @@ export default function SecureVideoPlayer({ src, userEmail }: SecureVideoPlayerP
           </div>
           
           <div className="flex items-center gap-4">
-            <button className="text-white hover:text-blue-400 transition-colors">
+            <button className="text-slate-900 hover:text-blue-400 transition-colors">
               <Settings size={20} />
             </button>
-            <button onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} className="text-white hover:text-blue-400 transition-colors">
+            <button onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} className="text-slate-900 hover:text-blue-400 transition-colors">
               <Maximize size={20} />
             </button>
           </div>
@@ -195,4 +210,6 @@ export default function SecureVideoPlayer({ src, userEmail }: SecureVideoPlayerP
       </div>
     </div>
   );
-}
+});
+
+export default SecureVideoPlayer;

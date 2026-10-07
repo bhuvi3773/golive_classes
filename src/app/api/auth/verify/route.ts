@@ -5,8 +5,15 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 
+import { checkRateLimit, getIP } from '@/lib/rateLimit';
+
 export async function POST(req: Request) {
   try {
+    const ip = getIP(req);
+    if (!checkRateLimit(ip, 10, 60000)) { // 10 requests per minute
+      return NextResponse.json({ error: 'Too many verification attempts. Please try again later.' }, { status: 429 });
+    }
+
     let { email, code } = await req.json();
 
     email = String(email);
@@ -55,10 +62,15 @@ export async function POST(req: Request) {
     user.lastLoginAt = new Date();
     await user.save();
 
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET is not configured');
+    }
+
     // Log the user in immediately
     const token = jwt.sign(
       { userId: user._id, role: user.role },
-      process.env.JWT_SECRET || 'fallback-secret',
+      jwtSecret,
       { expiresIn: '7d' }
     );
 
@@ -66,7 +78,6 @@ export async function POST(req: Request) {
     cookieStore.set('auth-token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 7, // 1 week
       path: '/',
     });
 

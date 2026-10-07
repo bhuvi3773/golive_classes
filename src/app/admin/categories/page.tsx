@@ -71,27 +71,27 @@ export default function CategoriesManager() {
       </div>
 
       {showForm && (
-        <div className="glass-card p-6 border border-blue-500/50">
+        <div className="glass-card-light p-6 border border-blue-500/50">
           <form onSubmit={handleCreate} className="space-y-4 max-w-xl">
             <div>
-              <label className="text-sm font-medium text-gray-300">Category Name</label>
+              <label className="text-sm font-medium text-slate-600">Category Name</label>
               <input 
                 type="text" 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
                 placeholder="e.g. Data Science"
-                className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500 text-white"
+                className="w-full mt-1 bg-slate-100 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500 text-slate-900"
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-300">Description</label>
+              <label className="text-sm font-medium text-slate-600">Description</label>
               <textarea 
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
                 rows={2}
-                className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500 text-white"
+                className="w-full mt-1 bg-slate-100 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500 text-slate-900"
               />
             </div>
             <button disabled={saving} type="submit" className="btn-primary py-2 px-6">
@@ -102,16 +102,16 @@ export default function CategoriesManager() {
       )}
 
       {categories.length === 0 ? (
-        <p className="text-gray-400">No categories created yet.</p>
+        <p className="text-slate-500">No categories created yet.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((cat) => (
-            <div key={cat._id} className="glass-card p-6 flex flex-col justify-between">
+            <div key={cat._id} className="glass-card-light p-6 flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="text-lg font-bold">{cat.name}</h3>
                 </div>
-                <p className="text-sm text-gray-400">{cat.description}</p>
+                <p className="text-sm text-slate-500">{cat.description}</p>
               </div>
             </div>
           ))}

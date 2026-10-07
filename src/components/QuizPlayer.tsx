@@ -29,9 +29,9 @@ export default function QuizPlayer({ quizData, courseId, lectureId, isCompleted 
   // If no questions exist, show a placeholder
   if (!quizData?.questions || quizData.questions.length === 0) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 p-8">
+      <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 p-8">
         <Award size={48} className="mb-4 opacity-50" />
-        <h2 className="text-xl font-bold text-white mb-2">Quiz Time!</h2>
+        <h2 className="text-xl font-bold text-slate-900 mb-2">Quiz Time!</h2>
         <p>This quiz does not have any questions yet.</p>
         <div className="mt-8">
           <MarkCompleteButton courseId={courseId} lectureId={lectureId} isCompleted={isCompleted} />
@@ -70,19 +70,19 @@ export default function QuizPlayer({ quizData, courseId, lectureId, isCompleted 
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-[#0a0c16] overflow-y-auto">
-      <div className="max-w-2xl w-full bg-[#1e2130] rounded-2xl border border-white/10 p-8 shadow-2xl">
+    <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-slate-50 overflow-y-auto">
+      <div className="max-w-2xl w-full bg-white rounded-2xl border border-slate-200 p-8 shadow-2xl">
         
         {!showResults ? (
           <>
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-xl font-bold text-white">Quiz Question {currentQuestion + 1} of {quizData.questions.length}</h2>
-              <span className="text-sm font-medium px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full">
+              <h2 className="text-xl font-bold text-slate-900">Quiz Question {currentQuestion + 1} of {quizData.questions.length}</h2>
+              <span className="text-sm font-medium px-3 py-1 bg-emerald-100 text-emerald-600 rounded-full">
                 Score: {score}
               </span>
             </div>
 
-            <h3 className="text-2xl font-semibold text-white mb-6 leading-relaxed">
+            <h3 className="text-2xl font-semibold text-slate-900 mb-6 leading-relaxed">
               {question.question}
             </h3>
 
@@ -91,7 +91,7 @@ export default function QuizPlayer({ quizData, courseId, lectureId, isCompleted 
                 const isSelected = selectedAnswer === idx;
                 const isCorrect = idx === question.correctAnswerIndex;
                 
-                let btnStyle = "bg-[#12141f] border-white/10 hover:border-blue-500/50 hover:bg-blue-500/10 text-gray-300";
+                let btnStyle = "bg-[#12141f] border-slate-200 hover:border-blue-500/50 hover:bg-blue-500/10 text-slate-600";
                 
                 if (isSubmitted) {
                   if (isCorrect) {
@@ -100,7 +100,7 @@ export default function QuizPlayer({ quizData, courseId, lectureId, isCompleted 
                     btnStyle = "bg-red-500/20 border-red-500 text-red-400";
                   }
                 } else if (isSelected) {
-                  btnStyle = "bg-blue-500/20 border-blue-500 text-blue-400";
+                  btnStyle = "bg-emerald-100 border-blue-500 text-emerald-600";
                 }
 
                 return (
@@ -123,7 +123,7 @@ export default function QuizPlayer({ quizData, courseId, lectureId, isCompleted 
                 <button
                   onClick={handleSubmit}
                   disabled={selectedAnswer === null}
-                  className="px-6 py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+                  className="px-6 py-3 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
                 >
                   Submit Answer
                 </button>
@@ -140,15 +140,15 @@ export default function QuizPlayer({ quizData, courseId, lectureId, isCompleted 
         ) : (
           <div className="text-center py-8 animate-in zoom-in duration-300">
             <Award size={64} className="mx-auto text-blue-500 mb-6" />
-            <h2 className="text-3xl font-bold text-white mb-2">Quiz Completed!</h2>
-            <p className="text-gray-400 mb-8">
-              You scored <span className="text-white font-bold">{score}</span> out of <span className="text-white font-bold">{quizData.questions.length}</span>
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">Quiz Completed!</h2>
+            <p className="text-slate-500 mb-8">
+              You scored <span className="text-slate-900 font-bold">{score}</span> out of <span className="text-slate-900 font-bold">{quizData.questions.length}</span>
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={handleRetry}
-                className="px-6 py-3 bg-[#12141f] border border-white/10 hover:bg-white/5 text-white font-semibold rounded-lg transition-colors w-full sm:w-auto"
+                className="px-6 py-3 bg-[#12141f] border border-slate-200 hover:bg-slate-100 text-white font-semibold rounded-lg transition-colors w-full sm:w-auto"
               >
                 Retry Quiz
               </button>

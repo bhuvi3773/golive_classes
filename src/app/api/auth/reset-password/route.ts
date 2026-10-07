@@ -3,9 +3,15 @@ import bcrypt from 'bcryptjs';
 import connectToDatabase from '@/lib/mongodb';
 import User from '@/models/User';
 import crypto from 'crypto';
+import { checkRateLimit, getIP } from '@/lib/rateLimit';
 
 export async function POST(req: Request) {
   try {
+    const ip = getIP(req);
+    if (!checkRateLimit(ip, 5, 60000)) { // 5 requests per minute
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
+
     let { token, password } = await req.json();
     token = String(token);
     password = String(password);

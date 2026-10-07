@@ -58,9 +58,9 @@ function ResetPasswordContent() {
   if (!token) {
     return (
       <div className="flex min-h-[90vh] items-center justify-center py-12 px-4 text-center">
-        <div className="glass-card p-10 max-w-md w-full">
-          <h2 className="text-2xl font-bold text-white mb-2">Invalid Link</h2>
-          <p className="text-gray-400 mb-6">This password reset link is invalid or missing the secure token.</p>
+        <div className="glass-card-light p-10 max-w-md w-full">
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Invalid Link</h2>
+          <p className="text-slate-500 mb-6">This password reset link is invalid or missing the secure token.</p>
           <Link href="/forgot-password" className="btn-primary w-full block py-3 rounded-lg font-bold">
             Request New Link
           </Link>
@@ -71,10 +71,10 @@ function ResetPasswordContent() {
 
   return (
     <div className="flex min-h-[90vh] items-center justify-center py-12 px-4">
-      <div className="w-full max-w-md glass-card p-8 md:p-10 space-y-8">
+      <div className="w-full max-w-md glass-card-light p-8 md:p-10 space-y-8">
         <div>
-          <h2 className="text-3xl font-extrabold text-white mb-2">Create New Password</h2>
-          <p className="text-gray-400 text-sm">
+          <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Create New Password</h2>
+          <p className="text-slate-500 text-sm">
             Please enter your new password below.
           </p>
         </div>
@@ -94,30 +94,30 @@ function ResetPasswordContent() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">New Password</label>
+            <label className="text-sm font-medium text-slate-600">New Password</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
               <input 
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••" 
-                className="w-full bg-[#1e2130] border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-white"
+                className="w-full bg-white border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-slate-900"
                 required
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Confirm New Password</label>
+            <label className="text-sm font-medium text-slate-600">Confirm New Password</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
               <input 
                 type="password" 
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••" 
-                className="w-full bg-[#1e2130] border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-white"
+                className="w-full bg-white border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-slate-900"
                 required
               />
             </div>
@@ -134,7 +134,7 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-[90vh] items-center justify-center text-gray-400">Loading...</div>}>
+    <Suspense fallback={<div className="flex min-h-[90vh] items-center justify-center text-slate-500">Loading...</div>}>
       <ResetPasswordContent />
     </Suspense>
   );

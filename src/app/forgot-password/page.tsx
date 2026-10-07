@@ -40,14 +40,14 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="flex min-h-[90vh] items-center justify-center py-12 px-4">
-      <div className="w-full max-w-md glass-card p-8 md:p-10 space-y-8">
-        <Link href="/login" className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors w-fit">
+      <div className="w-full max-w-md glass-card-light p-8 md:p-10 space-y-8">
+        <Link href="/login" className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors w-fit">
           <ArrowLeft size={16} /> Back to login
         </Link>
         
         <div>
-          <h2 className="text-3xl font-extrabold text-white mb-2">Forgot Password</h2>
-          <p className="text-gray-400 text-sm">
+          <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Forgot Password</h2>
+          <p className="text-slate-500 text-sm">
             Enter the email address associated with your account and we'll send you a link to reset your password.
           </p>
         </div>
@@ -67,15 +67,15 @@ export default function ForgotPasswordPage() {
         {!success && (
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Email Address</label>
+              <label className="text-sm font-medium text-slate-600">Email Address</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                 <input 
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com" 
-                  className="w-full bg-[#1e2130] border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-white"
+                  className="w-full bg-white border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-slate-900"
                   required
                 />
               </div>

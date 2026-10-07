@@ -78,20 +78,28 @@ export async function GET(req: Request) {
     user.lastLoginAt = new Date();
     await user.save();
 
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET is not configured');
+    }
+
     // Issue JWT
     const token = jwt.sign(
       { userId: user._id, role: user.role },
-      process.env.JWT_SECRET || 'fallback-secret',
+      jwtSecret,
       { expiresIn: '7d' }
     );
 
-    // Route to profile-setup if it's a brand new account, otherwise go to home page (/)
-    const redirectPath = !user.profileSetupCompleted ? '/profile-setup' : '/';
+    // Route to profile-setup if it's a brand new account, otherwise go to dashboard
+    let dashboardPath = '/my-learning';
+    if (user.role === 'superadmin') dashboardPath = '/superadmin';
+    if (user.role === 'admin') dashboardPath = '/admin/courses';
+    
+    const redirectPath = !user.profileSetupCompleted ? '/profile-setup' : dashboardPath;
     const response = NextResponse.redirect(`${APP_URL}${redirectPath}`);
     response.cookies.set('auth-token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 7,
       path: '/',
     });
     

@@ -33,17 +33,17 @@ export default function WishlistPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">My Wishlist</h1>
-        <p className="text-gray-400">Courses you've saved for later.</p>
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">My Wishlist</h1>
+        <p className="text-slate-500">Courses you've saved for later.</p>
       </div>
 
       {loading ? (
-        <div className="text-gray-500">Loading your wishlist...</div>
+        <div className="text-slate-400">Loading your wishlist...</div>
       ) : wishlist.length === 0 ? (
-        <div className="bg-white/5 border border-white/10 rounded-xl p-12 text-center flex flex-col items-center">
+        <div className="bg-slate-100 border border-slate-200 rounded-xl p-12 text-center flex flex-col items-center">
           <Heart size={48} className="text-gray-600 mb-4" />
-          <h2 className="text-xl font-bold text-white mb-2">Your wishlist is empty</h2>
-          <p className="text-gray-400 mb-6">Explore our catalog and find something to learn!</p>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">Your wishlist is empty</h2>
+          <p className="text-slate-500 mb-6">Explore our catalog and find something to learn!</p>
           <Link href="/courses">
             <button className="btn-primary">Browse Courses</button>
           </Link>
@@ -51,7 +51,7 @@ export default function WishlistPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {wishlist.map(course => (
-            <div key={course._id} className="bg-[#12141f] rounded-xl overflow-hidden border border-white/5 hover:border-white/10 transition-all group flex flex-col">
+            <div key={course._id} className="bg-[#12141f] rounded-xl overflow-hidden border border-slate-200 hover:border-white/10 transition-all group flex flex-col">
               <div className="aspect-video bg-gray-800 relative overflow-hidden">
                 {course.thumbnail ? (
                   <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -70,12 +70,12 @@ export default function WishlistPage() {
                 </div>
               </div>
               <div className="p-4 flex flex-col flex-1">
-                <div className="text-xs font-bold text-blue-400 mb-2 uppercase tracking-wider">{course.category}</div>
-                <h3 className="font-bold text-lg mb-2 text-white line-clamp-2">{course.title}</h3>
+                <div className="text-xs font-bold text-emerald-600 mb-2 uppercase tracking-wider">{course.category}</div>
+                <h3 className="font-bold text-lg mb-2 text-slate-900 line-clamp-2">{course.title}</h3>
                 <div className="mt-auto pt-4 flex items-center justify-between">
-                  <span className="font-bold text-lg text-white">${course.price}</span>
+                  <span className="font-bold text-lg text-slate-900">${course.price}</span>
                   <Link href={`/courses/${course._id}`}>
-                    <span className="text-sm text-blue-400 hover:text-blue-300 font-medium">View Course</span>
+                    <span className="text-sm text-emerald-600 hover:text-blue-300 font-medium">View Course</span>
                   </Link>
                 </div>
               </div>

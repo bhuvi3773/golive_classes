@@ -40,8 +40,10 @@ export default function LoginPage() {
       // Route based on role
       if (data.role === 'superadmin') {
         window.location.href = "/superadmin";
+      } else if (data.role === 'admin' || data.role === 'instructor') {
+        window.location.href = "/admin/courses";
       } else {
-        window.location.href = "/";
+        window.location.href = "/my-learning";
       }
     } catch (err) {
       setError("Failed to connect to the server.");
@@ -50,11 +52,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-[90vh] items-center justify-center py-12">
-      <div className="w-full max-w-lg glass-card p-8 md:p-10 space-y-8">
+    <div className="flex min-h-[90vh] items-center justify-center py-12 relative overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="w-full max-w-lg bg-white shadow-2xl border border-slate-200 rounded-2xl p-8 md:p-10 space-y-8 relative z-10">
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-white">Welcome Back</h2>
-          <p className="text-gray-400 mt-2">Log in to your account</p>
+          <h2 className="text-3xl font-extrabold text-slate-900">Welcome Back</h2>
+          <p className="text-slate-500 mt-2">Log in to your account</p>
         </div>
 
         {/* Role Selection added to Login per user request */}
@@ -63,12 +66,12 @@ export default function LoginPage() {
             onClick={() => setRole("student")}
             className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex flex-col items-center text-center gap-2 ${
               role === "student" 
-                ? "border-blue-500 bg-blue-500/10" 
-                : "border-white/10 bg-white/5 hover:border-white/20"
+                ? "border-blue-500 bg-emerald-50" 
+                : "border-slate-200 bg-slate-100 hover:border-white/20"
             }`}
           >
-            <BookOpen size={28} className={role === "student" ? "text-blue-400" : "text-gray-400"} />
-            <h3 className="font-semibold text-white">Learner</h3>
+            <BookOpen size={28} className={role === "student" ? "text-emerald-600" : "text-slate-500"} />
+            <h3 className="font-semibold text-slate-900">Learner</h3>
           </div>
 
           <div 
@@ -76,11 +79,11 @@ export default function LoginPage() {
             className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex flex-col items-center text-center gap-2 ${
               role === "instructor" 
                 ? "border-violet-500 bg-violet-500/10" 
-                : "border-white/10 bg-white/5 hover:border-white/20"
+                : "border-slate-200 bg-slate-100 hover:border-white/20"
             }`}
           >
-            <GraduationCap size={28} className={role === "instructor" ? "text-violet-400" : "text-gray-400"} />
-            <h3 className="font-semibold text-white">Teacher</h3>
+            <GraduationCap size={28} className={role === "instructor" ? "text-violet-400" : "text-slate-500"} />
+            <h3 className="font-semibold text-slate-900">Teacher</h3>
           </div>
         </div>
 
@@ -92,15 +95,15 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Email Address</label>
+            <label className="text-sm font-medium text-slate-600">Email Address</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
               <input 
                 type="email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com" 
-                className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-white"
+                className="w-full bg-slate-50 border border-slate-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-slate-900"
                 required
               />
             </div>
@@ -108,17 +111,17 @@ export default function LoginPage() {
 
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <label className="text-sm font-medium text-gray-300">Password</label>
-              <Link href="/forgot-password" className="text-xs text-blue-400 hover:text-blue-300 cursor-pointer">Forgot password?</Link>
+              <label className="text-sm font-medium text-slate-600">Password</label>
+              <Link href="/forgot-password" className="text-xs text-emerald-600 hover:text-blue-300 cursor-pointer">Forgot password?</Link>
             </div>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
               <input 
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••" 
-                className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-white"
+                className="w-full bg-slate-50 border border-slate-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-slate-900"
                 required
               />
             </div>
@@ -132,8 +135,8 @@ export default function LoginPage() {
         </form>
 
         <div className="relative flex items-center justify-center mt-6 mb-6">
-          <div className="absolute border-t border-gray-700 w-full"></div>
-          <span className="bg-[#0a0c16] px-4 text-sm text-gray-500 z-10">OR</span>
+          <div className="absolute border-t border-slate-200 w-full"></div>
+          <span className="bg-white px-4 text-sm text-slate-400 z-10">OR</span>
         </div>
 
         <Link href="/api/auth/google/login" className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-black font-semibold py-3 rounded-lg transition-colors border border-gray-300">
@@ -146,9 +149,9 @@ export default function LoginPage() {
           Continue with Google
         </Link>
 
-        <p className="text-center text-sm text-gray-400 mt-6">
+        <p className="text-center text-sm text-slate-500 mt-6">
           Don't have an account?{" "}
-          <Link href="/register" className="text-blue-400 hover:text-blue-300 font-medium">
+          <Link href="/register" className="text-emerald-600 hover:text-blue-300 font-medium">
             Sign up
           </Link>
         </p>

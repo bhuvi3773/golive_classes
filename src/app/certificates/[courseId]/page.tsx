@@ -17,6 +17,16 @@ export default async function CertificateViewPage({ params }: { params: Promise<
   const dbUser = await User.findById(user.userId);
   
   if (!course || !dbUser) notFound();
+  
+  const isOwner = dbUser.purchasedCourses && dbUser.purchasedCourses.some((cId: any) => cId.toString() === course._id.toString());
+  if (!isOwner) {
+    return (
+      <div className="p-12 text-center">
+        <h1 className="text-2xl font-bold text-red-500 mb-4">Unauthorized</h1>
+        <p className="text-slate-500">You must purchase this course to earn its certificate.</p>
+      </div>
+    );
+  }
 
   // Verify completion
   const progress = await Progress.findOne({ userId: user.userId, courseId: course._id });
@@ -27,7 +37,7 @@ export default async function CertificateViewPage({ params }: { params: Promise<
     return (
       <div className="p-12 text-center">
         <h1 className="text-2xl font-bold text-red-500 mb-4">Certificate Not Unlocked</h1>
-        <p className="text-gray-400">You must complete 100% of the course to view this certificate.</p>
+        <p className="text-slate-500">You must complete 100% of the course to view this certificate.</p>
       </div>
     );
   }
@@ -64,19 +74,19 @@ export default async function CertificateViewPage({ params }: { params: Promise<
           <div className="flex justify-between w-full max-w-2xl mt-12 pt-12 border-t border-gray-200">
             <div className="text-center">
               <p className="font-bold text-gray-800">{date}</p>
-              <p className="text-sm text-gray-500">Date Completed</p>
+              <p className="text-sm text-slate-400">Date Completed</p>
             </div>
             
             <div className="text-center">
               <p className="font-bold text-gray-800 font-serif italic text-xl">GoLive Admin</p>
-              <p className="text-sm text-gray-500">Instructor / Platform</p>
+              <p className="text-sm text-slate-400">Instructor / Platform</p>
             </div>
           </div>
         </div>
       </div>
       
-      <div className="bg-blue-900/20 border border-blue-500/30 text-blue-200 px-6 py-4 rounded-lg flex items-center gap-3">
-        <Award size={20} className="text-blue-400" />
+      <div className="bg-blue-900/20 border border-emerald-300 text-emerald-800 px-6 py-4 rounded-lg flex items-center gap-3">
+        <Award size={20} className="text-emerald-600" />
         <span>To save your certificate, press <strong>Ctrl + P</strong> (Windows) or <strong>Cmd + P</strong> (Mac) and select "Save as PDF".</span>
       </div>
     </div>

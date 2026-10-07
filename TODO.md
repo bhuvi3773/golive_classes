@@ -13,3 +13,11 @@
 
 ## Teacher Dashboard
 - [ ] **Instructor Revenue/Sales:** Show actual earnings, payouts, and sales analytics in the Teacher Dashboard.
+
+## Environment Variables Needed
+- [ ] Add the following Razorpay keys to `.env.local` to enable checkout:
+  ```env
+  NEXT_PUBLIC_RAZORPAY_KEY_ID="your_razorpay_key_id"
+  RAZORPAY_KEY_ID="your_razorpay_key_id"
+  RAZORPAY_KEY_SECRET="your_razorpay_key_secret"
+  ```

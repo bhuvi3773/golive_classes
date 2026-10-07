@@ -101,18 +101,18 @@ function VerifyEmailContent() {
 
   return (
     <div className="flex min-h-[90vh] items-center justify-center py-12 px-4">
-      <div className="w-full max-w-md glass-card p-8 md:p-10 space-y-8 text-center">
+      <div className="w-full max-w-md glass-card-light p-8 md:p-10 space-y-8 text-center">
         <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center border border-blue-500/20">
-            <Mail className="text-blue-400 w-8 h-8" />
+          <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center border border-emerald-200">
+            <Mail className="text-emerald-600 w-8 h-8" />
           </div>
         </div>
         
         <div>
-          <h2 className="text-2xl font-bold text-white mb-2">Verify your email</h2>
-          <p className="text-gray-400 text-sm">
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Verify your email</h2>
+          <p className="text-slate-500 text-sm">
             We've sent a 6-digit verification code to:<br/>
-            <strong className="text-white mt-1 block">{email}</strong>
+            <strong className="text-slate-900 mt-1 block">{email}</strong>
           </p>
         </div>
 
@@ -136,7 +136,7 @@ function VerifyEmailContent() {
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
               placeholder="000000" 
-              className="w-full bg-[#1e2130] border border-gray-600 rounded-lg px-4 py-4 text-center text-3xl tracking-[1em] focus:outline-none focus:border-blue-500 transition-colors text-white font-mono"
+              className="w-full bg-white border border-gray-600 rounded-lg px-4 py-4 text-center text-3xl tracking-[1em] focus:outline-none focus:border-blue-500 transition-colors text-slate-900 font-mono"
               required
             />
           </div>
@@ -146,13 +146,13 @@ function VerifyEmailContent() {
           </button>
         </form>
 
-        <div className="pt-4 border-t border-white/10">
-          <p className="text-sm text-gray-400">
+        <div className="pt-4 border-t border-slate-200">
+          <p className="text-sm text-slate-500">
             Didn't receive it?{" "}
             <button 
               onClick={handleResend}
               disabled={resendDisabled}
-              className="text-blue-400 hover:text-blue-300 font-medium disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
+              className="text-emerald-600 hover:text-blue-300 font-medium disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
             >
               {countdown > 0 ? `Resend Code (${countdown}s)` : "Resend Code"}
             </button>
@@ -165,7 +165,7 @@ function VerifyEmailContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-[90vh] items-center justify-center text-gray-400">Loading...</div>}>
+    <Suspense fallback={<div className="flex min-h-[90vh] items-center justify-center text-slate-500">Loading...</div>}>
       <VerifyEmailContent />
     </Suspense>
   );
