@@ -39,14 +39,14 @@ export default function CoursePlayerClient({
         {activeLecture?.type === 'quiz' ? (
            <QuizPlayer 
              quizData={activeLecture.quizData || { questions: [] }} 
-             courseId={course._id.toString()}
+             courseId={course.id.toString()}
              lectureId={Number(activeLectureId)}
              isCompleted={completedLectures.includes(Number(activeLectureId))}
            />
         ) : activeLecture?.type === 'assignment' ? (
            <AssignmentPlayer 
              lecture={activeLecture} 
-             courseId={course._id.toString()}
+             courseId={course.id.toString()}
              lectureId={Number(activeLectureId)}
              isCompleted={completedLectures.includes(Number(activeLectureId))}
            />
@@ -58,7 +58,7 @@ export default function CoursePlayerClient({
               </div>
               <div className="absolute bottom-4 right-4 z-20">
                 <MarkCompleteButton 
-                  courseId={course._id.toString()} 
+                  courseId={course.id.toString()} 
                   lectureId={Number(activeLectureId)} 
                   isCompleted={completedLectures.includes(Number(activeLectureId))} 
                 />
@@ -72,7 +72,7 @@ export default function CoursePlayerClient({
              {activeLecture && (
                <div className="mt-8">
                 <MarkCompleteButton 
-                  courseId={course._id.toString()} 
+                  courseId={course.id.toString()} 
                   lectureId={Number(activeLectureId)} 
                   isCompleted={completedLectures.includes(Number(activeLectureId))} 
                 />
@@ -102,9 +102,9 @@ export default function CoursePlayerClient({
         </div>
 
         {activeTab === 'discussions' ? (
-          <CourseDiscussions courseId={course._id.toString()} lectureId={Number(activeLectureId)} currentUser={dbUser} />
+          <CourseDiscussions courseId={course.id.toString()} lectureId={Number(activeLectureId)} currentUser={dbUser} />
         ) : (
-          <CourseNotes courseId={course._id.toString()} lectureId={Number(activeLectureId)} getCurrentTime={getCurrentTime} onSeek={handleSeek} />
+          <CourseNotes courseId={course.id.toString()} lectureId={Number(activeLectureId)} getCurrentTime={getCurrentTime} onSeek={handleSeek} />
         )}
       </div>
     </div>

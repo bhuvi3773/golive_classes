@@ -58,7 +58,7 @@ export default function RecommendationsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8">
         {recommendations.map((course) => (
-          <div key={course._id} className="glass-card-light overflow-hidden hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full border-blue-500/10">
+          <div key={course.id} className="glass-card-light overflow-hidden hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full border-blue-500/10">
             <div className="h-48 bg-gray-800 relative">
               {course.thumbnail ? (
                 <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover" />
@@ -80,7 +80,7 @@ export default function RecommendationsPage() {
                 <span className="text-xl font-bold text-slate-900">
                   ${course.price.toFixed(2)}
                 </span>
-                <Link href={`/courses/${course._id}`}>
+                <Link href={`/courses/${course.id}`}>
                   <button className="bg-slate-900 hover:bg-slate-800 text-white p-2 rounded-lg transition-colors flex items-center justify-center">
                     <ArrowRight size={20} />
                   </button>

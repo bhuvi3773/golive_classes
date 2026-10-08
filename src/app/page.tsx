@@ -62,38 +62,6 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-emerald-100 font-sans">
-      {/* Navigation */}
-      <nav className="fixed w-full z-50 top-0 border-b border-slate-200 bg-white/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link href={user ? "/my-learning" : "/"} className="flex items-center gap-2 shrink-0">
-            <img src="/logo.png" alt="GoLive Classes" className="h-32 md:h-40 w-auto max-w-[400px] object-contain drop-shadow-xl hover:scale-105 transition-transform" />
-          </Link>
-          <div className="hidden md:flex items-center gap-8 font-medium text-slate-600">
-            <Link href="/" className="hover:text-slate-900 transition-colors text-slate-900">Home</Link>
-            <Link href="/courses" className="hover:text-slate-900 transition-colors">Courses</Link>
-            <Link href="/recommendations" className="hover:text-slate-900 transition-colors flex items-center gap-1">
-              Recommendations
-            </Link>
-          </div>
-          <div className="flex items-center gap-4">
-            {user ? (
-              <Link href="/my-learning" className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-slate-900/20">
-                Dashboard
-              </Link>
-            ) : (
-              <>
-                <Link href="/login" className="text-slate-600 hover:text-slate-900 font-medium transition-colors hidden sm:block">
-                  Login
-                </Link>
-                <Link href="/register" className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-slate-900/20 hover:shadow-xl">
-                  Sign Up
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
-
       {/* Hero Section */}
       <section className="relative pt-36 pb-24 md:pt-48 md:pb-32 px-6 overflow-hidden border-b border-white/40">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-gradient-to-br from-emerald-400/30 via-teal-400/30 to-blue-500/20 rounded-full blur-[100px] pointer-events-none"></div>
@@ -135,19 +103,19 @@ export default async function Home() {
       <section className="bg-white/40 backdrop-blur-md border-y border-white/50 py-12 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center relative z-10">
           <div>
-            <div className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-1">50K+</div>
-            <div className="text-sm text-emerald-800">Students Trained</div>
+            <div className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-1">500+</div>
+            <div className="text-sm text-emerald-800">Active Learners</div>
           </div>
           <div>
-            <div className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-1">95%</div>
-            <div className="text-sm text-emerald-800">Placement Rate</div>
+            <div className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-1">100+</div>
+            <div className="text-sm text-emerald-800">Hours of Content</div>
           </div>
           <div>
-            <div className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-1">200+</div>
+            <div className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-1">20+</div>
             <div className="text-sm text-emerald-800">Expert Instructors</div>
           </div>
           <div>
-            <div className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-1">4.9/5</div>
+            <div className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-1">4.8/5</div>
             <div className="text-sm text-emerald-800">Average Rating</div>
           </div>
         </div>
@@ -259,25 +227,62 @@ export default async function Home() {
             <p className="text-slate-600 max-w-2xl mx-auto text-xl font-medium">Join thousands of students who have transformed their careers.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 relative z-10">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="bg-white/80 backdrop-blur-xl border border-white shadow-2xl shadow-slate-200/50 p-10 rounded-3xl hover:-translate-y-2 transition-transform duration-300">
-                <div className="flex gap-1 text-amber-400 mb-6 drop-shadow-sm">
-                  <Star size={22} fill="currentColor" />
-                  <Star size={22} fill="currentColor" />
-                  <Star size={22} fill="currentColor" />
-                  <Star size={22} fill="currentColor" />
-                  <Star size={22} fill="currentColor" />
-                </div>
-                <p className="text-slate-700 mb-8 italic text-lg leading-relaxed">"This platform completely changed my career trajectory. The instructors are amazing and the hands-on projects gave me the confidence to pass my technical interviews."</p>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center font-bold text-white shadow-lg">S{i}</div>
-                  <div>
-                    <h4 className="font-extrabold text-slate-900 text-base">Student {i}</h4>
-                    <p className="text-sm text-emerald-700 font-semibold">Placed at Top Tech Co.</p>
-                  </div>
+            {/* Testimonial 1 */}
+            <div className="bg-white/80 backdrop-blur-xl border border-white shadow-2xl shadow-slate-200/50 p-10 rounded-3xl hover:-translate-y-2 transition-transform duration-300">
+              <div className="flex gap-1 text-amber-400 mb-6 drop-shadow-sm">
+                <Star size={22} fill="currentColor" />
+                <Star size={22} fill="currentColor" />
+                <Star size={22} fill="currentColor" />
+                <Star size={22} fill="currentColor" />
+                <Star size={22} fill="currentColor" />
+              </div>
+              <p className="text-slate-700 mb-8 italic text-lg leading-relaxed">"The hands-on projects were exactly what I needed. I didn't just watch videos, I actually built full-stack apps that I could show off in my portfolio."</p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center font-bold text-white shadow-lg">R</div>
+                <div>
+                  <h4 className="font-extrabold text-slate-900 text-base">Rahul S.</h4>
+                  <p className="text-sm text-emerald-700 font-semibold">Software Engineer I</p>
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="bg-white/80 backdrop-blur-xl border border-white shadow-2xl shadow-slate-200/50 p-10 rounded-3xl hover:-translate-y-2 transition-transform duration-300">
+              <div className="flex gap-1 text-amber-400 mb-6 drop-shadow-sm">
+                <Star size={22} fill="currentColor" />
+                <Star size={22} fill="currentColor" />
+                <Star size={22} fill="currentColor" />
+                <Star size={22} fill="currentColor" />
+                <Star size={22} fill="currentColor" />
+              </div>
+              <p className="text-slate-700 mb-8 italic text-lg leading-relaxed">"The instructors here don't just teach syntax, they teach architecture and best practices. I cleared my technical interviews thanks to the deep dives here."</p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center font-bold text-white shadow-lg">P</div>
+                <div>
+                  <h4 className="font-extrabold text-slate-900 text-base">Priya M.</h4>
+                  <p className="text-sm text-blue-700 font-semibold">Frontend Developer</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="bg-white/80 backdrop-blur-xl border border-white shadow-2xl shadow-slate-200/50 p-10 rounded-3xl hover:-translate-y-2 transition-transform duration-300">
+              <div className="flex gap-1 text-amber-400 mb-6 drop-shadow-sm">
+                <Star size={22} fill="currentColor" />
+                <Star size={22} fill="currentColor" />
+                <Star size={22} fill="currentColor" />
+                <Star size={22} fill="currentColor" />
+                <Star size={22} fill="currentColor" />
+              </div>
+              <p className="text-slate-700 mb-8 italic text-lg leading-relaxed">"GoLive Classes breaks down complex backend concepts into simple, digestible pieces. Highly recommended for anyone looking to seriously upskill."</p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg">A</div>
+                <div>
+                  <h4 className="font-extrabold text-slate-900 text-base">Aman K.</h4>
+                  <p className="text-sm text-violet-700 font-semibold">Backend Engineer</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -287,6 +292,11 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-6 text-center text-slate-500 flex flex-col items-center gap-6">
           <img src="/logo.png" alt="GoLive Classes" className="h-20 w-auto max-w-[200px] object-contain drop-shadow-lg opacity-70 hover:opacity-100 transition-opacity" />
           <p>© {new Date().getFullYear()} GoLive Classes. All rights reserved.</p>
+          <div className="flex gap-4 text-sm mt-2">
+            <Link href="/terms" className="hover:text-emerald-600 transition-colors">Terms & Conditions</Link>
+            <span>•</span>
+            <Link href="/privacy" className="hover:text-emerald-600 transition-colors">Privacy Policy</Link>
+          </div>
         </div>
       </footer>
     </div>

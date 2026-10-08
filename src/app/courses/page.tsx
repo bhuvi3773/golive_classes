@@ -9,10 +9,6 @@ export const dynamic = 'force-dynamic';
 export default async function CoursesPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const user = await getUserFromCookie();
   
-  if (!user) {
-    redirect('/login');
-  }
-  
   const resolvedParams = await searchParams;
   const query = resolvedParams.q || "";
 
@@ -39,10 +35,13 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
   let recommendedCourses: any[] = [];
   let recommendTitle = "Recommended for You";
 
-  const dbUser = await prisma.user.findUnique({
-    where: { id: user.userId },
-    include: { purchasedCourses: true, wishlist: true }
-  });
+  let dbUser = null;
+  if (user) {
+    dbUser = await prisma.user.findUnique({
+      where: { id: user.userId },
+      include: { purchasedCourses: true, wishlist: true }
+    });
+  }
   
   const interestedCategories = new Set<string>();
 
@@ -101,7 +100,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
           <div className="w-full bg-gradient-to-r from-slate-100 to-slate-200 rounded-2xl p-8 border border-slate-200 relative overflow-hidden animate-in fade-in slide-in-from-bottom-4">
             <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
             <div className="relative z-10">
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome back, {user.name || "Student"}!</h1>
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome {user ? `back, ${user.name || "Student"}` : "to GoLive"}!</h1>
               <p className="text-slate-500">Ready to learn something new today? Let's dive in.</p>
             </div>
           </div>

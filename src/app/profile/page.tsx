@@ -110,11 +110,20 @@ export default async function ProfilePage() {
         </div>
       </div>
 
-      {user.purchasedCourses && user.purchasedCourses.length > 0 && (
-        <div className="glass-card-light p-8 border border-slate-200">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-slate-900">Purchase History & Invoices</h3>
+      <div className="glass-card-light p-8 border border-slate-200">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-slate-900">Purchase History & Invoices</h3>
+        </div>
+        
+        {(!user.purchasedCourses || user.purchasedCourses.length === 0) ? (
+          <div className="text-center py-8 text-slate-500">
+            <Briefcase size={32} className="mx-auto mb-3 text-slate-300" />
+            <p>You haven't made any purchases yet.</p>
+            <Link href="/courses" className="text-emerald-600 hover:underline text-sm font-medium mt-2 inline-block">
+              Explore Courses
+            </Link>
           </div>
+        ) : (
           <div className="space-y-4">
             {user.purchasedCourses.map((course: any, idx: number) => (
               <div key={idx} className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors gap-4">
@@ -136,8 +145,8 @@ export default async function ProfilePage() {
               </div>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className="glass-card-light p-6 flex items-center justify-between">
         <div>

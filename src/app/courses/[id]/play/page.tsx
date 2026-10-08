@@ -7,14 +7,12 @@ import { CheckCircle, PlayCircle, FileText, ChevronLeft, Award } from "lucide-re
 import { ProgressRepository } from "@/lib/repositories/progress.repository";
 import MarkCompleteButton from "@/components/MarkCompleteButton";
 import CoursePlayerClient from "@/components/CoursePlayerClient";
+import { getSignedS3Url } from "@/lib/s3";
 
 export const dynamic = 'force-dynamic';
 
 export default async function CoursePlayPage({ params, searchParams }: { params: Promise<{ id: string }>, searchParams: Promise<{ lectureId?: string }> }) {
   const user = await getUserFromCookie();
-  if (!user) {
-    redirect('/login');
-  }
 
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
@@ -46,11 +44,17 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
         break;
       }
     }
-    if (activeLecture) break;
+    if (activeLecture) {
+      if (activeLecture.content && activeLecture.content.startsWith('s3://')) {
+        const key = activeLecture.content.replace('s3://', '');
+        activeLecture.content = await getSignedS3Url(key);
+      }
+      break;
+    }
   }
 
   const { UserRepository } = await import('@/lib/repositories/user.repository');
-  const dbUser = await UserRepository.findById(user.userId);
+  const dbUser = user ? await UserRepository.findById(user.userId) : null;
   const isOwner = dbUser && dbUser.purchasedCourses && dbUser.purchasedCourses.some((c: any) => c.id === course.id);
   
   if (!isOwner) {
@@ -72,7 +76,7 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
     }
   }
 
-  let progress = await ProgressRepository.findProgress(user.userId, course.id);
+  let progress = user ? await ProgressRepository.findProgress(user.userId, course.id) : null;
   const completedLectures = progress?.completedLectures || [];
 
   return (
@@ -95,7 +99,7 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
           activeLecture={activeLecture}
           activeLectureId={activeLectureId}
           completedLectures={completedLectures}
-          userEmail={user.email}
+          userEmail={user?.email || "student@example.com"}
           dbUser={dbUser}
         />
 

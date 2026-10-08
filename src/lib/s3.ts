@@ -1,5 +1,6 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION || "ap-south-1",
@@ -24,6 +25,16 @@ export async function uploadToS3(buffer: Buffer, fileName: string, contentType: 
 
   return {
     success: true,
-    url: `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`
+    url: `s3://${key}`
   };
+}
+
+export async function getSignedS3Url(key: string) {
+  const command = new GetObjectCommand({
+    Bucket: process.env.AWS_S3_BUCKET_NAME || "",
+    Key: key,
+  });
+  
+  // URL expires in 12 hours (43200 seconds)
+  return getSignedUrl(s3Client, command, { expiresIn: 43200 });
 }
