@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
-export const dynamic = 'force-dynamic';
 import { UserRepository } from '@/lib/repositories/user.repository';
 import prisma from '@/lib/prisma';
 import { getUserFromCookie } from '@/lib/auth';
@@ -109,3 +108,4 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 });
   }
 }
+
