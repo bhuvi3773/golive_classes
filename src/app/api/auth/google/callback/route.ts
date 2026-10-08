@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import { OAuth2Client } from 'google-auth-library';
 import { UserRepository } from '@/lib/repositories/user.repository';
 import jwt from 'jsonwebtoken';

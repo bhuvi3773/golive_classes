@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;

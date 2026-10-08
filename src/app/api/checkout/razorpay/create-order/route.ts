@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import Razorpay from 'razorpay';
 import { CourseRepository } from '@/lib/repositories/course.repository';
 import { getUserFromCookie } from '@/lib/auth';

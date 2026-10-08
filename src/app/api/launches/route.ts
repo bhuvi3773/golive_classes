@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import { LaunchRepository } from '@/lib/repositories/launch.repository';
 import prisma from '@/lib/prisma';
 import { getUserFromCookie } from '@/lib/auth';

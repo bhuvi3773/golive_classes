@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import { uploadToCloudinary } from '@/lib/cloudinary';
 import { getUserFromCookie } from '@/lib/auth';
 
