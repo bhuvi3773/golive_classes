@@ -60,7 +60,7 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
     } else {
       // Send follow-up / recommendation email asynchronously for free demo watchers
       import('@/lib/email').then(async ({ sendCourseRecommendationEmail }) => {
-        if (dbUser.email) {
+        if (dbUser && dbUser.email) {
           const prisma = (await import('@/lib/prisma')).default;
           const recommendations = await prisma.course.findMany({
             where: { category: course.category, id: { not: course.id }, status: 'published' },
