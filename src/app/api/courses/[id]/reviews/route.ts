@@ -41,6 +41,18 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
       return NextResponse.json({ error: 'You must purchase this course to leave a review' }, { status: 403 });
     }
 
+    // Verify > 50% completion
+    const course = await prisma.course.findUnique({ where: { id } });
+    const progress = await prisma.progress.findUnique({ where: { userId_courseId: { userId: user.userId, courseId: id } } });
+    
+    const curriculum = (course?.curriculum as any) || [];
+    const totalLectures = curriculum.reduce((acc: number, sec: any) => acc + (sec.lectures?.length || 0), 0);
+    const completedCount = progress?.completedLectures?.length || 0;
+    
+    if (totalLectures > 0 && completedCount / totalLectures <= 0.5) {
+      return NextResponse.json({ error: 'You must complete at least 50% of the course to leave a review' }, { status: 403 });
+    }
+
     // Check if already reviewed
     const existingReview = await prisma.review.findFirst({
       where: { courseId: id, userId: user.userId }

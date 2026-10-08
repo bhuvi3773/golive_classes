@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { BookOpen, Search, PlayCircle } from "lucide-react";
-import connectToDatabase from "@/lib/mongodb";
-import Course from "@/models/Course";
-import User from "@/models/User";
+import prisma from "@/lib/prisma";
 import { getUserFromCookie } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
@@ -20,8 +18,10 @@ export default async function MyLearningPage() {
     );
   }
   
-  await connectToDatabase();
-  const dbUser = await User.findById(user.userId).populate('purchasedCourses wishlist');
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.userId },
+    include: { purchasedCourses: true, wishlist: true }
+  });
   const enrolledCourses = dbUser?.purchasedCourses || [];
 
   let recommendedCourses: any[] = [];
@@ -34,21 +34,27 @@ export default async function MyLearningPage() {
     }
     
     const categoryArray = Array.from(interestedCategories);
-    const purchasedIds = enrolledCourses.map((c: any) => c._id);
+    const purchasedIds = enrolledCourses.map((c: any) => c.id);
     
     if (categoryArray.length > 0) {
-      recommendedCourses = await Course.find({
-        _id: { $nin: purchasedIds },
-        status: 'published',
-        category: { $in: categoryArray }
-      }).limit(4);
+      recommendedCourses = await prisma.course.findMany({
+        where: {
+          id: { notIn: purchasedIds },
+          status: 'published',
+          category: { in: categoryArray }
+        },
+        take: 4
+      });
     }
     
     if (recommendedCourses.length < 4) {
-      const extraCourses = await Course.find({
-        _id: { $nin: [...purchasedIds, ...recommendedCourses.map((c: any) => c._id)] },
-        status: 'published'
-      }).limit(4 - recommendedCourses.length);
+      const extraCourses = await prisma.course.findMany({
+        where: {
+          id: { notIn: [...purchasedIds, ...recommendedCourses.map((c: any) => c.id)] },
+          status: 'published'
+        },
+        take: 4 - recommendedCourses.length
+      });
       recommendedCourses = [...recommendedCourses, ...extraCourses];
     }
   }
@@ -86,7 +92,7 @@ export default async function MyLearningPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {enrolledCourses.map((course: any) => (
-            <Link href={`/courses/${course._id}/play`} key={course._id.toString()} className="group">
+            <Link href={`/courses/${course.id}/play`} key={course.id.toString()} className="group">
               <div className="bg-white/70 backdrop-blur-md border border-white shadow-lg hover:shadow-2xl hover:border-emerald-300 rounded-2xl p-5 flex flex-col transition-all hover:-translate-y-1 h-full cursor-pointer relative z-10">
               <div className="flex gap-4 mb-6">
                 <div className="w-24 h-24 rounded-lg bg-gray-800 overflow-hidden flex-shrink-0">
@@ -127,7 +133,7 @@ export default async function MyLearningPage() {
           <h2 className="text-2xl font-bold text-slate-900">Recommended for You</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {recommendedCourses.map(course => (
-              <Link href={`/courses/${course._id}`} key={course._id.toString()} className="group flex flex-col h-full bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-lg hover:shadow-xl hover:border-emerald-300 transition-all duration-300 overflow-hidden cursor-pointer relative z-10 hover:-translate-y-1">
+              <Link href={`/courses/${course.id}`} key={course.id.toString()} className="group flex flex-col h-full bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-lg hover:shadow-xl hover:border-emerald-300 transition-all duration-300 overflow-hidden cursor-pointer relative z-10 hover:-translate-y-1">
                 <div className="w-full aspect-video bg-slate-100 relative overflow-hidden">
                   {course.thumbnail ? (
                     <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />

@@ -1,24 +1,27 @@
-import { PlayCircle, CheckCircle2, Lock, Clock, Award, FileText } from "lucide-react";
+import { PlayCircle, CheckCircle2, Lock, Clock, Award, FileText, Star } from "lucide-react";
 import Link from "next/link";
-import connectToDatabase from "@/lib/mongodb";
-import Course from "@/models/Course";
-import Progress from "@/models/Progress";
+import { CourseRepository } from "@/lib/repositories/course.repository";
+import { ProgressRepository } from "@/lib/repositories/progress.repository";
 import { getUserFromCookie } from "@/lib/auth";
-import User from "@/models/User";
+import { UserRepository } from "@/lib/repositories/user.repository";
 import { notFound } from "next/navigation";
 import CoursePurchaseCard from "@/components/CoursePurchaseCard";
 import CourseReviews from "@/components/CourseReviews";
 
 export default async function CourseDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const id = (await params).id;
-  await connectToDatabase();
-  const course = await Course.findById(id);
+  const course = await CourseRepository.findById(id);
 
   if (!course) {
     notFound();
   }
 
-  const curriculum = course.curriculum || [];
+  const reviews = (course as any).reviews || [];
+  const averageRating = reviews.length > 0 
+    ? (reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / reviews.length).toFixed(1) 
+    : 0;
+
+  const curriculum = (course.curriculum as any) || [];
   const totalLectures = curriculum.reduce((acc: number, sec: any) => acc + (sec.lectures?.length || 0), 0);
   let firstLectureId: number | null = null;
   if (curriculum.length > 0 && curriculum[0].lectures && curriculum[0].lectures.length > 0) {
@@ -29,26 +32,26 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
   let completedLectures: number[] = [];
   let isPurchased = false;
   if (user) {
-    const progress = await Progress.findOne({ userId: user.userId, courseId: course._id });
+    const progress = await ProgressRepository.findProgress(user.userId, course.id);
     if (progress) {
       completedLectures = progress.completedLectures;
     }
     
     // Fetch user from DB directly since this is a Server Component
-    const dbUser = await User.findById(user.userId);
+    const dbUser = await UserRepository.findById(user.userId);
     if (dbUser) {
-      if (dbUser.purchasedCourses && dbUser.purchasedCourses.map((c: any) => c.toString()).includes(id)) {
+      if (dbUser.purchasedCourses && dbUser.purchasedCourses.some((c) => c.id === id)) {
         isPurchased = true;
       }
       
       // Track category view for recommendations
       if (course.category) {
-        dbUser.viewedCategories = dbUser.viewedCategories || [];
-        if (!dbUser.viewedCategories.includes(course.category)) {
-          dbUser.viewedCategories.push(course.category);
+        const viewedCategories = (dbUser.viewedCategories as string[]) || [];
+        if (!viewedCategories.includes(course.category)) {
+          viewedCategories.push(course.category);
           // Keep only the last 10 viewed categories to prevent unbounded growth
-          if (dbUser.viewedCategories.length > 10) dbUser.viewedCategories.shift();
-          await dbUser.save();
+          if (viewedCategories.length > 10) viewedCategories.shift();
+          await UserRepository.update(dbUser.id, { viewedCategories });
         }
       }
     }
@@ -66,9 +69,18 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
       <div className="bg-white/60 backdrop-blur-xl border border-white relative z-10 shadow-2xl shadow-emerald-500/5 rounded-3xl p-8 md:p-12 mb-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col justify-center">
-            <span className="text-sm font-bold px-4 py-1.5 bg-gradient-to-r from-emerald-400 to-teal-500 text-white rounded-full w-fit mb-6 shadow-lg shadow-emerald-500/30">
-              {course.category}
-            </span>
+            <div className="flex items-center gap-4 mb-6">
+              <span className="text-sm font-bold px-4 py-1.5 bg-gradient-to-r from-emerald-400 to-teal-500 text-white rounded-full shadow-lg shadow-emerald-500/30">
+                {course.category}
+              </span>
+              {reviews.length > 0 && (
+                <div className="flex items-center gap-1 text-yellow-500 font-bold bg-yellow-50 px-3 py-1.5 rounded-full border border-yellow-200 w-fit">
+                  <Star size={16} className="fill-yellow-500" />
+                  <span>{averageRating}</span>
+                  <span className="text-slate-400 text-xs ml-1 font-medium">({reviews.length})</span>
+                </div>
+              )}
+            </div>
             <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 max-w-2xl leading-tight mb-6">
               {course.title}
             </h1>
@@ -85,7 +97,7 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
                 <PlayCircle size={64} className="text-emerald-300 drop-shadow-md" />
               </div>
             )}
-            <Link href={`/courses/${course._id}/play`} className="absolute inset-0 flex items-center justify-center cursor-pointer">
+            <Link href={`/courses/${course.id}/play`} className="absolute inset-0 flex items-center justify-center cursor-pointer">
                <div className="w-20 h-20 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center shadow-xl border border-white/50 group-hover:scale-110 transition-transform">
                  <PlayCircle size={40} className="text-white fill-emerald-500/80" />
                </div>

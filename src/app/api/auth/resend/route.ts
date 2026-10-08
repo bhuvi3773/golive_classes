@@ -3,9 +3,14 @@ export const dynamic = 'force-dynamic';
 import { UserRepository } from '@/lib/repositories/user.repository';
 import crypto from 'crypto';
 import { sendVerificationEmail } from '@/lib/email';
+import { checkRateLimit, getIP } from '@/lib/rateLimit';
 
 export async function POST(req: Request) {
   try {
+    const ip = getIP(req);
+    if (!checkRateLimit(ip, 3, 60000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
     let { email } = await req.json();
     email = String(email);
 

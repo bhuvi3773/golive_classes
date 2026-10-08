@@ -1,17 +1,16 @@
 import { Video, Calendar, Users, Clock, PlayCircle, BookOpen, Megaphone } from "lucide-react";
-import connectToDatabase from "@/lib/mongodb";
-import UpcomingLaunch from "@/models/UpcomingLaunch";
+import prisma from "@/lib/prisma";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 
 export default async function LiveClassesPage() {
-  await connectToDatabase();
-  
-  const now = new Date();
-  const launches = await UpcomingLaunch.find({
-    status: { $in: ['scheduled', 'live'] }
-  }).sort({ launchDate: 1 }).lean();
+  const launches = await prisma.upcomingLaunch.findMany({
+    where: {
+      status: { in: ['scheduled', 'live'] }
+    },
+    orderBy: { launchDate: 'asc' }
+  });
 
   const liveSessions = launches.filter((l: any) => l.status === 'live');
   const scheduledSessions = launches.filter((l: any) => l.status === 'scheduled');
@@ -153,7 +152,7 @@ export default async function LiveClassesPage() {
             
             <div className="space-y-4">
               {remainingLive.map((item: any) => (
-                <div key={item._id.toString()} className="flex gap-4 p-4 rounded-2xl bg-red-50 border border-red-100 hover:border-red-200 transition-colors group">
+                <div key={item.id.toString()} className="flex gap-4 p-4 rounded-2xl bg-red-50 border border-red-100 hover:border-red-200 transition-colors group">
                   <div className="flex flex-col items-center justify-center w-16 h-16 bg-white rounded-xl shrink-0 shadow-sm border border-red-100 group-hover:scale-105 transition-transform">
                     <span className="text-[10px] font-extrabold text-red-500 uppercase">LIVE</span>
                     <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse mt-1"></div>
@@ -170,7 +169,7 @@ export default async function LiveClassesPage() {
               {scheduledSessions.map((item: any, idx: number) => {
                 if (idx === 0 && !featuredLive) return null; // Skip the one shown in hero
                 return (
-                  <div key={item._id.toString()} className="flex gap-4 p-4 rounded-2xl bg-white border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all cursor-pointer group">
+                  <div key={item.id.toString()} className="flex gap-4 p-4 rounded-2xl bg-white border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all cursor-pointer group">
                     <div className="flex flex-col items-center justify-center w-16 h-16 bg-slate-50 rounded-xl shrink-0 border border-slate-100 group-hover:bg-emerald-50 group-hover:border-emerald-100 transition-colors">
                       <span className="text-[10px] font-extrabold text-slate-500 uppercase group-hover:text-emerald-600">{getMonthStr(item.launchDate)}</span>
                       <span className="text-xl font-extrabold text-slate-900 group-hover:text-emerald-700">{getDayStr(item.launchDate)}</span>

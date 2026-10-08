@@ -1,7 +1,6 @@
 import { getUserFromCookie } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import connectToDatabase from "@/lib/mongodb";
-import User from "@/models/User";
+import { UserRepository } from "@/lib/repositories/user.repository";
 import { LogOut, Edit, MapPin, Briefcase, Mail, Phone } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import Link from "next/link";
@@ -16,8 +15,7 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
-  await connectToDatabase();
-  const user = await User.findById(sessionUser.userId).populate('purchasedCourses');
+  const user = await UserRepository.findById(sessionUser.userId);
 
   if (!user) {
     redirect("/login");
@@ -126,7 +124,7 @@ export default async function ProfilePage() {
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-900 line-clamp-1">{course.title}</h4>
-                    <p className="text-sm text-slate-500">Order ID: #ORD-{course._id.toString().substring(0, 8).toUpperCase()}</p>
+                    <p className="text-sm text-slate-500">Order ID: #ORD-{course.id.substring(0, 8).toUpperCase()}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">

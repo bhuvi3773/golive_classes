@@ -1,46 +1,49 @@
 import Link from "next/link";
 import { PlayCircle, Star, Clock, BookOpen } from "lucide-react";
-import connectToDatabase from "@/lib/mongodb";
-import Course from "@/models/Course";
-import Category from "@/models/Category";
+import prisma from "@/lib/prisma";
 import { getUserFromCookie } from "@/lib/auth";
-import User from "@/models/User";
 import { redirect } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 
 export default async function CoursesPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  await connectToDatabase();
   const user = await getUserFromCookie();
-
+  
   if (!user) {
     redirect('/login');
   }
-
+  
   const resolvedParams = await searchParams;
   const query = resolvedParams.q || "";
 
-  const categories = await Category.find({});
+  const categories = await prisma.category.findMany();
 
   let filter: any = { status: 'published' };
   if (query) {
     filter = {
       ...filter,
-      $or: [
-        { title: { $regex: query, $options: 'i' } },
-        { category: { $regex: query, $options: 'i' } },
-        { description: { $regex: query, $options: 'i' } }
+      OR: [
+        { title: { contains: query, mode: 'insensitive' } },
+        { category: { contains: query, mode: 'insensitive' } },
+        { description: { contains: query, mode: 'insensitive' } }
       ]
     };
   }
 
-  const courses = await Course.find(filter).sort({ createdAt: -1 });
+  const courses = await prisma.course.findMany({
+    where: filter,
+    orderBy: { createdAt: 'desc' }
+  });
 
   // Recommendations Logic
   let recommendedCourses: any[] = [];
   let recommendTitle = "Recommended for You";
 
-  const dbUser = await User.findById(user.userId).populate('purchasedCourses wishlist');
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.userId },
+    include: { purchasedCourses: true, wishlist: true }
+  });
+  
   const interestedCategories = new Set<string>();
 
   if (dbUser) {
@@ -59,24 +62,30 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
   }
 
   const categoryArray = Array.from(interestedCategories);
-  const purchasedIds = dbUser?.purchasedCourses ? dbUser.purchasedCourses.map((c: any) => c._id) : [];
-  const shownCourseIds = courses.map(c => c._id);
+  const purchasedIds = dbUser?.purchasedCourses ? dbUser.purchasedCourses.map((c: any) => c.id) : [];
+  const shownCourseIds = courses.map(c => c.id);
   const excludeIds = [...purchasedIds, ...shownCourseIds];
 
   if (categoryArray.length > 0) {
-    recommendedCourses = await Course.find({
-      _id: { $nin: excludeIds },
-      status: 'published',
-      category: { $in: categoryArray }
-    }).limit(4);
+    recommendedCourses = await prisma.course.findMany({
+      where: {
+        id: { notIn: excludeIds },
+        status: 'published',
+        category: { in: categoryArray }
+      },
+      take: 4
+    });
   }
 
   // Backfill with popular/new courses if we don't have enough personalized recommendations
   if (recommendedCourses.length < 4) {
-    const extraCourses = await Course.find({
-      _id: { $nin: [...excludeIds, ...recommendedCourses.map(c => c._id)] },
-      status: 'published'
-    }).limit(4 - recommendedCourses.length);
+    const extraCourses = await prisma.course.findMany({
+      where: {
+        id: { notIn: [...excludeIds, ...recommendedCourses.map(c => c.id)] },
+        status: 'published'
+      },
+      take: 4 - recommendedCourses.length
+    });
     recommendedCourses = [...recommendedCourses, ...extraCourses];
     if (recommendedCourses.length > 0 && !query) {
       recommendTitle = "More Courses You Might Like";
@@ -108,7 +117,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
                 {categories.map((cat) => (
                   <Link
                     href={`/courses?q=${encodeURIComponent(cat.name)}`}
-                    key={cat._id.toString()}
+                    key={cat.id.toString()}
                     className="px-5 py-3 rounded-full bg-white border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-700 transition-all cursor-pointer font-bold text-sm text-slate-700 shadow-sm"
                   >
                     {cat.name}
@@ -150,7 +159,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {courses.map((course) => (
-              <Link href={`/courses/${course._id}`} key={course._id.toString()} className="group flex flex-col h-full bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-lg hover:shadow-xl hover:border-emerald-300 transition-all duration-300 overflow-hidden cursor-pointer relative z-10 hover:-translate-y-1">
+              <Link href={`/courses/${course.id}`} key={course.id.toString()} className="group flex flex-col h-full bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-lg hover:shadow-xl hover:border-emerald-300 transition-all duration-300 overflow-hidden cursor-pointer relative z-10 hover:-translate-y-1">
                 {/* Thumbnail */}
                 <div className="w-full aspect-video bg-slate-100 relative overflow-hidden">
                   {course.thumbnail ? (
@@ -212,7 +221,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
           <h2 className="text-2xl font-bold text-slate-900">{recommendTitle}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {recommendedCourses.map(course => (
-              <Link href={`/courses/${course._id}`} key={course._id.toString()} className="group flex flex-col h-full bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-lg hover:shadow-xl hover:border-emerald-300 transition-all duration-300 overflow-hidden cursor-pointer relative z-10 hover:-translate-y-1">
+              <Link href={`/courses/${course.id}`} key={course.id.toString()} className="group flex flex-col h-full bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-lg hover:shadow-xl hover:border-emerald-300 transition-all duration-300 overflow-hidden cursor-pointer relative z-10 hover:-translate-y-1">
                 <div className="w-full aspect-video bg-slate-100 relative overflow-hidden">
                   {course.thumbnail ? (
                     <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />

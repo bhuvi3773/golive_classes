@@ -1,23 +1,21 @@
 import Link from "next/link";
 import { LogIn, UserPlus, CheckCircle, Code, Briefcase, Video, Star, ArrowRight } from "lucide-react";
-import connectToDatabase from "@/lib/mongodb";
-import Course from "@/models/Course";
-import User from "@/models/User";
+import prisma from "@/lib/prisma";
 import { getUserFromCookie } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  await connectToDatabase();
-  
-  // Fetch recommendations or top published courses
   const user = await getUserFromCookie();
   
   let courses: any[] = [];
   let isPersonalized = false;
   
   if (user) {
-    const dbUser = await User.findById(user.userId).populate('purchasedCourses wishlist');
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.userId },
+      include: { purchasedCourses: true, wishlist: true }
+    });
     if (dbUser) {
       const interestedCategories = new Set<string>();
       dbUser.purchasedCourses.forEach((course: any) => {
@@ -31,29 +29,35 @@ export default async function Home() {
       }
       
       const categoryArray = Array.from(interestedCategories);
-      const purchasedIds = dbUser.purchasedCourses.map((c: any) => c._id);
+      const purchasedIds = dbUser.purchasedCourses.map((c: any) => c.id);
       
       if (categoryArray.length > 0) {
-        courses = await Course.find({
-          _id: { $nin: purchasedIds },
-          status: 'published',
-          category: { $in: categoryArray }
-        }).limit(6);
+        courses = await prisma.course.findMany({
+          where: {
+            id: { notIn: purchasedIds },
+            status: 'published',
+            category: { in: categoryArray }
+          },
+          take: 6
+        });
         isPersonalized = true;
       }
       
       if (courses.length < 6) {
-        const extraCourses = await Course.find({
-          _id: { $nin: [...purchasedIds, ...courses.map(r => r._id)] },
-          status: 'published'
-        }).limit(6 - courses.length);
+        const extraCourses = await prisma.course.findMany({
+          where: {
+            id: { notIn: [...purchasedIds, ...courses.map(r => r.id)] },
+            status: 'published'
+          },
+          take: 6 - courses.length
+        });
         courses = [...courses, ...extraCourses];
       }
     } else {
-       courses = await Course.find({ status: 'published' }).limit(6);
+       courses = await prisma.course.findMany({ where: { status: 'published' }, take: 6 });
     }
   } else {
-    courses = await Course.find({ status: 'published' }).limit(6);
+    courses = await prisma.course.findMany({ where: { status: 'published' }, take: 6 });
   }
 
   return (
@@ -206,7 +210,7 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {courses.map((course: any) => (
-              <div key={course._id.toString()} className="bg-white border-2 border-slate-100 rounded-3xl overflow-hidden hover:border-emerald-300 transition-all hover:-translate-y-2 shadow-xl hover:shadow-2xl flex flex-col h-full group">
+              <div key={course.id.toString()} className="bg-white border-2 border-slate-100 rounded-3xl overflow-hidden hover:border-emerald-300 transition-all hover:-translate-y-2 shadow-xl hover:shadow-2xl flex flex-col h-full group">
                 <div className="h-48 bg-slate-900 relative overflow-hidden">
                   {course.thumbnail ? (
                     <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover opacity-80 mix-blend-overlay group-hover:scale-110 transition-transform duration-700" />
@@ -228,7 +232,7 @@ export default async function Home() {
                     <span className="text-2xl font-bold text-slate-900">
                       ${course.price.toFixed(2)}
                     </span>
-                    <Link href={`/courses/${course._id}`}>
+                    <Link href={`/courses/${course.id}`}>
                       <button className="bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white px-6 py-2.5 rounded-xl transition-colors font-bold border border-emerald-200 hover:border-emerald-600 shadow-sm">
                         View Course
                       </button>

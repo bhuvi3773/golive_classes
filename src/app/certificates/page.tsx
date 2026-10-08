@@ -1,8 +1,5 @@
 import { getUserFromCookie } from "@/lib/auth";
-import connectToDatabase from "@/lib/mongodb";
-import User from "@/models/User";
-import Course from "@/models/Course";
-import Progress from "@/models/Progress";
+import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { Award, Lock, ExternalLink } from "lucide-react";
 
@@ -10,8 +7,10 @@ export default async function CertificatesPage() {
   const user = await getUserFromCookie();
   if (!user) return <div className="p-8 text-slate-900 text-center">Please login.</div>;
 
-  await connectToDatabase();
-  const dbUser = await User.findById(user.userId).populate('purchasedCourses');
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.userId },
+    include: { purchasedCourses: true }
+  });
   
   if (!dbUser || !dbUser.purchasedCourses) {
     return <div className="p-8 text-slate-900 text-center">No purchased courses found.</div>;
@@ -19,8 +18,11 @@ export default async function CertificatesPage() {
 
   // Get progress for all purchased courses
   const coursesWithProgress = await Promise.all(dbUser.purchasedCourses.map(async (course: any) => {
-    const progress = await Progress.findOne({ userId: user.userId, courseId: course._id });
-    const totalLectures = course.curriculum?.reduce((acc: number, sec: any) => acc + (sec.lectures?.length || 0), 0) || 0;
+    const progress = await prisma.progress.findUnique({
+      where: { userId_courseId: { userId: user.userId, courseId: course.id } }
+    });
+    const curriculum = course.curriculum as any || [];
+    const totalLectures = curriculum.reduce((acc: number, sec: any) => acc + (sec.lectures?.length || 0), 0) || 0;
     const completedLectures = progress?.completedLectures?.length || 0;
     const isCompleted = totalLectures > 0 && completedLectures >= totalLectures;
     
@@ -57,7 +59,7 @@ export default async function CertificatesPage() {
               </div>
               
               {item.isCompleted ? (
-                <Link href={`/certificates/${item.course._id}`}>
+                <Link href={`/certificates/${item.course.id}`}>
                   <button className="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded-lg font-bold text-sm transition-colors flex justify-center items-center gap-2">
                     <ExternalLink size={16} /> View Certificate
                   </button>

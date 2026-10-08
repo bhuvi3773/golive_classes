@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 import crypto from 'crypto';
 import { CourseRepository } from '@/lib/repositories/course.repository';
+import { UserRepository } from '@/lib/repositories/user.repository';
+import { sendEnrollmentEmail } from '@/lib/email';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function POST(req: Request) {
@@ -33,6 +35,12 @@ export async function POST(req: Request) {
 
     // Add course to user's purchasedCourses array
     await CourseRepository.addPurchase(user.userId, courseId);
+
+    const course = await CourseRepository.findById(courseId);
+    const dbUser = await UserRepository.findById(user.userId);
+    if (course && dbUser) {
+      sendEnrollmentEmail(dbUser.email, dbUser.name || 'Student', course.title, course.id).catch(console.error);
+    }
 
     return NextResponse.json({ success: true, message: 'Payment verified and course enrolled successfully' });
   } catch (error: any) {

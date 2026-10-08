@@ -1,12 +1,8 @@
-import connectToDatabase from "@/lib/mongodb";
-import User from "@/models/User";
-import Course from "@/models/Course";
+import prisma from "@/lib/prisma";
 
 export default async function AdminOverview() {
-  await connectToDatabase();
-  
-  const users = await User.find({}).populate('purchasedCourses');
-  const totalCourses = await Course.countDocuments();
+  const users = await prisma.user.findMany({ include: { purchasedCourses: true } });
+  const totalCourses = await prisma.course.count();
   
   let totalRevenue = 0;
   let activeStudents = 0;

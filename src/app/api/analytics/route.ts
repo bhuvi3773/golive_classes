@@ -50,55 +50,55 @@ export async function GET(req: Request) {
       });
     }
 
-    if (role === 'admin') {
-      // Teacher Analytics: Total students enrolled in their courses
-      const allUsers = await prisma.user.findMany({ where: { purchasedCourses: { some: {} } } });
-      const myCourses = await prisma.course.findMany(); // In a real app with 'instructor' field, filter by instructor.
-      
-      // Calculate total enrollments across platform (as a placeholder for teacher's own courses)
-      const topCourses = await prisma.course.findMany({ where: { status: 'published' }, take: 5 });
-      
-      return NextResponse.json({
-        role: 'admin', // Teacher
-        stats: {
-          totalRevenue: 0, // Mock
-          totalStudents: allUsers.length,
-          topSelling: topCourses
-        },
-        studentStats
-      });
-    }
-
-    if (role === 'superadmin') {
-      // Superadmin Analytics: Platform wide
-      const totalUsers = await prisma.user.count();
-      const totalCourses = await prisma.course.count();
-      const publishedCourses = await prisma.course.count({ where: { status: 'published' } });
-      
-      // Mock highly selling courses (in reality, count from Users' purchasedCourses)
-      // To get real counts:
+    if (role === 'admin' || role === 'superadmin') {
       const users = await prisma.user.findMany({ include: { purchasedCourses: true } });
-      const courseCounts: Record<string, number> = {};
-      users.forEach(u => {
-        u.purchasedCourses?.forEach(c => {
-          courseCounts[c.id] = (courseCounts[c.id] || 0) + 1;
-        });
-      });
+      const totalCoursesCount = await prisma.course.count();
+      const publishedCoursesCount = await prisma.course.count({ where: { status: 'published' } });
       
+      const courseCounts: Record<string, number> = {};
+      let totalRevenue = 0;
+      let totalStudents = 0;
+
+      users.forEach(u => {
+        if (u.purchasedCourses && u.purchasedCourses.length > 0) {
+          totalStudents++;
+          u.purchasedCourses.forEach(c => {
+            courseCounts[c.id] = (courseCounts[c.id] || 0) + 1;
+            totalRevenue += (c.price || 0);
+          });
+        }
+      });
+
       const sortedIds = Object.keys(courseCounts).sort((a, b) => courseCounts[b] - courseCounts[a]).slice(0, 5);
       const topSelling = await prisma.course.findMany({ where: { id: { in: sortedIds } } });
+      
+      const settings = await prisma.platformSetting.findFirst();
+      const commissionRate = settings?.commissionRate || 20;
 
-      return NextResponse.json({
-        role: 'superadmin',
-        stats: {
-          totalUsers,
-          totalCourses,
-          publishedCourses,
-          topSelling,
-          totalRevenue: Object.values(courseCounts).reduce((a, b) => a + b * 50, 0) // Mock $50 per course
-        },
-        studentStats
-      });
+      if (role === 'admin') {
+        const instructorRevenue = totalRevenue * (1 - (commissionRate / 100));
+        return NextResponse.json({
+          role: 'admin',
+          stats: {
+            totalRevenue: instructorRevenue.toFixed(2),
+            totalStudents,
+            topSelling
+          },
+          studentStats
+        });
+      } else {
+        return NextResponse.json({
+          role: 'superadmin',
+          stats: {
+            totalUsers: users.length,
+            totalCourses: totalCoursesCount,
+            publishedCourses: publishedCoursesCount,
+            topSelling,
+            totalRevenue: totalRevenue.toFixed(2)
+          },
+          studentStats
+        });
+      }
     }
 
     return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
@@ -108,4 +108,3 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 });
   }
 }
-

@@ -32,17 +32,29 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Upload to Cloudinary
-    const result = await uploadToCloudinary(buffer, file.name, folderType);
+    let result: { success: boolean, url?: string, error?: string };
+
+    if (folderType === 'video') {
+      // Phase 8: AWS S3 Storage Setup for Videos (Large Files)
+      const { uploadToS3 } = await import('@/lib/s3');
+      try {
+        result = await uploadToS3(buffer, file.name, file.type);
+      } catch (err: any) {
+        result = { success: false, error: err.message };
+      }
+    } else {
+      // Fallback: Cloudinary for Thumbnails/Images
+      result = await uploadToCloudinary(buffer, file.name, folderType);
+    }
 
     if (result.success) {
       return NextResponse.json({ 
         success: true, 
-        url: result.url // Returns the Cloudinary CDN URL
+        url: result.url // Returns the S3 or Cloudinary CDN URL
       });
     } else {
-      console.error('Cloudinary Upload Failed:', result.error);
-      return NextResponse.json({ success: false, error: result.error || 'Failed to upload to Cloudinary' }, { status: 500 });
+      console.error('Upload Failed:', result.error);
+      return NextResponse.json({ success: false, error: result.error || 'Failed to upload' }, { status: 500 });
     }
 
   } catch (error) {

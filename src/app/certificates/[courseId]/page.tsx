@@ -1,8 +1,5 @@
 import { getUserFromCookie } from "@/lib/auth";
-import connectToDatabase from "@/lib/mongodb";
-import User from "@/models/User";
-import Course from "@/models/Course";
-import Progress from "@/models/Progress";
+import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import { Award } from "lucide-react";
 
@@ -11,14 +8,15 @@ export default async function CertificateViewPage({ params }: { params: Promise<
   if (!user) redirect('/login');
 
   const resolvedParams = await params;
-  await connectToDatabase();
-  
-  const course = await Course.findById(resolvedParams.courseId);
-  const dbUser = await User.findById(user.userId);
+  const course = await prisma.course.findUnique({ where: { id: resolvedParams.courseId } });
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.userId },
+    include: { purchasedCourses: true }
+  });
   
   if (!course || !dbUser) notFound();
   
-  const isOwner = dbUser.purchasedCourses && dbUser.purchasedCourses.some((cId: any) => cId.toString() === course._id.toString());
+  const isOwner = dbUser.purchasedCourses && dbUser.purchasedCourses.some((c: any) => c.id === course.id);
   if (!isOwner) {
     return (
       <div className="p-12 text-center">
@@ -29,8 +27,10 @@ export default async function CertificateViewPage({ params }: { params: Promise<
   }
 
   // Verify completion
-  const progress = await Progress.findOne({ userId: user.userId, courseId: course._id });
-  const totalLectures = course.curriculum?.reduce((acc: number, sec: any) => acc + (sec.lectures?.length || 0), 0) || 0;
+  const progress = await prisma.progress.findUnique({
+    where: { userId_courseId: { userId: user.userId, courseId: course.id } }
+  });
+  const totalLectures = (course.curriculum as any)?.reduce((acc: number, sec: any) => acc + (sec.lectures?.length || 0), 0) || 0;
   const completedLectures = progress?.completedLectures?.length || 0;
   
   if (totalLectures === 0 || completedLectures < totalLectures) {

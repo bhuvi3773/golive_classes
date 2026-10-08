@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getUserFromCookie } from '@/lib/auth';
-import connectToDatabase from '@/lib/mongodb';
-import Course from '@/models/Course';
+import prisma from "@/lib/prisma";
 import { ShieldCheck, CreditCard, Lock } from 'lucide-react';
 import CheckoutForm from './CheckoutForm';
 
@@ -13,8 +12,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
     redirect('/login');
   }
 
-  await connectToDatabase();
-  const course = await Course.findById(id);
+  const course = await prisma.course.findUnique({ where: { id } });
 
   if (!course) {
     redirect('/courses');

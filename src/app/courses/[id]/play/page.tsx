@@ -1,11 +1,10 @@
 import { getUserFromCookie } from "@/lib/auth";
-import connectToDatabase from "@/lib/mongodb";
-import Course from "@/models/Course";
+import { CourseRepository } from "@/lib/repositories/course.repository";
 import { redirect } from "next/navigation";
 import SecureVideoPlayer from "@/components/SecureVideoPlayer";
 import Link from "next/link";
 import { CheckCircle, PlayCircle, FileText, ChevronLeft, Award } from "lucide-react";
-import Progress from "@/models/Progress";
+import { ProgressRepository } from "@/lib/repositories/progress.repository";
 import MarkCompleteButton from "@/components/MarkCompleteButton";
 import CoursePlayerClient from "@/components/CoursePlayerClient";
 
@@ -19,15 +18,13 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
 
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
-  await connectToDatabase();
-  
-  const course = await Course.findById(resolvedParams.id);
+  const course = await CourseRepository.findById(resolvedParams.id);
   
   if (!course) {
     redirect('/courses');
   }
 
-  const curriculum = course.curriculum || [];
+  const curriculum = (course.curriculum as any) || [];
   let firstLectureId: number | null = null;
   if (curriculum.length > 0 && curriculum[0].lectures && curriculum[0].lectures.length > 0) {
     firstLectureId = curriculum[0].lectures[0].id;
@@ -52,18 +49,30 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
     if (activeLecture) break;
   }
 
-  const { default: User } = await import('@/models/User');
-  const dbUser = await User.findById(user.userId);
-  const isOwner = dbUser && dbUser.purchasedCourses && dbUser.purchasedCourses.some((cId: any) => cId.toString() === course._id.toString());
+  const { UserRepository } = await import('@/lib/repositories/user.repository');
+  const dbUser = await UserRepository.findById(user.userId);
+  const isOwner = dbUser && dbUser.purchasedCourses && dbUser.purchasedCourses.some((c: any) => c.id === course.id);
   
   if (!isOwner) {
     // If they don't own it and they are trying to access a lecture that is NOT the first lecture, redirect them
     if (activeLectureId !== firstLectureId) {
-      redirect(`/courses/${course._id}`);
+      redirect(`/courses/${course.id}`);
+    } else {
+      // Send follow-up / recommendation email asynchronously for free demo watchers
+      import('@/lib/email').then(async ({ sendCourseRecommendationEmail }) => {
+        if (dbUser.email) {
+          const prisma = (await import('@/lib/prisma')).default;
+          const recommendations = await prisma.course.findMany({
+            where: { category: course.category, id: { not: course.id }, status: 'published' },
+            take: 2
+          });
+          sendCourseRecommendationEmail(dbUser.email, dbUser.name || 'Student', course.title, recommendations).catch(console.error);
+        }
+      }).catch(console.error);
     }
   }
 
-  let progress = await Progress.findOne({ userId: user.userId, courseId: course._id });
+  let progress = await ProgressRepository.findProgress(user.userId, course.id);
   const completedLectures = progress?.completedLectures || [];
 
   return (
@@ -71,7 +80,7 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
       {/* Header */}
       <div className="bg-white h-14 border-b border-slate-200 flex items-center px-4 shrink-0 justify-between">
         <div className="flex items-center gap-4">
-          <Link href={`/courses/${course._id}`} className="text-slate-500 hover:text-slate-900 transition-colors">
+          <Link href={`/courses/${course.id}`} className="text-slate-500 hover:text-slate-900 transition-colors">
             <ChevronLeft size={24} />
           </Link>
           <h1 className="text-slate-900 font-bold text-sm md:text-base line-clamp-1">{course.title}</h1>
@@ -109,7 +118,7 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
                     
                     return (
                       <Link 
-                        href={isLocked ? '#' : `/courses/${course._id}/play?lectureId=${lecture.id}`}
+                        href={isLocked ? '#' : `/courses/${course.id}/play?lectureId=${lecture.id}`}
                         key={lecture.id || lIdx} 
                         className={`w-full text-left px-3 py-3 rounded-lg flex items-start gap-3 transition-colors ${
                           activeLectureId === lecture.id 
