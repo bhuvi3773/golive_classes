@@ -1,13 +1,10 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import Discussion from '@/models/Discussion';
+import prisma from '@/lib/prisma';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    await connectToDatabase();
     const { id } = await context.params;
-    
     // allow filtering by lectureId
     const { searchParams } = new URL(req.url);
     const lectureId = searchParams.get('lectureId');
@@ -17,10 +14,17 @@ export async function GET(req: Request, context: { params: Promise<{ id: string 
       query.lectureId = parseInt(lectureId, 10);
     }
 
-    const discussions = await Discussion.find(query)
-      .populate('userId', 'name avatar role')
-      .populate('replies.userId', 'name avatar role')
-      .sort({ createdAt: -1 });
+    const discussions = await prisma.discussion.findMany({
+      where: query,
+      include: {
+        user: { select: { id: true, name: true, avatar: true, role: true } },
+        replies: {
+          include: { user: { select: { id: true, name: true, avatar: true, role: true } } },
+          orderBy: { createdAt: 'asc' }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
 
     return NextResponse.json(discussions, { status: 200 });
   } catch (error) {
@@ -36,38 +40,50 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectToDatabase();
     const { id } = await context.params;
     const body = await req.json();
 
     if (body.action === 'reply') {
       const { discussionId, text } = body;
-      const discussion = await Discussion.findById(discussionId);
-      if (!discussion) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+      const discussionExists = await prisma.discussion.findUnique({ where: { id: discussionId } });
+      if (!discussionExists) return NextResponse.json({ error: 'Not found' }, { status: 404 });
       
-      discussion.replies.push({
-        userId: user.userId,
-        text
+      await prisma.discussionReply.create({
+        data: {
+          discussionId,
+          userId: user.userId,
+          text
+        }
       });
-      discussion.updatedAt = new Date();
-      await discussion.save();
       
-      return NextResponse.json(discussion, { status: 201 });
+      const updatedDiscussion = await prisma.discussion.findUnique({
+        where: { id: discussionId },
+        include: {
+          user: { select: { id: true, name: true, avatar: true, role: true } },
+          replies: {
+            include: { user: { select: { id: true, name: true, avatar: true, role: true } } },
+            orderBy: { createdAt: 'asc' }
+          }
+        }
+      });
+      
+      return NextResponse.json(updatedDiscussion, { status: 201 });
     } else {
       const { lectureId, title, text } = body;
       if (!lectureId || !title || !text) {
         return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
       }
 
-      const discussion = new Discussion({
-        courseId: id,
-        lectureId,
-        userId: user.userId,
-        title,
-        text
+      const discussion = await prisma.discussion.create({
+        data: {
+          courseId: id,
+          lectureId,
+          userId: user.userId,
+          title,
+          text
+        }
       });
 
-      await discussion.save();
       return NextResponse.json(discussion, { status: 201 });
     }
   } catch (error) {

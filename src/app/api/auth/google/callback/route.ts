@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { OAuth2Client } from 'google-auth-library';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
+import { UserRepository } from '@/lib/repositories/user.repository';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 
@@ -49,22 +48,22 @@ export async function GET(req: Request) {
 
     const { email, name, sub: googleId, picture } = payload;
     
-    await connectToDatabase();
-    
     // Account Linking Strategy
-    let user = await User.findOne({ email });
+    let user = await UserRepository.findByEmail(email);
 
     if (user) {
       // If user exists but is an email user, we could link or reject.
       // Standard practice: Link if verified, or just let them log in.
       if (!user.googleId) {
-        user.googleId = googleId;
-        user.authProvider = 'google'; // Convert to Google auth
-        user.isVerified = true; // Google verified them
+        user = await UserRepository.update(user.id, {
+          googleId,
+          authProvider: 'google',
+          isVerified: true
+        });
       }
     } else {
       // New user
-      user = await User.create({
+      user = await UserRepository.create({
         name: name || 'Google User',
         email,
         authProvider: 'google',
@@ -75,8 +74,7 @@ export async function GET(req: Request) {
       });
     }
 
-    user.lastLoginAt = new Date();
-    await user.save();
+    await UserRepository.updateLastLogin(user.id);
 
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
@@ -85,7 +83,7 @@ export async function GET(req: Request) {
 
     // Issue JWT
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: user.id, role: user.role },
       jwtSecret,
       { expiresIn: '7d' }
     );
@@ -101,6 +99,7 @@ export async function GET(req: Request) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       path: '/',
+      maxAge: 7 * 24 * 60 * 60, // 7 days
     });
     
     // Clear oauth state

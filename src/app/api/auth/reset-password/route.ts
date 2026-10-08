@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
+import { UserRepository } from '@/lib/repositories/user.repository';
 import crypto from 'crypto';
 import { checkRateLimit, getIP } from '@/lib/rateLimit';
 
@@ -23,11 +22,7 @@ export async function POST(req: Request) {
     // Hash the input token to compare with DB
     const resetTokenHash = crypto.createHash('sha256').update(token).digest('hex');
 
-    await connectToDatabase();
-    const user = await User.findOne({
-      resetPasswordToken: resetTokenHash,
-      resetPasswordExpiresAt: { $gt: new Date() }, // Ensure not expired
-    });
+    const user = await UserRepository.findByValidResetToken(resetTokenHash);
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid or expired password reset token.' }, { status: 400 });
@@ -37,13 +32,12 @@ export async function POST(req: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Update user and invalidate token
-    user.password = hashedPassword;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpiresAt = undefined;
-    
-    // If they reset their password via email link, they implicitly verified their email!
-    user.isVerified = true; 
-    await user.save();
+    await UserRepository.update(user.id, {
+      password: hashedPassword,
+      resetPasswordToken: null,
+      resetPasswordExpiresAt: null,
+      isVerified: true
+    });
 
     return NextResponse.json({ message: 'Password has been successfully reset.' }, { status: 200 });
   } catch (error: any) {

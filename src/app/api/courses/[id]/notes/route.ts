@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import VideoNote from '@/models/VideoNote';
+import prisma from '@/lib/prisma';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
@@ -10,9 +9,7 @@ export async function GET(req: Request, context: { params: Promise<{ id: string 
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectToDatabase();
     const { id } = await context.params;
-    
     const { searchParams } = new URL(req.url);
     const lectureId = searchParams.get('lectureId');
     
@@ -21,7 +18,10 @@ export async function GET(req: Request, context: { params: Promise<{ id: string 
       query.lectureId = parseInt(lectureId, 10);
     }
 
-    const notes = await VideoNote.find(query).sort({ timestamp: 1 });
+    const notes = await prisma.videoNote.findMany({
+      where: query,
+      orderBy: { timestamp: 'asc' }
+    });
 
     return NextResponse.json(notes, { status: 200 });
   } catch (error) {
@@ -37,7 +37,6 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectToDatabase();
     const { id } = await context.params;
     const body = await req.json();
 
@@ -46,15 +45,16 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
     }
 
-    const note = new VideoNote({
-      courseId: id,
-      lectureId,
-      userId: user.userId,
-      timestamp,
-      text
+    const note = await prisma.videoNote.create({
+      data: {
+        courseId: id,
+        lectureId,
+        userId: user.userId,
+        timestamp,
+        text
+      }
     });
 
-    await note.save();
     return NextResponse.json(note, { status: 201 });
   } catch (error) {
     console.error('Save Note Error:', error);
@@ -69,7 +69,6 @@ export async function DELETE(req: Request, context: { params: Promise<{ id: stri
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectToDatabase();
     const { searchParams } = new URL(req.url);
     const noteId = searchParams.get('noteId');
     
@@ -77,8 +76,11 @@ export async function DELETE(req: Request, context: { params: Promise<{ id: stri
        return NextResponse.json({ error: 'Note ID required' }, { status: 400 });
     }
 
-    const deletedNote = await VideoNote.findOneAndDelete({ _id: noteId, userId: user.userId });
-    if (!deletedNote) {
+    const deletedNote = await prisma.videoNote.deleteMany({
+      where: { id: noteId, userId: user.userId }
+    });
+    
+    if (deletedNote.count === 0) {
        return NextResponse.json({ error: 'Note not found or unauthorized' }, { status: 404 });
     }
 

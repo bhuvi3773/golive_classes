@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import UpcomingLaunch from '@/models/UpcomingLaunch';
+import { LaunchRepository } from '@/lib/repositories/launch.repository';
+import prisma from '@/lib/prisma';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function GET(req: Request) {
@@ -8,12 +8,10 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const admin = searchParams.get('admin');
 
-    await connectToDatabase();
-    
-    let query = {};
+    let query: any = {};
     if (!admin) {
       // For public users, only show scheduled or live
-      query = { status: { $in: ['scheduled', 'live'] } };
+      query = { status: { in: ['scheduled', 'live'] } };
     } else {
       // For admin view, check permissions
       const user = await getUserFromCookie();
@@ -22,7 +20,10 @@ export async function GET(req: Request) {
       }
     }
 
-    const launches = await UpcomingLaunch.find(query).sort({ launchDate: 1 });
+    const launches = await prisma.upcomingLaunch.findMany({
+      where: query,
+      orderBy: { launchDate: 'asc' }
+    });
     return NextResponse.json(launches, { status: 200 });
   } catch (error) {
     console.error('Fetch Launches Error:', error);
@@ -37,16 +38,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectToDatabase();
     const body = await req.json();
 
-    const newLaunch = new UpcomingLaunch({
+    const newLaunch = await LaunchRepository.create({
       ...body,
       createdAt: new Date(),
       updatedAt: new Date()
     });
 
-    await newLaunch.save();
     return NextResponse.json(newLaunch, { status: 201 });
   } catch (error: any) {
     console.error('Create Launch Error:', error);

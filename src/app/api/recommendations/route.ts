@@ -1,22 +1,21 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import Course from '@/models/Course';
-import User from '@/models/User';
+import prisma from '@/lib/prisma';
+import { UserRepository } from '@/lib/repositories/user.repository';
 import { getUserFromCookie } from '@/lib/auth';
-import mongoose from 'mongoose';
 
 export async function GET(req: Request) {
   try {
     const user = await getUserFromCookie();
-    await connectToDatabase();
-
     if (!user) {
       // If not logged in, return most popular (for now just randomly sorted or newest)
-      const popularCourses = await Course.find({ status: 'published' }).limit(10);
+      const popularCourses = await prisma.course.findMany({
+        where: { status: 'published' },
+        take: 10
+      });
       return NextResponse.json({ recommendations: popularCourses, type: 'general' });
     }
 
-    const dbUser = await User.findById(user.userId).populate('purchasedCourses wishlist');
+    const dbUser = await UserRepository.findById(user.userId);
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -37,26 +36,32 @@ export async function GET(req: Request) {
     }
 
     const categoryArray = Array.from(interestedCategories);
-    const purchasedIds = dbUser.purchasedCourses.map((c: any) => c._id);
+    const purchasedIds = dbUser.purchasedCourses.map((c: any) => c.id);
 
     let recommendations: any[] = [];
     let type = 'personalized';
 
     if (categoryArray.length > 0) {
       // Find courses in those categories that the user hasn't bought
-      recommendations = await Course.find({
-        _id: { $nin: purchasedIds },
-        status: 'published',
-        category: { $in: categoryArray }
-      }).limit(12);
+      recommendations = await prisma.course.findMany({
+        where: {
+          id: { notIn: purchasedIds },
+          status: 'published',
+          category: { in: categoryArray }
+        },
+        take: 12
+      });
     }
 
     // If we didn't find enough personalized recommendations, backfill with general ones
     if (recommendations.length < 4) {
-      const extraCourses = await Course.find({
-        _id: { $nin: [...purchasedIds, ...recommendations.map(r => r._id)] },
-        status: 'published'
-      }).limit(12 - recommendations.length);
+      const extraCourses = await prisma.course.findMany({
+        where: {
+          id: { notIn: [...purchasedIds, ...recommendations.map(r => r.id)] },
+          status: 'published'
+        },
+        take: 12 - recommendations.length
+      });
       
       recommendations = [...recommendations, ...extraCourses];
       if (categoryArray.length === 0) type = 'general';

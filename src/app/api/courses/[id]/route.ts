@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import Course from '@/models/Course';
+import { CourseRepository } from '@/lib/repositories/course.repository';
+import { UserRepository } from '@/lib/repositories/user.repository';
 import { getUserFromCookie } from '@/lib/auth';
-import User from '@/models/User';
 import { sendCourseRecommendationEmail } from '@/lib/email';
+import prisma from '@/lib/prisma';
 
 export async function DELETE(
   req: Request,
@@ -19,13 +19,10 @@ export async function DELETE(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    await connectToDatabase();
-    
     // params.id requires await in Next.js 15+
     const { id } = await context.params;
-    const courseId = id;
     
-    const deletedCourse = await Course.findByIdAndDelete(courseId);
+    const deletedCourse = await CourseRepository.delete(id);
 
     if (!deletedCourse) {
       return NextResponse.json({ error: 'Course not found' }, { status: 404 });
@@ -43,10 +40,9 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectToDatabase();
     const { id } = await context.params;
     
-    const course = await Course.findById(id);
+    const course = await CourseRepository.findById(id);
     if (!course) {
       return NextResponse.json({ error: 'Course not found' }, { status: 404 });
     }
@@ -59,9 +55,9 @@ export async function GET(
       // Fire off a background task to send recommendation emails if a user is logged in
       (async () => {
         try {
-          const dbUser = await User.findById(user.userId);
+          const dbUser = await UserRepository.findById(user.userId);
           // Check ownership
-          if (dbUser && dbUser.purchasedCourses && dbUser.purchasedCourses.includes(course._id)) {
+          if (dbUser && dbUser.purchasedCourses && dbUser.purchasedCourses.some(c => c.id === course.id)) {
             isOwner = true;
           }
           
@@ -69,11 +65,14 @@ export async function GET(
           if (dbUser && !isOwner) {
             
             // Find 3 recommended courses in the same category
-            const recommendations = await Course.find({
-              _id: { $ne: course._id },
-              category: course.category,
-              status: 'published'
-            }).limit(3);
+            const recommendations = await prisma.course.findMany({
+              where: {
+                id: { not: course.id },
+                category: course.category,
+                status: 'published'
+              },
+              take: 3
+            });
 
             if (recommendations.length > 0) {
               await sendCourseRecommendationEmail(
@@ -91,15 +90,15 @@ export async function GET(
       
       // We also need to synchronously check ownership for the current request
       if (!isOwner) {
-         const dbUser = await User.findById(user.userId);
-         if (dbUser && dbUser.purchasedCourses && dbUser.purchasedCourses.includes(course._id)) {
+         const dbUser = await UserRepository.findById(user.userId);
+         if (dbUser && dbUser.purchasedCourses && dbUser.purchasedCourses.some(c => c.id === course.id)) {
            isOwner = true;
          }
       }
     }
 
     // Sanitize course data if not owner or admin
-    let courseData = course.toObject();
+    let courseData = JSON.parse(JSON.stringify(course));
     if (!isOwner && !isAdmin) {
       if (courseData.curriculum && courseData.curriculum.length > 0) {
         let firstLectureId: number | null = null;
@@ -142,12 +141,11 @@ export async function PUT(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    await connectToDatabase();
     const { id } = await context.params;
     
     const body = await req.json();
 
-    const updatedCourse = await Course.findByIdAndUpdate(id, body, { new: true });
+    const updatedCourse = await CourseRepository.update(id, body);
 
     if (!updatedCourse) {
       return NextResponse.json({ error: 'Course not found' }, { status: 404 });

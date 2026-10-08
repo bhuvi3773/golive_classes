@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
+import { UserRepository } from '@/lib/repositories/user.repository';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
@@ -23,9 +22,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Valid email and 6-digit code are required.' }, { status: 400 });
     }
 
-    await connectToDatabase();
-
-    const user = await User.findOne({ email });
+    // Check if user exists
+    const user = await UserRepository.findByEmail(email);
     
     if (!user) {
       return NextResponse.json({ error: 'User not found.' }, { status: 404 });
@@ -49,18 +47,18 @@ export async function POST(req: Request) {
     const hashedInputOtp = crypto.createHash('sha256').update(code).digest('hex');
     
     if (user.verificationCode !== hashedInputOtp) {
-      user.verificationAttempts += 1;
-      await user.save();
+      await UserRepository.update(user.id, { verificationAttempts: user.verificationAttempts + 1 });
       return NextResponse.json({ error: 'Invalid verification code.' }, { status: 400 });
     }
 
     // Success! Mark as verified
-    user.isVerified = true;
-    user.verificationCode = undefined;
-    user.verificationCodeExpiresAt = undefined;
-    user.verificationAttempts = 0;
-    user.lastLoginAt = new Date();
-    await user.save();
+    await UserRepository.update(user.id, {
+      isVerified: true,
+      verificationCode: null,
+      verificationCodeExpiresAt: null,
+      verificationAttempts: 0,
+      lastLoginAt: new Date()
+    });
 
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
@@ -69,7 +67,7 @@ export async function POST(req: Request) {
 
     // Log the user in immediately
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: user.id, role: user.role },
       jwtSecret,
       { expiresIn: '7d' }
     );

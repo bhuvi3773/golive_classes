@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import UpcomingLaunch from '@/models/UpcomingLaunch';
+import { LaunchRepository } from '@/lib/repositories/launch.repository';
+import prisma from '@/lib/prisma';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function DELETE(
@@ -14,12 +14,10 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectToDatabase();
-    
     // params.id requires await in Next.js 15+
     const { id } = await context.params;
     
-    const deletedLaunch = await UpcomingLaunch.findByIdAndDelete(id);
+    const deletedLaunch = await LaunchRepository.delete(id);
 
     if (!deletedLaunch) {
       return NextResponse.json({ error: 'Launch not found' }, { status: 404 });
@@ -43,13 +41,12 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectToDatabase();
     const { id } = await context.params;
     
     const body = await req.json();
     body.updatedAt = new Date();
 
-    const updatedLaunch = await UpcomingLaunch.findByIdAndUpdate(id, body, { new: true });
+    const updatedLaunch = await LaunchRepository.update(id, body);
 
     if (!updatedLaunch) {
       return NextResponse.json({ error: 'Launch not found' }, { status: 404 });

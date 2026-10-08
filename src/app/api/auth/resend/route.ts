@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
+import { UserRepository } from '@/lib/repositories/user.repository';
 import crypto from 'crypto';
 import { sendVerificationEmail } from '@/lib/email';
 
@@ -13,8 +12,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Email is required.' }, { status: 400 });
     }
 
-    await connectToDatabase();
-    const user = await User.findOne({ email });
+    const user = await UserRepository.findByEmail(email);
 
     if (!user) {
       return NextResponse.json({ error: 'User not found.' }, { status: 404 });
@@ -38,10 +36,11 @@ export async function POST(req: Request) {
     const otpExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
     const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
 
-    user.verificationCode = hashedOtp;
-    user.verificationCodeExpiresAt = otpExpires;
-    user.verificationAttempts = 0; // reset attempts for the new code
-    await user.save();
+    await UserRepository.update(user.id, {
+      verificationCode: hashedOtp,
+      verificationCodeExpiresAt: otpExpires,
+      verificationAttempts: 0
+    });
 
     await sendVerificationEmail(email, otp);
 

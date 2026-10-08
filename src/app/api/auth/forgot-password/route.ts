@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
+import { UserRepository } from '@/lib/repositories/user.repository';
 import crypto from 'crypto';
 import { sendPasswordResetEmail } from '@/lib/email';
 import { checkRateLimit, getIP } from '@/lib/rateLimit';
@@ -19,8 +18,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Email is required.' }, { status: 400 });
     }
 
-    await connectToDatabase();
-    const user = await User.findOne({ email });
+    const user = await UserRepository.findByEmail(email);
 
     // For security (account enumeration prevention), always return the same generic message
     // even if the user is not found.
@@ -37,9 +35,10 @@ export async function POST(req: Request) {
     const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex');
     const resetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
-    user.resetPasswordToken = resetTokenHash;
-    user.resetPasswordExpiresAt = resetExpires;
-    await user.save();
+    await UserRepository.update(user.id, {
+      resetPasswordToken: resetTokenHash,
+      resetPasswordExpiresAt: resetExpires
+    });
 
     // Send email with the unhashed token
     await sendPasswordResetEmail(email, resetToken);

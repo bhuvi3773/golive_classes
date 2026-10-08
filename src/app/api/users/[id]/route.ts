@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
+import prisma from '@/lib/prisma';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function PUT(
@@ -14,15 +13,14 @@ export async function PUT(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    await connectToDatabase();
     const { id } = await context.params;
     const { isBlocked } = await req.json();
 
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { isBlocked },
-      { new: true }
-    ).select('-password');
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: { isBlocked },
+      select: { id: true, name: true, email: true, role: true, isBlocked: true, createdAt: true, profileSetupCompleted: true }
+    });
 
     if (!updatedUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -46,10 +44,11 @@ export async function DELETE(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    await connectToDatabase();
     const { id } = await context.params;
     
-    const deletedUser = await User.findByIdAndDelete(id);
+    const deletedUser = await prisma.user.delete({
+      where: { id }
+    });
 
     if (!deletedUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });

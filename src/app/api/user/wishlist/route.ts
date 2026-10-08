@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
-import Course from '@/models/Course'; // Ensure course model is loaded
+import { UserRepository } from '@/lib/repositories/user.repository';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function GET(req: Request) {
@@ -9,8 +7,7 @@ export async function GET(req: Request) {
     const authUser = await getUserFromCookie();
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    await connectToDatabase();
-    const user = await User.findById(authUser.userId).populate('wishlist');
+    const user = await UserRepository.findById(authUser.userId);
     
     return NextResponse.json(user?.wishlist || [], { status: 200 });
   } catch (error) {
@@ -26,23 +23,20 @@ export async function POST(req: Request) {
     const { courseId } = await req.json();
     if (!courseId) return NextResponse.json({ error: 'Course ID required' }, { status: 400 });
 
-    await connectToDatabase();
-    const user = await User.findById(authUser.userId);
+    let user = await UserRepository.findById(authUser.userId);
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-    const index = user.wishlist.indexOf(courseId);
-    let isAdded = false;
+    const isAdded = user.wishlist.some(c => c.id === courseId);
 
-    if (index === -1) {
-      user.wishlist.push(courseId);
-      isAdded = true;
+    if (!isAdded) {
+      await UserRepository.addToWishlist(authUser.userId, courseId);
     } else {
-      user.wishlist.splice(index, 1);
+      await UserRepository.removeFromWishlist(authUser.userId, courseId);
     }
 
-    await user.save();
+    user = await UserRepository.findById(authUser.userId);
     
-    return NextResponse.json({ success: true, isAdded, wishlist: user.wishlist }, { status: 200 });
+    return NextResponse.json({ success: true, isAdded: !isAdded, wishlist: user?.wishlist }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }

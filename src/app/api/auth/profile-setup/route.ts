@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
+import { UserRepository } from '@/lib/repositories/user.repository';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function POST(req: Request) {
@@ -21,9 +20,7 @@ export async function POST(req: Request) {
       }
     }
 
-    await connectToDatabase();
-
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await UserRepository.update(
       sessionUser.userId,
       {
         phone,
@@ -33,8 +30,7 @@ export async function POST(req: Request) {
         linkedin,
         avatar,
         profileSetupCompleted: true,
-      },
-      { new: true }
+      }
     );
 
     if (!updatedUser) {

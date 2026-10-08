@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
-import Course from '@/models/Course';
+import { CourseRepository } from '@/lib/repositories/course.repository';
+import { UserRepository } from '@/lib/repositories/user.repository';
 import { getUserFromCookie } from '@/lib/auth';
 import { sendEnrollmentEmail } from '@/lib/email';
 
@@ -14,26 +13,24 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
 
     const { id } = await context.params;
     const courseId = id;
-    await connectToDatabase();
 
-    const course = await Course.findById(courseId);
+    const course = await CourseRepository.findById(courseId);
     if (!course) {
       return NextResponse.json({ error: 'Course not found' }, { status: 404 });
     }
 
-    const user = await User.findById(userPayload.userId);
+    const user = await UserRepository.findById(userPayload.userId);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Check if already purchased
-    const alreadyPurchased = user.purchasedCourses.some((id: any) => id.toString() === courseId);
+    const alreadyPurchased = user.purchasedCourses.some(c => c.id === courseId);
     if (!alreadyPurchased) {
-      user.purchasedCourses.push(courseId as any);
-      await user.save();
+      await CourseRepository.addPurchase(user.id, courseId);
       
       // Fire and forget email notification
-      sendEnrollmentEmail(user.email, user.name || 'Student', course.title, course._id.toString()).catch(err => console.error("Email failed:", err));
+      sendEnrollmentEmail(user.email, user.name || 'Student', course.title, course.id).catch(err => console.error("Email failed:", err));
     }
 
     return NextResponse.json({ success: true, message: 'Successfully enrolled' });

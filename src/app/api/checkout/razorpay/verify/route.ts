@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
+import { CourseRepository } from '@/lib/repositories/course.repository';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function POST(req: Request) {
@@ -31,12 +30,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid payment signature. Payment verification failed.' }, { status: 400 });
     }
 
-    await connectToDatabase();
-    
     // Add course to user's purchasedCourses array
-    await User.findByIdAndUpdate(user.userId, {
-      $addToSet: { purchasedCourses: courseId }
-    });
+    await CourseRepository.addPurchase(user.userId, courseId);
 
     return NextResponse.json({ success: true, message: 'Payment verified and course enrolled successfully' });
   } catch (error: any) {

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
-import connectToDatabase from '@/lib/mongodb';
-import Course from '@/models/Course';
+import { CourseRepository } from '@/lib/repositories/course.repository';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function POST(req: Request) {
@@ -12,8 +11,7 @@ export async function POST(req: Request) {
     const { courseId } = await req.json();
     if (!courseId) return NextResponse.json({ error: 'Course ID is required' }, { status: 400 });
 
-    await connectToDatabase();
-    const course = await Course.findById(courseId);
+    const course = await CourseRepository.findById(courseId);
     if (!course) return NextResponse.json({ error: 'Course not found' }, { status: 404 });
 
     if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {

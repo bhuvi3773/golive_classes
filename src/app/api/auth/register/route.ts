@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
+import { UserRepository } from '@/lib/repositories/user.repository';
 import { sendVerificationEmail } from '@/lib/email';
 import crypto from 'crypto';
 
@@ -31,10 +30,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 });
     }
 
-    await connectToDatabase();
-
     // Check if user exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await UserRepository.findByEmail(email);
     if (existingUser) {
       return NextResponse.json({ error: 'Account already exists. Please login instead.' }, { status: 400 });
     }
@@ -52,7 +49,7 @@ export async function POST(req: Request) {
     // Hash OTP before storing
     const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
 
-    const newUser = await User.create({
+    const newUser = await UserRepository.create({
       name,
       email,
       password: hashedPassword,

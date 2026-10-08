@@ -1,17 +1,14 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import Review from '@/models/Review';
-import User from '@/models/User';
+import { ReviewRepository } from '@/lib/repositories/review.repository';
+import { UserRepository } from '@/lib/repositories/user.repository';
+import prisma from '@/lib/prisma';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    await connectToDatabase();
     const { id } = await context.params;
 
-    const reviews = await Review.find({ courseId: id })
-      .populate('userId', 'name avatar')
-      .sort({ createdAt: -1 });
+    const reviews = await ReviewRepository.findByCourse(id);
 
     return NextResponse.json(reviews, { status: 200 });
   } catch (error) {
@@ -27,7 +24,6 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectToDatabase();
     const { id } = await context.params;
     const { rating, comment } = await req.json();
 
@@ -40,33 +36,32 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
     }
 
     // Verify ownership
-    const dbUser = await User.findById(user.userId);
-    if (!dbUser || !dbUser.purchasedCourses || !dbUser.purchasedCourses.some((c: any) => c.toString() === id)) {
+    const dbUser = await UserRepository.findById(user.userId);
+    if (!dbUser || !dbUser.purchasedCourses || !dbUser.purchasedCourses.some(c => c.id === id)) {
       return NextResponse.json({ error: 'You must purchase this course to leave a review' }, { status: 403 });
     }
 
     // Check if already reviewed
-    const existingReview = await Review.findOne({ courseId: id, userId: user.userId });
+    const existingReview = await prisma.review.findFirst({
+      where: { courseId: id, userId: user.userId }
+    });
+    
     if (existingReview) {
       return NextResponse.json({ error: 'You have already reviewed this course' }, { status: 400 });
     }
 
-    const review = new Review({
-      courseId: id,
-      userId: user.userId,
-      rating,
-      comment
+    const review = await ReviewRepository.create(user.userId, id, rating, comment);
+    
+    // Fetch it again to include the populated user for the frontend
+    const populatedReview = await prisma.review.findUnique({
+      where: { id: review.id },
+      include: { user: { select: { id: true, name: true, avatar: true } } }
     });
 
-    await review.save();
-
-    // Populate user info before returning
-    await review.populate('userId', 'name avatar');
-
-    return NextResponse.json(review, { status: 201 });
+    return NextResponse.json(populatedReview, { status: 201 });
   } catch (error: any) {
     console.error('Submit Review Error:', error);
-    if (error.code === 11000) {
+    if (error.code === 'P2002') {
       return NextResponse.json({ error: 'You have already reviewed this course' }, { status: 400 });
     }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

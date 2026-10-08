@@ -1,24 +1,20 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import Course from '@/models/Course';
+import { CourseRepository } from '@/lib/repositories/course.repository';
 import { getUserFromCookie } from '@/lib/auth';
 
 // GET all published courses (public)
 export async function GET(req: Request) {
   try {
-    await connectToDatabase();
-    // We can add query params to filter by 'draft' if Admin is fetching
     const user = await getUserFromCookie();
-    
     const { searchParams } = new URL(req.url);
     const isAdminView = searchParams.get('admin') === 'true';
 
-    let filter: any = { status: 'published' };
+    let courses;
     if (isAdminView && (user?.role === 'admin' || user?.role === 'superadmin')) {
-      filter = {}; // Admin sees everything
+      courses = await CourseRepository.findAll();
+    } else {
+      courses = await CourseRepository.findPublished();
     }
-
-    const courses = await Course.find(filter).sort({ createdAt: -1 });
     return NextResponse.json(courses, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch courses' }, { status: 500 });
@@ -37,9 +33,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    await connectToDatabase();
-    
-    const newCourse = await Course.create(body);
+    const newCourse = await CourseRepository.create(body);
     return NextResponse.json(newCourse, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create course' }, { status: 500 });

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
+import prisma from '@/lib/prisma';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function GET(req: Request) {
@@ -11,12 +10,12 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    await connectToDatabase();
-    
     // Get all users except superadmins
-    const users = await User.find({ role: { $ne: 'superadmin' } })
-      .select('-password -__v')
-      .sort({ createdAt: -1 });
+    const users = await prisma.user.findMany({
+      where: { role: { not: 'superadmin' } },
+      orderBy: { createdAt: 'desc' },
+      select: { id: true, name: true, email: true, role: true, isBlocked: true, createdAt: true, profileSetupCompleted: true }
+    });
       
     return NextResponse.json(users, { status: 200 });
   } catch (error) {

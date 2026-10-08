@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
+import { UserRepository } from '@/lib/repositories/user.repository';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 
@@ -30,10 +29,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 });
     }
 
-    await connectToDatabase();
-
     // Check if user exists
-    const user = await User.findOne({ email });
+    const user = await UserRepository.findByEmail(email);
     if (!user) {
       return NextResponse.json({ error: 'Account not found. Please sign up first.' }, { status: 401 });
     }
@@ -77,7 +74,7 @@ export async function POST(req: Request) {
 
     // Create JWT Token
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: user.id, role: user.role },
       jwtSecret,
       { expiresIn: '7d' }
     );
@@ -88,11 +85,11 @@ export async function POST(req: Request) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       path: '/',
+      maxAge: 7 * 24 * 60 * 60, // 7 days
     });
 
     // Update last login
-    user.lastLoginAt = new Date();
-    await user.save();
+    await UserRepository.updateLastLogin(user.id);
 
     return NextResponse.json({ message: 'Logged in successfully', role: user.role }, { status: 200 });
   } catch (error: any) {

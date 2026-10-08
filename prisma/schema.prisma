@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                        String    @id @default(uuid())
+  name                      String
+  email                     String    @unique
+  password                  String?
+  role                      String    @default("student")
+  
+  purchasedCourses          Course[]  @relation("PurchasedCourses")
+  wishlist                  Course[]  @relation("WishlistCourses")
+  
+  viewedCategories          String[]
+  
+  avatar                    String?   @default("")
+  phone                     String?   @default("")
+  headline                  String?   @default("")
+  bio                       String?   @default("")
+  github                    String?   @default("")
+  linkedin                  String?   @default("")
+  profileSetupCompleted     Boolean   @default(false)
+  
+  isVerified                Boolean   @default(false)
+  verificationCode          String?
+  verificationCodeExpiresAt DateTime?
+  verificationAttempts      Int       @default(0)
+  isBlocked                 Boolean   @default(false)
+  
+  resetPasswordToken        String?
+  resetPasswordExpiresAt    DateTime?
+  
+  authProvider              String    @default("email")
+  googleId                  String?   @unique
+  lastLoginAt               DateTime?
+  
+  createdAt                 DateTime  @default(now())
+  
+  progress                  Progress[]
+  reviews                   Review[]
+  discussions               Discussion[]
+  discussionReplies         DiscussionReply[]
+  videoNotes                VideoNote[]
+}
+
+model Course {
+  id             String       @id @default(uuid())
+  title          String
+  description    String
+  category       String
+  price          Float
+  thumbnail      String?      @default("")
+  status         String       @default("draft")
+  curriculum     Json?        @default("[]")
+  goals          String[]     @default([])
+  requirements   String[]     @default([])
+  targetAudience String[]     @default([])
+  createdAt      DateTime     @default(now())
+  
+  purchasedBy    User[]       @relation("PurchasedCourses")
+  wishlistedBy   User[]       @relation("WishlistCourses")
+  
+  progress       Progress[]
+  reviews        Review[]
+  discussions    Discussion[]
+  videoNotes     VideoNote[]
+}
+
+model Category {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+}
+
+model Progress {
+  id                  String    @id @default(uuid())
+  userId              String
+  courseId            String
+  completedLectures   Int[]     @default([])
+  lastAccessedLecture Int?
+  completedAt         DateTime?
+  updatedAt           DateTime  @default(now()) @updatedAt
+  
+  user                User      @relation(fields: [userId], references: [id])
+  course              Course    @relation(fields: [courseId], references: [id])
+  
+  @@unique([userId, courseId])
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  courseId    String
+  userId      String
+  rating      Int
+  comment     String
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id])
+  course      Course   @relation(fields: [courseId], references: [id])
+  
+  @@unique([courseId, userId])
+}
+
+model Discussion {
+  id        String            @id @default(uuid())
+  courseId  String
+  lectureId Int
+  userId    String
+  title     String
+  text      String
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @default(now()) @updatedAt
+  
+  user      User              @relation(fields: [userId], references: [id])
+  course    Course            @relation(fields: [courseId], references: [id])
+  replies   DiscussionReply[]
+}
+
+model DiscussionReply {
+  id           String     @id @default(uuid())
+  discussionId String
+  userId       String
+  text         String
+  createdAt    DateTime   @default(now())
+  
+  discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id])
+}
+
+model UpcomingLaunch {
+  id             String   @id @default(uuid())
+  title          String
+  description    String
+  launchDate     DateTime
+  category       String
+  type           String   @default("live-session")
+  status         String   @default("scheduled")
+  instructorName String   @default("Expert Instructor")
+  thumbnail      String?  @default("")
+  link           String?  @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+}
+
+model VideoNote {
+  id        String   @id @default(uuid())
+  courseId  String
+  lectureId Int
+  userId    String
+  timestamp Float
+  text      String
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+}
+
+model PlatformSetting {
+  id                          String   @id @default(uuid())
+  commissionRate              Float    @default(20)
+  allowInstructorRegistration Boolean  @default(true)
+  siteName                    String   @default("GoLive Classes")
+  contactEmail                String   @default("support@goliveclasses.com")
+  updatedAt                   DateTime @default(now()) @updatedAt
+}

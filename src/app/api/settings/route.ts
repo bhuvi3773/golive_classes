@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import PlatformSetting from '@/models/PlatformSetting';
+import prisma from '@/lib/prisma';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function GET() {
@@ -10,11 +9,9 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectToDatabase();
-    
-    let settings = await PlatformSetting.findOne();
+    let settings = await prisma.platformSetting.findFirst();
     if (!settings) {
-      settings = await PlatformSetting.create({});
+      settings = await prisma.platformSetting.create({ data: {} });
     }
 
     return NextResponse.json(settings, { status: 200 });
@@ -31,18 +28,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectToDatabase();
     const body = await req.json();
     
-    let settings = await PlatformSetting.findOne();
+    let settings = await prisma.platformSetting.findFirst();
     if (!settings) {
-      settings = new PlatformSetting(body);
+      settings = await prisma.platformSetting.create({ data: body });
     } else {
-      Object.assign(settings, body);
-      settings.updatedAt = new Date();
+      settings = await prisma.platformSetting.update({
+        where: { id: settings.id },
+        data: body
+      });
     }
-    
-    await settings.save();
     return NextResponse.json(settings, { status: 200 });
   } catch (error) {
     console.error('Save Settings Error:', error);

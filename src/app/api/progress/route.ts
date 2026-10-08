@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';
-import Progress from '@/models/Progress';
+import { UserRepository } from '@/lib/repositories/user.repository';
+import prisma from '@/lib/prisma';
 import { getUserFromCookie } from '@/lib/auth';
 
 export async function POST(req: Request) {
@@ -16,34 +16,35 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'courseId and lectureId are required' }, { status: 400 });
     }
 
-    await connectToDatabase();
-    
     // Check if user owns the course
-    const { default: User } = await import('@/models/User');
-    const userRecord = await User.findById(user.userId);
-    if (!userRecord || !userRecord.purchasedCourses || !userRecord.purchasedCourses.some((id: any) => id.toString() === courseId)) {
+    const userRecord = await UserRepository.findById(user.userId);
+    if (!userRecord || !userRecord.purchasedCourses || !userRecord.purchasedCourses.some((c: any) => c.id === courseId)) {
       return NextResponse.json({ error: 'You must purchase this course to save progress.' }, { status: 403 });
     }
 
     // Find or create progress record for this user and course
-    let progress = await Progress.findOne({ userId: user.userId, courseId });
+    let progress = await prisma.progress.findUnique({
+      where: { userId_courseId: { userId: user.userId, courseId } }
+    });
 
-    if (!progress) {
-      progress = new Progress({
+    let completedLectures = progress?.completedLectures || [];
+    if (!completedLectures.includes(lectureId)) {
+      completedLectures.push(lectureId);
+    }
+
+    progress = await prisma.progress.upsert({
+      where: { userId_courseId: { userId: user.userId, courseId } },
+      update: {
+        completedLectures,
+        lastAccessedLecture: lectureId,
+      },
+      create: {
         userId: user.userId,
         courseId,
         completedLectures: [lectureId],
-        lastAccessedLecture: lectureId
-      });
-    } else {
-      if (!progress.completedLectures.includes(lectureId)) {
-        progress.completedLectures.push(lectureId);
+        lastAccessedLecture: lectureId,
       }
-      progress.lastAccessedLecture = lectureId;
-      progress.updatedAt = new Date();
-    }
-
-    await progress.save();
+    });
 
     return NextResponse.json(progress, { status: 200 });
   } catch (error) {
@@ -62,13 +63,15 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const courseId = searchParams.get('courseId');
 
-    await connectToDatabase();
-
     if (courseId) {
-      const progress = await Progress.findOne({ userId: user.userId, courseId });
+      const progress = await prisma.progress.findUnique({
+        where: { userId_courseId: { userId: user.userId, courseId } }
+      });
       return NextResponse.json(progress || { completedLectures: [] }, { status: 200 });
     } else {
-      const allProgress = await Progress.find({ userId: user.userId });
+      const allProgress = await prisma.progress.findMany({
+        where: { userId: user.userId }
+      });
       return NextResponse.json(allProgress, { status: 200 });
     }
   } catch (error) {
