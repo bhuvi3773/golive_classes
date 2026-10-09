@@ -37,7 +37,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="w-[72px] hover:w-64 transition-all duration-300 group overflow-hidden bg-white border-r border-slate-200 h-screen fixed left-0 top-0 flex-col hidden md:flex z-50">
+      <aside className="w-[72px] hover:w-64 transition-all duration-300 group overflow-hidden bg-white/70 backdrop-blur-xl border-r border-white/40 h-screen fixed left-0 top-0 flex-col hidden md:flex z-50 shadow-[4px_0_24px_-2px_rgba(0,0,0,0.02)]">
         <div className="p-6 flex items-center justify-center group-hover:justify-start">
           <Link href="/my-learning">
             <div className="flex items-center gap-2 cursor-pointer w-full">
@@ -148,7 +148,7 @@ export default function Sidebar() {
       </aside>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 px-2 py-3 pb-safe flex justify-around items-center">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/70 backdrop-blur-xl border-t border-white/40 z-50 px-2 py-3 pb-safe flex justify-around items-center shadow-[0_-4px_24px_-2px_rgba(0,0,0,0.02)]">
         <Link href="/courses" className="flex flex-col items-center p-2 text-slate-500 hover:text-slate-900">
           <Home size={22} />
           <span className="text-[10px] mt-1 font-medium">Home</span>

@@ -46,7 +46,7 @@ export default function TopHeader() {
   };
 
   return (
-    <header className="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-40 px-6 md:px-10 flex items-center justify-end gap-4">
+    <header className="h-16 border-b border-white/40 bg-white/60 backdrop-blur-xl sticky top-0 z-40 px-6 md:px-10 flex items-center justify-end gap-4 shadow-[0_4px_24px_-2px_rgba(0,0,0,0.02)]">
       {/* Search */}
       <div className="flex items-center">
         {isSearchOpen ? (
