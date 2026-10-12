@@ -43,11 +43,11 @@ export default function RegisterPage() {
 
   return (
     <div className="flex min-h-[90vh] items-center justify-center py-12 relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="w-full max-w-lg bg-white shadow-2xl border border-slate-200 rounded-2xl p-8 md:p-10 space-y-8 relative z-10">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="w-full max-w-lg glass-card shadow-2xl rounded-2xl p-8 md:p-10 space-y-8 relative z-10">
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-slate-900">Join GoLive</h2>
-          <p className="text-slate-500 mt-2">Create a student account to get started</p>
+          <h2 className="text-3xl font-extrabold text-white">Join GoLive</h2>
+          <p className="text-slate-400 mt-2">Create a student account to get started</p>
         </div>
 
         {error && (
@@ -58,7 +58,7 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600">Full Name</label>
+            <label className="text-sm font-medium text-slate-300">Full Name</label>
             <div className="relative">
               <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
               <input 
@@ -66,14 +66,14 @@ export default function RegisterPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="John Doe" 
-                className="w-full bg-slate-50 border border-slate-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-slate-900"
+                className="w-full bg-slate-800/50 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-white placeholder:text-slate-500"
                 required
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600">Email Address</label>
+            <label className="text-sm font-medium text-slate-300">Email Address</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
               <input 
@@ -81,14 +81,14 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com" 
-                className="w-full bg-slate-50 border border-slate-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-slate-900"
+                className="w-full bg-slate-800/50 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-white placeholder:text-slate-500"
                 required
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600">Password</label>
+            <label className="text-sm font-medium text-slate-300">Password</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
               <input 
@@ -96,7 +96,7 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••" 
-                className="w-full bg-slate-50 border border-slate-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-slate-900"
+                className="w-full bg-slate-800/50 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-white placeholder:text-slate-500"
                 required
               />
             </div>
@@ -108,11 +108,11 @@ export default function RegisterPage() {
         </form>
 
         <div className="relative flex items-center justify-center mt-6 mb-6">
-          <div className="absolute border-t border-slate-200 w-full"></div>
-          <span className="bg-white px-4 text-sm text-slate-400 z-10">OR</span>
+          <div className="absolute border-t border-white/10 w-full"></div>
+          <span className="bg-slate-900/60 px-4 text-sm text-slate-400 z-10 backdrop-blur-2xl">OR</span>
         </div>
 
-        <Link href="/api/auth/google/login" className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-black font-semibold py-3 rounded-lg transition-colors border border-gray-300">
+        <Link href="/api/auth/google/login" className="w-full flex items-center justify-center gap-3 bg-slate-800/80 hover:bg-slate-700 text-white font-semibold py-3 rounded-lg transition-colors border border-white/10">
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -122,9 +122,9 @@ export default function RegisterPage() {
           Continue with Google
         </Link>
 
-        <p className="text-center text-sm text-slate-500 mt-6">
+        <p className="text-center text-sm text-slate-400 mt-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-emerald-600 hover:text-blue-300 font-medium">
+          <Link href="/login" className="text-teal-400 hover:text-teal-300 font-medium">
             Sign in
           </Link>
         </p>

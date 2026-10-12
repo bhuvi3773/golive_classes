@@ -39,15 +39,16 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-[90vh] items-center justify-center py-12 px-4">
-      <div className="w-full max-w-md glass-card-light p-8 md:p-10 space-y-8">
-        <Link href="/login" className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors w-fit">
+    <div className="flex min-h-[90vh] items-center justify-center py-12 px-4 relative overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="w-full max-w-md glass-card shadow-2xl rounded-2xl p-8 md:p-10 space-y-8 relative z-10">
+        <Link href="/login" className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors w-fit">
           <ArrowLeft size={16} /> Back to login
         </Link>
         
         <div>
-          <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Forgot Password</h2>
-          <p className="text-slate-500 text-sm">
+          <h2 className="text-3xl font-extrabold text-white mb-2">Forgot Password</h2>
+          <p className="text-slate-400 text-sm">
             Enter the email address associated with your account and we'll send you a link to reset your password.
           </p>
         </div>
@@ -59,7 +60,7 @@ export default function ForgotPasswordPage() {
         )}
         
         {success && (
-          <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-3 rounded-lg text-sm font-medium">
+          <div className="bg-teal-500/10 border border-teal-500/20 text-teal-400 p-3 rounded-lg text-sm font-medium">
             {success}
           </div>
         )}
@@ -67,7 +68,7 @@ export default function ForgotPasswordPage() {
         {!success && (
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-600">Email Address</label>
+              <label className="text-sm font-medium text-slate-300">Email Address</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                 <input 
@@ -75,7 +76,7 @@ export default function ForgotPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com" 
-                  className="w-full bg-white border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-slate-900"
+                  className="w-full bg-slate-800/50 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-white placeholder:text-slate-500"
                   required
                 />
               </div>

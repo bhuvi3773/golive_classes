@@ -98,17 +98,18 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
       {!query ? (
         <>
           {/* Welcome Banner */}
-          <div className="w-full bg-gradient-to-r from-slate-100 to-slate-200 rounded-2xl p-8 border border-slate-200 relative overflow-hidden animate-in fade-in slide-in-from-bottom-4">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
+          <div className="w-full bg-slate-900/60 backdrop-blur-2xl rounded-2xl p-8 border border-white/10 relative overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-4">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-1/4 w-48 h-48 bg-teal-500/10 rounded-full blur-[60px] translate-y-1/2 pointer-events-none"></div>
             <div className="relative z-10">
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome back, {user.name || "Student"}!</h1>
-              <p className="text-slate-500">Ready to learn something new today? Let's dive in.</p>
+              <h1 className="text-3xl font-extrabold text-white mb-2 drop-shadow-sm">Welcome back, {user.name || "Student"}!</h1>
+              <p className="text-slate-300 font-medium">Ready to learn something new today? Let's dive in.</p>
             </div>
           </div>
 
           {/* Categories Section - Udemy Style (Pills) */}
           <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 delay-75">
-            <h2 className="text-2xl font-bold text-slate-900">Top Categories</h2>
+            <h2 className="text-2xl font-bold text-white">Top Categories</h2>
 
             {categories.length === 0 ? (
               <p className="text-sm text-slate-400">More categories coming soon.</p>
@@ -118,7 +119,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
                   <Link
                     href={`/courses?q=${encodeURIComponent(cat.name)}`}
                     key={cat.id.toString()}
-                    className="px-5 py-3 rounded-full bg-white border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-700 transition-all cursor-pointer font-bold text-sm text-slate-700 shadow-sm"
+                    className="px-5 py-2.5 rounded-full bg-slate-800/50 border border-white/10 hover:border-teal-500/50 hover:bg-teal-500/20 hover:text-teal-300 transition-all cursor-pointer font-bold text-sm text-slate-300 shadow-lg shadow-black/20"
                   >
                     {cat.name}
                   </Link>
@@ -129,8 +130,8 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
         </>
       ) : (
         /* Search Results Header */
-        <div className="pb-4 border-b border-slate-200 animate-in fade-in">
-          <h1 className="text-2xl font-bold text-slate-900">
+        <div className="pb-4 border-b border-white/10 animate-in fade-in">
+          <h1 className="text-2xl font-bold text-white">
             {courses.length} result{courses.length !== 1 ? 's' : ''} for "{query}"
           </h1>
         </div>
@@ -140,16 +141,16 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
       <section className="space-y-6 animate-in fade-in slide-in-from-bottom-4 delay-150">
         {!query && (
           <div className="flex items-end justify-between">
-            <h2 className="text-2xl font-bold text-slate-900">Featured Courses</h2>
-            <span className="text-sm text-emerald-600 font-medium hover:text-blue-300 cursor-pointer">See all</span>
+            <h2 className="text-2xl font-bold text-white">Featured Courses</h2>
+            <span className="text-sm text-teal-400 font-medium hover:text-cyan-300 transition-colors cursor-pointer">See all</span>
           </div>
         )}
 
         {courses.length === 0 ? (
-          <div className="text-center p-12 bg-slate-50 border border-slate-200 rounded-2xl">
+          <div className="text-center p-12 glass-card rounded-2xl">
             {query ? (
               <>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">No results found</h3>
+                <h3 className="text-xl font-bold text-white mb-2">No results found</h3>
                 <p className="text-slate-400">We couldn't find any courses matching "{query}". Try adjusting your search or browsing categories.</p>
               </>
             ) : (
@@ -159,37 +160,39 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {courses.map((course) => (
-              <Link href={`/courses/${course.id}`} key={course.id.toString()} className="group flex flex-col h-full bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-lg hover:shadow-xl hover:border-emerald-300 transition-all duration-300 overflow-hidden cursor-pointer relative z-10 hover:-translate-y-1">
+              <Link href={`/courses/${course.id}`} key={course.id.toString()} className="glass-card rounded-3xl flex flex-col h-full group hover:border-teal-400/40 relative z-10 transition-all duration-300">
                 {/* Thumbnail */}
-                <div className="w-full aspect-video bg-slate-100 relative overflow-hidden">
+                <div className="w-full aspect-video bg-slate-900 relative overflow-hidden border-b border-white/5">
                   {course.thumbnail ? (
                     <img
                       src={course.thumbnail}
                       alt={course.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-105 opacity-80 mix-blend-overlay transition-transform duration-500"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-tr from-emerald-100 to-sky-100 flex items-center justify-center">
-                      <PlayCircle size={32} className="text-emerald-300" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-teal-900/50 to-slate-900 flex items-center justify-center">
+                      <PlayCircle size={32} className="text-white/30" />
                     </div>
                   )}
                   {/* Category Badge */}
-                  <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-extrabold text-emerald-700 shadow-sm border border-emerald-100">
+                  <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-extrabold text-teal-300 border border-teal-500/30 shadow-lg shadow-black/50">
                     {course.category}
                   </div>
                   {/* Hover Overlay Play Button */}
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="bg-white/20 backdrop-blur-md p-3 rounded-full">
-                      <PlayCircle size={24} className="text-slate-900 fill-white" />
+                    <div className="bg-slate-900/50 backdrop-blur-md p-3 rounded-full border border-white/20">
+                      <PlayCircle size={24} className="text-white fill-teal-500/80" />
                     </div>
                   </div>
                 </div>
 
                 {/* Course Details */}
-                <div className="p-4 flex flex-col flex-1">
-                  <h3 className="text-sm font-bold text-slate-900 line-clamp-2 leading-tight group-hover:text-emerald-600 transition-colors">
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="text-xl font-bold text-white line-clamp-2 leading-tight group-hover:text-teal-400 transition-colors">
                     {course.title}
                   </h3>
+                  
+                  {/* description is currently missing from the original card layout, but we can add it for consistency or keep it as is, wait, the original didn't have description in this view, just title, rating, price. Let's keep the structure identical. */}
 
                   {/* Ratings */}
                   <div className="flex items-center gap-1 mt-2">
@@ -199,13 +202,13 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
                       <Star size={12} fill="currentColor" />
                       <Star size={12} fill="currentColor" />
                       <Star size={12} fill="currentColor" />
-                      <Star size={12} className="text-gray-300" />
+                      <Star size={12} className="text-slate-600" />
                     </div>
                     <span className="text-xs text-slate-400">(1,204)</span>
                   </div>
 
                   {/* Price */}
-                  <div className="font-bold text-base text-slate-900 mt-auto pt-4">
+                  <div className="font-bold text-2xl text-white mt-auto pt-4 flex items-center justify-between">
                     ${course.price}
                   </div>
                 </div>
@@ -217,28 +220,28 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
 
       {/* Dynamic Recommendations Section */}
       {recommendedCourses.length > 0 && (
-        <section className="space-y-6 pt-10 mt-10 border-t border-slate-200 animate-in fade-in slide-in-from-bottom-4 delay-300">
-          <h2 className="text-2xl font-bold text-slate-900">{recommendTitle}</h2>
+        <section className="space-y-6 pt-10 mt-10 border-t border-white/10 animate-in fade-in slide-in-from-bottom-4 delay-300">
+          <h2 className="text-2xl font-bold text-white">{recommendTitle}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {recommendedCourses.map(course => (
-              <Link href={`/courses/${course.id}`} key={course.id.toString()} className="group flex flex-col h-full bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-lg hover:shadow-xl hover:border-emerald-300 transition-all duration-300 overflow-hidden cursor-pointer relative z-10 hover:-translate-y-1">
-                <div className="w-full aspect-video bg-slate-100 relative overflow-hidden">
+              <Link href={`/courses/${course.id}`} key={course.id.toString()} className="glass-card rounded-3xl flex flex-col h-full group hover:border-teal-400/40 relative z-10 transition-all duration-300">
+                <div className="w-full aspect-video bg-slate-900 relative overflow-hidden border-b border-white/5">
                   {course.thumbnail ? (
-                    <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 opacity-80 mix-blend-overlay transition-transform duration-500" />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-tr from-emerald-100 to-sky-100 flex items-center justify-center">
-                      <PlayCircle size={32} className="text-emerald-300" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-teal-900/50 to-slate-900 flex items-center justify-center">
+                      <PlayCircle size={32} className="text-white/30" />
                     </div>
                   )}
-                  <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-extrabold text-emerald-700 shadow-sm border border-emerald-100">
+                  <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-extrabold text-teal-300 border border-teal-500/30 shadow-lg shadow-black/50">
                     {course.category}
                   </div>
                 </div>
-                <div className="p-4 flex flex-col flex-1">
-                  <h3 className="text-sm font-bold text-slate-900 line-clamp-2 leading-tight group-hover:text-emerald-600 transition-colors">
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="text-xl font-bold text-white line-clamp-2 leading-tight group-hover:text-teal-400 transition-colors">
                     {course.title}
                   </h3>
-                  <div className="font-bold text-base text-slate-900 mt-auto pt-2">
+                  <div className="font-bold text-2xl text-white mt-auto pt-4 flex items-center justify-between">
                     ${course.price}
                   </div>
                 </div>

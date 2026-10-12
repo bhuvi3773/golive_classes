@@ -163,7 +163,7 @@ export const sendCourseRecommendationEmail = async (to: string, userName: string
     <div style="margin-bottom: 20px; border-bottom: 1px solid #eaeaea; padding-bottom: 15px;">
       <h3 style="color: #0f172a; margin: 0 0 5px 0;">${course.title}</h3>
       <p style="color: #475569; font-size: 14px; margin: 0 0 10px 0;">Category: ${course.category}</p>
-      <a href="${appUrl}/courses/${course._id}" style="color: #10b981; text-decoration: none; font-weight: bold;">View Course &rarr;</a>
+      <a href="${appUrl}/courses/${course.id}" style="color: #10b981; text-decoration: none; font-weight: bold;">View Course &rarr;</a>
     </div>
   `).join('');
 

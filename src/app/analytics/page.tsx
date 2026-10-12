@@ -36,8 +36,8 @@ export default function AnalyticsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-8 animate-in fade-in">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Performance Analytics</h1>
-        <p className="text-slate-500 capitalize">{data.role === 'admin' ? 'Teacher' : data.role} Dashboard</p>
+        <h1 className="text-3xl font-bold text-white mb-2">Performance Analytics</h1>
+        <p className="text-slate-400 capitalize">{data.role === 'admin' ? 'Teacher' : data.role} Dashboard</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -70,21 +70,21 @@ export default function AnalyticsPage() {
       </div>
 
       {(data.role === 'superadmin' || data.role === 'admin') && data.stats.topSelling && data.stats.topSelling.length > 0 && (
-        <div className="mt-12 glass-card-light p-6">
-          <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2"><TrendingUp className="text-green-400" /> Top Selling Courses</h2>
+        <div className="mt-12 glass-card border border-white/10 p-6 shadow-2xl">
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><TrendingUp className="text-teal-400" /> Top Selling Courses</h2>
           <div className="space-y-4">
             {data.stats.topSelling.map((course: any, idx: number) => (
-              <div key={course._id} className="flex items-center gap-4 p-4 rounded-xl bg-slate-100 border border-slate-200 hover:border-white/10 transition-colors">
-                <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center font-bold text-emerald-600">
+              <div key={course.id} className="flex items-center gap-4 p-4 rounded-xl bg-slate-800/50 border border-white/10 hover:border-teal-500/50 transition-colors shadow-lg">
+                <div className="w-12 h-12 bg-teal-500/10 rounded-lg flex items-center justify-center font-bold text-teal-400 border border-teal-500/20">
                   #{idx + 1}
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-slate-900 line-clamp-1">{course.title}</h3>
-                  <p className="text-sm text-slate-500">{course.category}</p>
+                  <h3 className="font-bold text-white line-clamp-1">{course.title}</h3>
+                  <p className="text-sm text-slate-400">{course.category}</p>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-green-400">${course.price}</div>
-                  <Link href={`/courses/${course._id}`} className="text-xs text-emerald-600 hover:underline">View Course</Link>
+                  <div className="font-bold text-teal-400">${course.price}</div>
+                  <Link href={`/courses/${course.id}`} className="text-xs text-teal-500 hover:text-teal-300 transition-colors">View Course</Link>
                 </div>
               </div>
             ))}
@@ -94,40 +94,39 @@ export default function AnalyticsPage() {
 
       {/* Student Detailed Course Progress (Visible to Everyone) */}
       {data.studentStats && data.studentStats.courseProgressStats && data.studentStats.courseProgressStats.length > 0 && (
-        <div className="mt-12 bg-white/60 backdrop-blur-md border border-white shadow-xl rounded-3xl p-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-3">
-            <Activity className="text-emerald-500" /> My Learning Trajectory
+        <div className="mt-12 glass-card border border-white/10 shadow-2xl p-8">
+          <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+            <Activity className="text-teal-400" /> My Learning Trajectory
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {data.studentStats.courseProgressStats.map((course: any) => (
-              <div key={course._id} className="bg-white/80 border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-6 rounded-2xl flex flex-col">
+              <div key={course.id} className="glass-card bg-slate-800/40 border border-white/10 shadow-lg hover:shadow-xl hover:border-teal-500/50 transition-all p-6 rounded-2xl flex flex-col">
                 <div className="flex gap-4 mb-6">
-                  <div className="w-20 h-20 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200">
+                  <div className="w-20 h-20 rounded-xl bg-slate-800 overflow-hidden flex-shrink-0">
                     {course.thumbnail ? (
                       <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <BookOpen className="text-slate-400" size={24} />
+                        <BookOpen className="text-slate-600" size={24} />
                       </div>
                     )}
                   </div>
                   <div className="flex-1 flex flex-col justify-center">
-                    <h3 className="font-bold text-slate-900 line-clamp-2 text-lg">{course.title}</h3>
-                    <p className="text-sm text-slate-500 font-medium mt-1">{course.category}</p>
+                    <h3 className="font-bold text-white line-clamp-2 text-lg">{course.title}</h3>
+                    <p className="text-sm text-slate-400 font-medium mt-1">{course.category}</p>
                   </div>
                 </div>
                 
                 <div className="mt-auto">
                   <div className="flex justify-between items-end mb-2">
-                    <span className="text-sm font-bold text-slate-700">Completion</span>
-                    <span className="text-lg font-extrabold text-emerald-600">{course.percentage}%</span>
+                    <span className="text-sm font-bold text-slate-300">Completion</span>
+                    <span className="text-lg font-extrabold text-teal-400">{course.percentage}%</span>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden shadow-inner border border-slate-200">
+                  <div className="w-full bg-slate-900 rounded-full h-3 overflow-hidden shadow-inner">
                     <div 
-                      className="bg-gradient-to-r from-emerald-400 to-teal-500 h-full rounded-full relative transition-all duration-1000 ease-out" 
+                      className="bg-gradient-to-r from-teal-500 to-cyan-400 h-full rounded-full relative transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(20,184,166,0.5)]" 
                       style={{ width: `${course.percentage}%` }}
                     >
-                      <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l from-white/30 to-transparent"></div>
                     </div>
                   </div>
                 </div>
@@ -142,12 +141,12 @@ export default function AnalyticsPage() {
 
 function StatCard({ icon, title, value }: { icon: any, title: string, value: string | number }) {
   return (
-    <div className="glass-card-light p-6 border-t-4 border-t-blue-500 flex flex-col">
-      <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+    <div className="glass-card p-6 border-t-4 border-t-teal-500 flex flex-col shadow-xl">
+      <div className="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-4 border border-teal-500/20">
         {icon}
       </div>
-      <p className="text-slate-500 text-sm font-medium uppercase tracking-wider">{title}</p>
-      <h3 className="text-3xl font-bold text-slate-900 mt-1">{value}</h3>
+      <p className="text-slate-400 text-sm font-medium uppercase tracking-wider">{title}</p>
+      <h3 className="text-3xl font-bold text-white mt-1">{value}</h3>
     </div>
   );
 }

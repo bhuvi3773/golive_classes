@@ -34,19 +34,19 @@ export default function CoursePlayerClient({
   };
 
   return (
-    <div className="flex-1 bg-[#fafafa] flex flex-col relative overflow-y-auto">
+    <div className="flex-1 bg-slate-950 flex flex-col relative overflow-y-auto">
       <div className="bg-black w-full shrink-0 relative aspect-video md:max-h-[70vh] flex flex-col">
         {activeLecture?.type === 'quiz' ? (
            <QuizPlayer 
              quizData={activeLecture.quizData || { questions: [] }} 
-             courseId={course._id.toString()}
+             courseId={course.id.toString()}
              lectureId={Number(activeLectureId)}
              isCompleted={completedLectures.includes(Number(activeLectureId))}
            />
         ) : activeLecture?.type === 'assignment' ? (
            <AssignmentPlayer 
              lecture={activeLecture} 
-             courseId={course._id.toString()}
+             courseId={course.id.toString()}
              lectureId={Number(activeLectureId)}
              isCompleted={completedLectures.includes(Number(activeLectureId))}
            />
@@ -58,7 +58,7 @@ export default function CoursePlayerClient({
               </div>
               <div className="absolute bottom-4 right-4 z-20">
                 <MarkCompleteButton 
-                  courseId={course._id.toString()} 
+                  courseId={course.id.toString()} 
                   lectureId={Number(activeLectureId)} 
                   isCompleted={completedLectures.includes(Number(activeLectureId))} 
                 />
@@ -72,7 +72,7 @@ export default function CoursePlayerClient({
              {activeLecture && (
                <div className="mt-8">
                 <MarkCompleteButton 
-                  courseId={course._id.toString()} 
+                  courseId={course.id.toString()} 
                   lectureId={Number(activeLectureId)} 
                   isCompleted={completedLectures.includes(Number(activeLectureId))} 
                 />
@@ -84,17 +84,17 @@ export default function CoursePlayerClient({
       
       <div className="w-full max-w-5xl mx-auto py-8 px-4">
         {/* Tabs for Discussions and Notes */}
-        <div className="flex gap-4 border-b border-slate-200 mb-6">
+        <div className="flex gap-4 border-b border-white/10 mb-6">
           <button 
             onClick={() => setActiveTab('discussions')}
-            className={`pb-3 font-medium text-sm transition-colors border-b-2 ${activeTab === 'discussions' ? 'border-emerald-500 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            className={`pb-3 font-medium text-sm transition-colors border-b-2 ${activeTab === 'discussions' ? 'border-teal-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-300'}`}
           >
             Q&A / Discussions
           </button>
           {activeLecture?.type === 'video' && (
             <button 
               onClick={() => setActiveTab('notes')}
-              className={`pb-3 font-medium text-sm transition-colors border-b-2 ${activeTab === 'notes' ? 'border-emerald-500 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+              className={`pb-3 font-medium text-sm transition-colors border-b-2 ${activeTab === 'notes' ? 'border-teal-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-300'}`}
             >
               My Notes
             </button>
@@ -102,9 +102,9 @@ export default function CoursePlayerClient({
         </div>
 
         {activeTab === 'discussions' ? (
-          <CourseDiscussions courseId={course._id.toString()} lectureId={Number(activeLectureId)} currentUser={dbUser} />
+          <CourseDiscussions courseId={course.id.toString()} lectureId={Number(activeLectureId)} currentUser={dbUser} />
         ) : (
-          <CourseNotes courseId={course._id.toString()} lectureId={Number(activeLectureId)} getCurrentTime={getCurrentTime} onSeek={handleSeek} />
+          <CourseNotes courseId={course.id.toString()} lectureId={Number(activeLectureId)} getCurrentTime={getCurrentTime} onSeek={handleSeek} />
         )}
       </div>
     </div>

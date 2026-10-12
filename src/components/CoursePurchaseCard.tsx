@@ -13,7 +13,7 @@ export default function CoursePurchaseCard({ courseId, price, isPurchasedInitial
     fetch('/api/user/wishlist')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data) && data.some(c => c._id === courseId)) {
+        if (Array.isArray(data) && data.some(c => c.id === courseId)) {
           setInWishlist(true);
         }
       });
@@ -55,24 +55,24 @@ export default function CoursePurchaseCard({ courseId, price, isPurchasedInitial
 
   return (
     <>
-      <div className="text-center mb-6 border-b border-slate-200 pb-6">
-        <span className="text-4xl font-extrabold text-slate-900">${price}</span>
+      <div className="text-center mb-6 border-b border-white/10 pb-6">
+        <span className="text-4xl font-extrabold text-white">${price}</span>
       </div>
       
       {isPurchased ? (
         <Link href={`/courses/${courseId}/play`}>
-          <button className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-green-500/25 flex items-center justify-center gap-2">
+          <button className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2">
             <PlayCircle size={20} /> Continue Learning
           </button>
         </Link>
       ) : (
         <div className="flex gap-2">
-          <button onClick={handleBuy} className="flex-1 bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-slate-900/20">
+          <button onClick={handleBuy} className="flex-1 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-slate-900 font-bold py-4 rounded-xl transition-all shadow-lg shadow-teal-500/30">
             Buy Now
           </button>
           <button 
             onClick={toggleWishlist}
-            className={`px-6 rounded-xl border flex items-center justify-center transition-colors ${inWishlist ? 'border-red-500 text-red-500 bg-red-500/10' : 'border-slate-200 hover:bg-slate-100 text-slate-500'}`}
+            className={`px-6 rounded-xl border flex items-center justify-center transition-colors ${inWishlist ? 'border-pink-500 text-pink-500 bg-pink-500/10' : 'border-white/10 hover:bg-slate-800 text-slate-300'}`}
             title={inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
           >
             <Heart size={24} fill={inWishlist ? "currentColor" : "none"} />

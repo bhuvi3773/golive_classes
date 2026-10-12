@@ -57,10 +57,11 @@ function ResetPasswordContent() {
 
   if (!token) {
     return (
-      <div className="flex min-h-[90vh] items-center justify-center py-12 px-4 text-center">
-        <div className="glass-card-light p-10 max-w-md w-full">
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Invalid Link</h2>
-          <p className="text-slate-500 mb-6">This password reset link is invalid or missing the secure token.</p>
+      <div className="flex min-h-[90vh] items-center justify-center py-12 px-4 text-center relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="glass-card shadow-2xl p-10 max-w-md w-full rounded-2xl relative z-10">
+          <h2 className="text-2xl font-bold text-white mb-2">Invalid Link</h2>
+          <p className="text-slate-400 mb-6">This password reset link is invalid or missing the secure token.</p>
           <Link href="/forgot-password" className="btn-primary w-full block py-3 rounded-lg font-bold">
             Request New Link
           </Link>
@@ -70,11 +71,12 @@ function ResetPasswordContent() {
   }
 
   return (
-    <div className="flex min-h-[90vh] items-center justify-center py-12 px-4">
-      <div className="w-full max-w-md glass-card-light p-8 md:p-10 space-y-8">
+    <div className="flex min-h-[90vh] items-center justify-center py-12 px-4 relative overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="w-full max-w-md glass-card shadow-2xl rounded-2xl p-8 md:p-10 space-y-8 relative z-10">
         <div>
-          <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Create New Password</h2>
-          <p className="text-slate-500 text-sm">
+          <h2 className="text-3xl font-extrabold text-white mb-2">Create New Password</h2>
+          <p className="text-slate-400 text-sm">
             Please enter your new password below.
           </p>
         </div>
@@ -86,15 +88,15 @@ function ResetPasswordContent() {
         )}
         
         {success && (
-          <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-3 rounded-lg text-sm font-medium">
+          <div className="bg-teal-500/10 border border-teal-500/20 text-teal-400 p-3 rounded-lg text-sm font-medium">
             {success}
-            <p className="text-xs text-green-500/70 mt-1">Redirecting to login...</p>
+            <p className="text-xs text-teal-500/70 mt-1">Redirecting to login...</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600">New Password</label>
+            <label className="text-sm font-medium text-slate-300">New Password</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
               <input 
@@ -102,14 +104,14 @@ function ResetPasswordContent() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••" 
-                className="w-full bg-white border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-slate-900"
+                className="w-full bg-slate-800/50 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-white placeholder:text-slate-500"
                 required
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600">Confirm New Password</label>
+            <label className="text-sm font-medium text-slate-300">Confirm New Password</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
               <input 
@@ -117,7 +119,7 @@ function ResetPasswordContent() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••" 
-                className="w-full bg-white border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors text-slate-900"
+                className="w-full bg-slate-800/50 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-white placeholder:text-slate-500"
                 required
               />
             </div>

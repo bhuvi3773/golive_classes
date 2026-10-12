@@ -115,10 +115,10 @@ export default function CourseDiscussions({ courseId, lectureId, currentUser }: 
           </div>
         ) : (
           discussions.map(discussion => (
-            <div key={discussion._id} className="bg-white border border-slate-200 rounded-xl overflow-hidden transition-all shadow-sm">
+            <div key={discussion.id} className="bg-white border border-slate-200 rounded-xl overflow-hidden transition-all shadow-sm">
               <div 
                 className="p-4 cursor-pointer hover:bg-slate-50 flex items-start gap-4"
-                onClick={() => setExpandedId(expandedId === discussion._id ? null : discussion._id)}
+                onClick={() => setExpandedId(expandedId === discussion.id ? null : discussion.id)}
               >
                 <div className="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center shrink-0 mt-1 overflow-hidden">
                   {discussion.userId?.avatar ? (
@@ -139,11 +139,11 @@ export default function CourseDiscussions({ courseId, lectureId, currentUser }: 
                   </div>
                 </div>
                 <div className="shrink-0 text-slate-400">
-                  {expandedId === discussion._id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                  {expandedId === discussion.id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </div>
               </div>
 
-              {expandedId === discussion._id && (
+              {expandedId === discussion.id && (
                 <div className="border-t border-slate-100 p-4 bg-slate-50/50">
                   <p className="text-slate-700 text-sm mb-6 whitespace-pre-wrap">{discussion.text}</p>
                   
@@ -185,12 +185,12 @@ export default function CourseDiscussions({ courseId, lectureId, currentUser }: 
                         onChange={e => setReplyText(e.target.value)}
                         className="flex-1 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500"
                         onKeyDown={e => {
-                          if (e.key === 'Enter') handleReply(discussion._id);
+                          if (e.key === 'Enter') handleReply(discussion.id);
                         }}
                       />
                       <button 
                         disabled={isReplying}
-                        onClick={() => handleReply(discussion._id)}
+                        onClick={() => handleReply(discussion.id)}
                         className="bg-slate-200 hover:bg-slate-300 text-slate-800 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
                       >
                         Reply

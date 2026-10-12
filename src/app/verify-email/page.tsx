@@ -100,19 +100,20 @@ function VerifyEmailContent() {
   if (!email) return null;
 
   return (
-    <div className="flex min-h-[90vh] items-center justify-center py-12 px-4">
-      <div className="w-full max-w-md glass-card-light p-8 md:p-10 space-y-8 text-center">
+    <div className="flex min-h-[90vh] items-center justify-center py-12 px-4 relative overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="w-full max-w-md glass-card shadow-2xl rounded-2xl p-8 md:p-10 space-y-8 text-center relative z-10">
         <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center border border-emerald-200">
-            <Mail className="text-emerald-600 w-8 h-8" />
+          <div className="w-16 h-16 bg-teal-500/10 rounded-full flex items-center justify-center border border-teal-500/20">
+            <Mail className="text-teal-400 w-8 h-8" />
           </div>
         </div>
         
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Verify your email</h2>
-          <p className="text-slate-500 text-sm">
+          <h2 className="text-2xl font-bold text-white mb-2">Verify your email</h2>
+          <p className="text-slate-400 text-sm">
             We've sent a 6-digit verification code to:<br/>
-            <strong className="text-slate-900 mt-1 block">{email}</strong>
+            <strong className="text-white mt-1 block">{email}</strong>
           </p>
         </div>
 
@@ -123,7 +124,7 @@ function VerifyEmailContent() {
         )}
         
         {success && (
-          <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-3 rounded-lg text-sm font-medium">
+          <div className="bg-teal-500/10 border border-teal-500/20 text-teal-400 p-3 rounded-lg text-sm font-medium">
             {success}
           </div>
         )}
@@ -136,7 +137,7 @@ function VerifyEmailContent() {
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
               placeholder="000000" 
-              className="w-full bg-white border border-gray-600 rounded-lg px-4 py-4 text-center text-3xl tracking-[1em] focus:outline-none focus:border-blue-500 transition-colors text-slate-900 font-mono"
+              className="w-full bg-slate-800/50 border border-white/10 rounded-lg px-4 py-4 text-center text-3xl tracking-[1em] focus:outline-none focus:border-teal-500 transition-colors text-white font-mono placeholder:text-slate-500"
               required
             />
           </div>
@@ -146,13 +147,13 @@ function VerifyEmailContent() {
           </button>
         </form>
 
-        <div className="pt-4 border-t border-slate-200">
-          <p className="text-sm text-slate-500">
+        <div className="pt-4 border-t border-white/10">
+          <p className="text-sm text-slate-400">
             Didn't receive it?{" "}
             <button 
               onClick={handleResend}
               disabled={resendDisabled}
-              className="text-emerald-600 hover:text-blue-300 font-medium disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
+              className="text-teal-400 hover:text-teal-300 font-medium disabled:text-slate-600 disabled:cursor-not-allowed transition-colors"
             >
               {countdown > 0 ? `Resend Code (${countdown}s)` : "Resend Code"}
             </button>

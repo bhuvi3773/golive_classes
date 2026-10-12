@@ -53,11 +53,11 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-[90vh] items-center justify-center py-12 relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="w-full max-w-lg bg-white shadow-2xl border border-slate-200 rounded-2xl p-8 md:p-10 space-y-8 relative z-10">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="w-full max-w-lg glass-card shadow-2xl rounded-2xl p-8 md:p-10 space-y-8 relative z-10">
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-slate-900">Welcome Back</h2>
-          <p className="text-slate-500 mt-2">Log in to your account</p>
+          <h2 className="text-3xl font-extrabold text-white">Welcome Back</h2>
+          <p className="text-slate-400 mt-2">Log in to your account</p>
         </div>
 
         {/* Role Selection added to Login per user request */}
@@ -66,12 +66,12 @@ export default function LoginPage() {
             onClick={() => setRole("student")}
             className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex flex-col items-center text-center gap-2 ${
               role === "student" 
-                ? "border-blue-500 bg-emerald-50" 
-                : "border-slate-200 bg-slate-100 hover:border-white/20"
+                ? "border-teal-500 bg-teal-500/10" 
+                : "border-white/10 bg-slate-800/50 hover:border-white/20"
             }`}
           >
-            <BookOpen size={28} className={role === "student" ? "text-emerald-600" : "text-slate-500"} />
-            <h3 className="font-semibold text-slate-900">Learner</h3>
+            <BookOpen size={28} className={role === "student" ? "text-teal-400" : "text-slate-400"} />
+            <h3 className="font-semibold text-white">Learner</h3>
           </div>
 
           <div 
@@ -79,11 +79,11 @@ export default function LoginPage() {
             className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex flex-col items-center text-center gap-2 ${
               role === "instructor" 
                 ? "border-violet-500 bg-violet-500/10" 
-                : "border-slate-200 bg-slate-100 hover:border-white/20"
+                : "border-white/10 bg-slate-800/50 hover:border-white/20"
             }`}
           >
-            <GraduationCap size={28} className={role === "instructor" ? "text-violet-400" : "text-slate-500"} />
-            <h3 className="font-semibold text-slate-900">Teacher</h3>
+            <GraduationCap size={28} className={role === "instructor" ? "text-violet-400" : "text-slate-400"} />
+            <h3 className="font-semibold text-white">Teacher</h3>
           </div>
         </div>
 
@@ -95,7 +95,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600">Email Address</label>
+            <label className="text-sm font-medium text-slate-300">Email Address</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
               <input 
@@ -103,7 +103,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com" 
-                className="w-full bg-slate-50 border border-slate-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-slate-900"
+                className="w-full bg-slate-800/50 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-white placeholder:text-slate-500"
                 required
               />
             </div>
@@ -111,8 +111,8 @@ export default function LoginPage() {
 
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <label className="text-sm font-medium text-slate-600">Password</label>
-              <Link href="/forgot-password" className="text-xs text-emerald-600 hover:text-blue-300 cursor-pointer">Forgot password?</Link>
+              <label className="text-sm font-medium text-slate-300">Password</label>
+              <Link href="/forgot-password" className="text-xs text-teal-400 hover:text-teal-300 cursor-pointer">Forgot password?</Link>
             </div>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
@@ -121,7 +121,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••" 
-                className="w-full bg-slate-50 border border-slate-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-slate-900"
+                className="w-full bg-slate-800/50 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-white placeholder:text-slate-500"
                 required
               />
             </div>
@@ -135,11 +135,11 @@ export default function LoginPage() {
         </form>
 
         <div className="relative flex items-center justify-center mt-6 mb-6">
-          <div className="absolute border-t border-slate-200 w-full"></div>
-          <span className="bg-white px-4 text-sm text-slate-400 z-10">OR</span>
+          <div className="absolute border-t border-white/10 w-full"></div>
+          <span className="bg-slate-900/60 px-4 text-sm text-slate-400 z-10 backdrop-blur-2xl">OR</span>
         </div>
 
-        <Link href="/api/auth/google/login" className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-black font-semibold py-3 rounded-lg transition-colors border border-gray-300">
+        <Link href="/api/auth/google/login" className="w-full flex items-center justify-center gap-3 bg-slate-800/80 hover:bg-slate-700 text-white font-semibold py-3 rounded-lg transition-colors border border-white/10">
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -149,9 +149,9 @@ export default function LoginPage() {
           Continue with Google
         </Link>
 
-        <p className="text-center text-sm text-slate-500 mt-6">
+        <p className="text-center text-sm text-slate-400 mt-6">
           Don't have an account?{" "}
-          <Link href="/register" className="text-emerald-600 hover:text-blue-300 font-medium">
+          <Link href="/register" className="text-teal-400 hover:text-teal-300 font-medium">
             Sign up
           </Link>
         </p>

@@ -19,9 +19,11 @@ export default async function CertificateViewPage({ params }: { params: Promise<
   const isOwner = dbUser.purchasedCourses && dbUser.purchasedCourses.some((c: any) => c.id === course.id);
   if (!isOwner) {
     return (
-      <div className="p-12 text-center">
-        <h1 className="text-2xl font-bold text-red-500 mb-4">Unauthorized</h1>
-        <p className="text-slate-500">You must purchase this course to earn its certificate.</p>
+      <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
+        <div className="glass-card border border-red-500/30 shadow-2xl p-12 text-center max-w-md w-full">
+          <h1 className="text-2xl font-bold text-red-400 mb-4">Unauthorized</h1>
+          <p className="text-slate-400">You must purchase this course to earn its certificate.</p>
+        </div>
       </div>
     );
   }
@@ -35,9 +37,11 @@ export default async function CertificateViewPage({ params }: { params: Promise<
   
   if (totalLectures === 0 || completedLectures < totalLectures) {
     return (
-      <div className="p-12 text-center">
-        <h1 className="text-2xl font-bold text-red-500 mb-4">Certificate Not Unlocked</h1>
-        <p className="text-slate-500">You must complete 100% of the course to view this certificate.</p>
+      <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
+        <div className="glass-card border border-teal-500/30 shadow-2xl p-12 text-center max-w-md w-full">
+          <h1 className="text-2xl font-bold text-white mb-4">Certificate Not Unlocked</h1>
+          <p className="text-slate-400">You must complete 100% of the course to view this certificate.</p>
+        </div>
       </div>
     );
   }
@@ -85,9 +89,11 @@ export default async function CertificateViewPage({ params }: { params: Promise<
         </div>
       </div>
       
-      <div className="bg-blue-900/20 border border-emerald-300 text-emerald-800 px-6 py-4 rounded-lg flex items-center gap-3">
-        <Award size={20} className="text-emerald-600" />
-        <span>To save your certificate, press <strong>Ctrl + P</strong> (Windows) or <strong>Cmd + P</strong> (Mac) and select "Save as PDF".</span>
+      <div className="glass-card border border-teal-500/30 shadow-2xl text-slate-300 px-6 py-4 flex items-center gap-4 w-full max-w-4xl mx-auto mt-8">
+        <div className="bg-teal-500/20 p-2 rounded-full text-teal-400 border border-teal-500/30 shrink-0">
+          <Award size={20} />
+        </div>
+        <span>To save your certificate, press <strong className="text-white">Ctrl + P</strong> (Windows) or <strong className="text-white">Cmd + P</strong> (Mac) and select "Save as PDF".</span>
       </div>
     </div>
   );

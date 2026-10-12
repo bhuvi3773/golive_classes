@@ -58,7 +58,7 @@ export default function CourseNotes({ courseId, lectureId, getCurrentTime, onSee
     try {
       const res = await fetch(`/api/courses/${courseId}/notes?noteId=${noteId}`, { method: 'DELETE' });
       if (res.ok) {
-        setNotes(notes.filter(n => n._id !== noteId));
+        setNotes(notes.filter(n => n.id !== noteId));
       }
     } catch (err) {
       console.error(err);
@@ -107,7 +107,7 @@ export default function CourseNotes({ courseId, lectureId, getCurrentTime, onSee
           </div>
         ) : (
           notes.map(note => (
-            <div key={note._id} className="bg-white border border-slate-200 rounded-xl p-4 flex gap-4 shadow-sm hover:shadow-md transition-shadow group">
+            <div key={note.id} className="bg-white border border-slate-200 rounded-xl p-4 flex gap-4 shadow-sm hover:shadow-md transition-shadow group">
               <button 
                 onClick={() => onSeek(note.timestamp)}
                 className="flex items-center justify-center gap-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3 py-1.5 rounded-lg text-sm font-bold h-fit shrink-0 transition-colors"
@@ -117,7 +117,7 @@ export default function CourseNotes({ courseId, lectureId, getCurrentTime, onSee
               </button>
               <p className="text-slate-700 text-sm flex-1 whitespace-pre-wrap mt-0.5">{note.text}</p>
               <button 
-                onClick={() => handleDelete(note._id)}
+                onClick={() => handleDelete(note.id)}
                 className="text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1 h-fit"
                 title="Delete note"
               >

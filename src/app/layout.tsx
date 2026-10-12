@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} mesh-bg text-slate-900 selection:bg-indigo-100 min-h-screen bg-fixed`}>
+      <body className={`${inter.className} mesh-bg text-slate-200 selection:bg-teal-500/30 min-h-screen bg-fixed`}>
         <LayoutWrapper>
           {children}
         </LayoutWrapper>

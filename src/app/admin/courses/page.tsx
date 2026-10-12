@@ -30,7 +30,7 @@ export default function CoursesManager() {
         method: "DELETE",
       });
       if (res.ok) {
-        setCourses(courses.filter(c => c._id !== courseId));
+        setCourses(courses.filter(c => c.id !== courseId));
       } else {
         alert("Failed to delete course.");
       }
@@ -50,8 +50,8 @@ export default function CoursesManager() {
       {/* Header Actions */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Manage Courses</h2>
-          <p className="text-slate-500 mt-1">Create, edit, and publish your courses.</p>
+          <h2 className="text-2xl font-bold text-white">Manage Courses</h2>
+          <p className="text-slate-400 mt-1">Create, edit, and publish your courses.</p>
         </div>
         <div className="flex items-center gap-3">
           <Link href="/admin/courses/new">
@@ -64,7 +64,7 @@ export default function CoursesManager() {
       </div>
 
       {/* Filters Bar */}
-      <div className="glass-card-light p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
+      <div className="glass-card p-4 flex flex-col md:flex-row gap-4 justify-between items-center border border-white/5 shadow-lg">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
           <input 
@@ -72,11 +72,11 @@ export default function CoursesManager() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search courses..." 
-            className="w-full bg-slate-100 border border-slate-200 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors text-slate-900"
+            className="w-full bg-slate-800/50 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-teal-500 transition-colors text-white placeholder:text-slate-500"
           />
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <button className="flex items-center gap-2 px-4 py-2 bg-slate-100 border border-slate-200 rounded-lg text-sm text-slate-600 hover:text-slate-900 transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-white/10 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
             <Filter size={16} />
             Filter
           </button>
@@ -84,10 +84,10 @@ export default function CoursesManager() {
       </div>
 
       {/* Courses Table */}
-      <div className="glass-card-light overflow-hidden">
+      <div className="glass-card overflow-hidden border border-white/10 shadow-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm whitespace-nowrap min-w-max">
-            <thead className="bg-slate-100 border-b border-slate-200 text-slate-500">
+            <thead className="bg-slate-800/50 border-b border-white/10 text-slate-400">
               <tr>
                 <th className="px-6 py-4 font-semibold">Course Details</th>
                 <th className="px-6 py-4 font-semibold">Category</th>
@@ -96,11 +96,11 @@ export default function CoursesManager() {
                 <th className="px-6 py-4 font-semibold text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/10">
+            <tbody className="divide-y divide-white/5">
               {loading ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
-                    <Loader2 className="animate-spin text-blue-500 mx-auto" />
+                    <Loader2 className="animate-spin text-teal-500 mx-auto" />
                   </td>
                 </tr>
               ) : filteredCourses.length === 0 ? (
@@ -111,42 +111,42 @@ export default function CoursesManager() {
                 </tr>
               ) : (
                 filteredCourses.map((course) => (
-                  <tr key={course._id} className="hover:bg-slate-100 transition-colors">
+                  <tr key={course.id} className="hover:bg-slate-800/40 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-16 h-12 bg-gray-800 rounded flex-shrink-0 overflow-hidden">
+                        <div className="w-16 h-12 bg-gray-800 rounded flex-shrink-0 overflow-hidden border border-white/5">
                           {course.thumbnail ? (
                             <img src={course.thumbnail} className="w-full h-full object-cover" alt="thumbnail" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-xs text-slate-400">No Img</div>
+                            <div className="w-full h-full flex items-center justify-center text-xs text-slate-500">No Img</div>
                           )}
                         </div>
                         <div>
-                          <p className="font-bold text-slate-900 line-clamp-1">{course.title}</p>
-                          <p className="text-xs text-slate-500 mt-0.5">Instructor: {course.instructor}</p>
+                          <p className="font-bold text-white line-clamp-1">{course.title}</p>
+                          <p className="text-xs text-slate-400 mt-0.5">Instructor: {course.instructor}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="px-2.5 py-1 bg-slate-100 border border-slate-200 rounded text-xs text-slate-600">
+                      <span className="px-2.5 py-1 bg-slate-800/80 border border-white/10 rounded text-xs text-slate-300">
                         {course.category}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-medium">${course.price}</td>
+                    <td className="px-6 py-4 font-medium text-teal-400">${course.price}</td>
                     <td className="px-6 py-4">
-                      <span className="px-2.5 py-1 bg-green-500/20 text-green-400 border border-green-500/20 rounded-full text-xs font-medium">
+                      <span className={`px-2.5 py-1 border rounded-full text-xs font-medium ${course.status === 'published' ? 'bg-teal-500/20 text-teal-400 border-teal-500/20' : course.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/20' : 'bg-slate-500/20 text-slate-400 border-slate-500/20'}`}>
                         {course.status}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex justify-end gap-3 text-slate-500">
-                        <Link href={`/courses/${course._id}`} className="hover:text-slate-900 transition-colors" title="View">
+                      <div className="flex justify-end gap-3 text-slate-400">
+                        <Link href={`/courses/${course.id}`} className="hover:text-white transition-colors" title="View">
                           <Eye size={18} />
                         </Link>
-                        <Link href={`/admin/courses/${course._id}/manage`} className="hover:text-blue-400 transition-colors" title="Manage">
+                        <Link href={`/admin/courses/${course.id}/manage`} className="hover:text-blue-400 transition-colors" title="Manage">
                           <Edit size={18} />
                         </Link>
-                        <button onClick={() => handleDelete(course._id)} className="hover:text-red-400 transition-colors" title="Delete">
+                        <button onClick={() => handleDelete(course.id)} className="hover:text-red-400 transition-colors" title="Delete">
                           <Trash size={18} />
                         </button>
                       </div>
