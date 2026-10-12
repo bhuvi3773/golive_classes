@@ -43,6 +43,17 @@ const SecureVideoPlayer = forwardRef<SecureVideoPlayerRef, SecureVideoPlayerProp
     return () => clearInterval(interval);
   }, []);
 
+  // Prevent keyboard shortcuts for saving (Ctrl+S / Cmd+S)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
@@ -114,12 +125,15 @@ const SecureVideoPlayer = forwardRef<SecureVideoPlayerRef, SecureVideoPlayerProp
     <div 
       ref={containerRef}
       className="relative w-full aspect-video bg-black rounded-xl overflow-hidden group select-none shadow-md"
+      onContextMenu={(e) => e.preventDefault()}
     >
       {/* Video Element */}
       <video
         ref={videoRef}
         src={src}
         className="w-full h-full object-contain cursor-pointer"
+        controlsList="nodownload nofullscreen noremoteplayback"
+        disablePictureInPicture
         playsInline
         preload="auto"
         onPlay={() => setIsPlaying(true)}
@@ -128,6 +142,14 @@ const SecureVideoPlayer = forwardRef<SecureVideoPlayerRef, SecureVideoPlayerProp
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
       />
+
+      {/* Dynamic Anti-Piracy Watermark */}
+      <div 
+        className="absolute pointer-events-none text-white/30 text-xs md:text-sm font-bold font-mono transition-all duration-1000 select-none z-10"
+        style={{ top: watermarkPos.top, left: watermarkPos.left }}
+      >
+        <span>{userEmail}</span>
+      </div>
 
       {/* Custom Controls (Overlay) */}
       <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col pointer-events-none">

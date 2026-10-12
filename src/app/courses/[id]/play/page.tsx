@@ -73,9 +73,11 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
   const { UserRepository } = await import('@/lib/repositories/user.repository');
   const dbUser = await UserRepository.findById(user.userId);
   const isOwner = dbUser && dbUser.purchasedCourses && dbUser.purchasedCourses.some((c: any) => c.id === course.id);
+  const isStaff = ["admin", "superadmin"].includes(user.role?.toLowerCase() || "");
+  const hasAccess = isOwner || isStaff;
   
-  if (!isOwner) {
-    // If they don't own it and they are trying to access a lecture that is NOT the first lecture, redirect them
+  if (!hasAccess) {
+    // If they don't own it and are not staff, and trying to access a lecture that is NOT the first lecture, redirect them
     if (activeLectureId !== firstLectureId) {
       redirect(`/courses/${course.id}`);
     } else {
@@ -90,6 +92,25 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
           sendCourseRecommendationEmail(dbUser.email, dbUser.name || 'Student', course.title, recommendations).catch(console.error);
         }
       }).catch(console.error);
+    }
+  }
+
+  // Resolve private S3 video content to short-lived presigned URL
+  let playableLecture = activeLecture;
+  if (activeLecture?.type === 'video' && activeLecture?.content) {
+    const { isS3Url, extractS3Key, getPresignedDownloadUrl } = await import('@/lib/s3');
+    if (isS3Url(activeLecture.content) || activeLecture.content.startsWith('courses/')) {
+      const s3Key = extractS3Key(activeLecture.content);
+      if (s3Key) {
+        try {
+          const presignedUrl = await getPresignedDownloadUrl(s3Key, 3600);
+          if (presignedUrl) {
+            playableLecture = { ...activeLecture, content: presignedUrl };
+          }
+        } catch (err) {
+          console.error("Failed to generate presigned download URL for course video:", err);
+        }
+      }
     }
   }
 
@@ -121,7 +142,7 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
         {/* Main Content Area */}
         <CoursePlayerClient 
           course={course}
-          activeLecture={activeLecture}
+          activeLecture={playableLecture}
           activeLectureId={activeLectureId}
           completedLectures={completedLectures}
           userEmail={user.email}
@@ -149,7 +170,7 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
                 <div className="space-y-1">
                   {section.lectures?.map((lecture: any, lIdx: number) => {
                     const isFirstLecture = lecture.id === firstLectureId;
-                    const isLocked = !isOwner && !isFirstLecture;
+                    const isLocked = !hasAccess && !isFirstLecture;
                     const isActive = activeLectureId === lecture.id;
                     const isCompleted = completedLectures.includes(lecture.id);
                     
