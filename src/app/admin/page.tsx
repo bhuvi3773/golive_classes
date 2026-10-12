@@ -1,6 +1,16 @@
+import { getUserFromCookie } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminOverview() {
+  const user = await getUserFromCookie();
+
+  if (!user || (user.role !== 'admin' && user.role !== 'superadmin')) {
+    redirect('/login');
+  }
+
   const users = await prisma.user.findMany({ include: { purchasedCourses: true } });
   const totalCourses = await prisma.course.count();
   
