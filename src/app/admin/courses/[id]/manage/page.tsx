@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { Plus, GripVertical, CheckCircle, Video, FileText, ChevronDown, UploadCloud, X, Award, Trash } from "lucide-react";
-import Link from "next/link";
+import { Plus, GripVertical, CheckCircle, Video, FileText, UploadCloud, X, Award, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import QuizBuilder from "@/components/admin/QuizBuilder";
 import AssignmentBuilder from "@/components/admin/AssignmentBuilder";
@@ -100,9 +99,6 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
       setIsUploading(true);
       const formData = new FormData();
       formData.append('file', file);
-      
-      // Explicitly tell the backend this is a video so it knows to use the Videos Folder ID
-      // This prevents the "Storage Quota" error if the browser fails to detect the video mime type
       formData.append('folderType', 'video');
       
       try {
@@ -123,7 +119,7 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
             return sec;
           }));
         } else {
-          alert(`Upload failed: ${data.error || "Please check your Cloudinary credentials in .env.local"}`);
+          alert(`Upload failed: ${data.error || "Please check upload configuration"}`);
         }
       } catch (err) {
         console.error(err);
@@ -149,7 +145,6 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
   const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // You can add a loading state specifically for thumbnail if you want, or reuse isUploading
       setIsUploading(true);
       const formData = new FormData();
       formData.append('file', file);
@@ -245,7 +240,7 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
 
   const toggleUpload = (lectureId: number, type: 'video' | 'article' | 'quiz' | 'assignment') => {
     if (activeUpload?.lectureId === lectureId && activeUpload?.type === type) {
-      setActiveUpload(null); // toggle off
+      setActiveUpload(null);
     } else {
       setActiveUpload({ lectureId, type });
     }
@@ -298,173 +293,175 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
   };
 
   return (
-    <div className="flex min-h-[75vh] glass-card rounded-xl overflow-hidden border border-white/10 mt-6 shadow-2xl">
-      
-      {/* Instructor Sidebar */}
-      <div className="w-64 bg-slate-900/50 backdrop-blur-sm border-r border-white/10 flex flex-col p-4 shrink-0">
-        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Plan your course</h3>
+    <div className="flex min-h-[75vh] bg-[#FAF7F0] rounded-2xl overflow-hidden border border-[#E9DFCC] mt-6 shadow-sm text-[#1B2E26]">
+      {/* Faculty Sidebar */}
+      <div className="w-64 bg-[#F8F4EC] border-r border-[#E9DFCC] flex flex-col p-5 shrink-0">
+        <h3 className="text-xs font-bold text-[#3D5A4C] uppercase tracking-wider mb-4 px-2">Plan Curriculum</h3>
         <button 
           onClick={() => setActiveTab('goals')}
-          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-left ${activeTab === 'goals' ? 'bg-teal-500/10 text-teal-400 border-l-2 border-teal-500' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+          className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors text-left text-xs font-semibold ${activeTab === 'goals' ? 'bg-[#DCE6D8] text-[#24483C] border-l-2 border-[#24483C]' : 'text-[#556960] hover:bg-[#E9DFCC]/40 hover:text-[#1B2E26]'}`}
         >
-          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${activeTab === 'goals' ? 'border-teal-400' : 'border-slate-500'}`}></div>
-          Intended learners
+          <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${activeTab === 'goals' ? 'border-[#24483C] bg-[#24483C]' : 'border-[#556960]'}`}></div>
+          Intended Scholars
         </button>
 
-        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mt-8 mb-4 px-2">Create your content</h3>
+        <h3 className="text-xs font-bold text-[#3D5A4C] uppercase tracking-wider mt-8 mb-4 px-2">Course Syllabus</h3>
         <button 
           onClick={() => setActiveTab('curriculum')}
-          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-left ${activeTab === 'curriculum' ? 'bg-teal-500/10 text-teal-400 border-l-2 border-teal-500' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+          className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors text-left text-xs font-semibold ${activeTab === 'curriculum' ? 'bg-[#DCE6D8] text-[#24483C] border-l-2 border-[#24483C]' : 'text-[#556960] hover:bg-[#E9DFCC]/40 hover:text-[#1B2E26]'}`}
         >
-          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${activeTab === 'curriculum' ? 'border-teal-400 bg-teal-400' : 'border-slate-500 bg-transparent'}`}></div>
-          Curriculum
+          <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${activeTab === 'curriculum' ? 'border-[#24483C] bg-[#24483C]' : 'border-[#556960]'}`}></div>
+          Curriculum Modules
         </button>
 
-        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mt-8 mb-4 px-2">Publish your course</h3>
+        <h3 className="text-xs font-bold text-[#3D5A4C] uppercase tracking-wider mt-8 mb-4 px-2">Publishing & Listing</h3>
         <button 
           onClick={() => setActiveTab('landing')}
-          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-left ${activeTab === 'landing' ? 'bg-teal-500/10 text-teal-400 border-l-2 border-teal-500' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+          className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors text-left text-xs font-semibold ${activeTab === 'landing' ? 'bg-[#DCE6D8] text-[#24483C] border-l-2 border-[#24483C]' : 'text-[#556960] hover:bg-[#E9DFCC]/40 hover:text-[#1B2E26]'}`}
         >
-          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${activeTab === 'landing' ? 'border-teal-400' : 'border-slate-500'}`}></div>
-          Course landing page
+          <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${activeTab === 'landing' ? 'border-[#24483C] bg-[#24483C]' : 'border-[#556960]'}`}></div>
+          Course Landing Page
         </button>
         <button 
           onClick={() => setActiveTab('pricing')}
-          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-left ${activeTab === 'pricing' ? 'bg-teal-500/10 text-teal-400 border-l-2 border-teal-500' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+          className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors text-left text-xs font-semibold ${activeTab === 'pricing' ? 'bg-[#DCE6D8] text-[#24483C] border-l-2 border-[#24483C]' : 'text-[#556960] hover:bg-[#E9DFCC]/40 hover:text-[#1B2E26]'}`}
         >
-          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${activeTab === 'pricing' ? 'border-teal-400' : 'border-slate-500'}`}></div>
-          Pricing
+          <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${activeTab === 'pricing' ? 'border-[#24483C] bg-[#24483C]' : 'border-[#556960]'}`}></div>
+          Tuition Pricing
         </button>
 
-        <div className="mt-auto pt-8 pb-2 px-2 space-y-3">
+        <div className="mt-auto pt-8 pb-2 space-y-2.5">
           <button 
             onClick={saveCourse}
-            className="w-full bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-md font-bold transition-colors border border-white/10"
+            className="w-full bg-[#FAF7F0] hover:bg-[#E9DFCC]/50 text-[#1B2E26] py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors border border-[#E9DFCC] shadow-sm"
           >
             Save Draft
           </button>
           <button 
             onClick={publishCourse}
-            className="w-full btn-primary py-2 shadow-[0_0_15px_rgba(20,184,166,0.2)]"
+            className="w-full bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
           >
-            Submit for Review
+            Submit For Review
           </button>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 p-8 bg-slate-900/40 overflow-y-auto">
+      <div className="flex-1 p-8 bg-[#FAF7F0] overflow-y-auto">
         
         {activeTab === 'curriculum' && (
-          <div className="max-w-4xl animate-in fade-in">
-            <h2 className="text-2xl font-bold text-white mb-2">Curriculum</h2>
-            <p className="text-slate-400 mb-8 pb-6 border-b border-white/10">
-              Start putting together your course by creating sections, lectures and practice activities. Use your outline to structure your content and label your sections and lectures clearly.
-            </p>
+          <div className="max-w-4xl animate-in fade-in space-y-6">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Curriculum Architecture</span>
+              <h2 className="font-serif text-2xl font-bold text-[#1B2E26]">Syllabus Modules & Content</h2>
+              <p className="text-[#556960] text-xs mt-1 pb-4 border-b border-[#E9DFCC]">
+                Structure your course into cohesive chronological sections, lectures, assignments, and knowledge evaluations.
+              </p>
+            </div>
 
             <div className="space-y-6">
               {sections.map((section, sIdx) => (
-                <div key={section.id} className="bg-slate-800/40 border border-white/10 rounded-lg overflow-hidden shadow-md">
+                <div key={section.id} className="bg-[#F8F4EC] border border-[#E9DFCC] rounded-2xl overflow-hidden shadow-sm">
                   {/* Section Header */}
-                  <div className="bg-slate-900/50 p-4 flex items-center gap-3 border-b border-white/10 group">
-                    <span className="font-bold text-sm text-slate-400">Section {sIdx + 1}:</span>
+                  <div className="bg-[#FAF7F0] p-4 flex items-center gap-3 border-b border-[#E9DFCC] group">
+                    <span className="font-bold text-xs uppercase tracking-wider text-[#3D5A4C]">Section {sIdx + 1}:</span>
                     <input 
                       type="text" 
                       value={section.title}
                       onChange={(e) => updateTitle(section.id, null, e.target.value)}
-                      className="bg-transparent text-white font-bold text-base focus:outline-none focus:border-b focus:border-teal-500 w-full placeholder:text-slate-500"
+                      className="bg-transparent text-[#1B2E26] font-serif font-bold text-base focus:outline-none focus:border-b focus:border-[#24483C] w-full"
                     />
-                    <button onClick={() => deleteSection(section.id)} className="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-red-400 transition-opacity p-2">
-                      <X size={18} />
+                    <button onClick={() => deleteSection(section.id)} className="opacity-0 group-hover:opacity-100 text-[#556960] hover:text-[#8B381A] transition-opacity p-1.5" title="Delete section">
+                      <X size={16} />
                     </button>
                   </div>
 
                   {/* Lectures */}
                   <div className="p-4 space-y-3">
                     {section.lectures.map((lecture, lIdx) => (
-                      <div key={lecture.id} className={`border bg-slate-900/50 rounded-md transition-colors ${activeUpload?.lectureId === lecture.id ? 'border-teal-500/50 shadow-[0_0_10px_rgba(20,184,166,0.1)]' : 'border-white/5'}`}>
+                      <div key={lecture.id} className={`border bg-[#FAF7F0] rounded-xl transition-colors ${activeUpload?.lectureId === lecture.id ? 'border-[#24483C] shadow-sm' : 'border-[#E9DFCC]'}`}>
                         <div className="p-3 flex items-center gap-3 group">
-                          <GripVertical size={16} className="text-slate-500 cursor-grab opacity-0 group-hover:opacity-100" />
-                          <CheckCircle size={16} className={lecture.content ? "text-teal-400" : "text-slate-600"} />
-                          <span className="font-medium text-sm text-slate-400 whitespace-nowrap">Lecture {lIdx + 1}:</span>
+                          <GripVertical size={15} className="text-[#556960] cursor-grab opacity-0 group-hover:opacity-100" />
+                          <CheckCircle size={16} className={lecture.content ? "text-[#24483C]" : "text-[#556960]/40"} />
+                          <span className="font-bold text-xs uppercase tracking-wider text-[#556960] whitespace-nowrap">Lecture {lIdx + 1}:</span>
                           <input 
                             type="text" 
                             value={lecture.title}
                             onChange={(e) => updateTitle(section.id, lecture.id, e.target.value)}
-                            className="bg-transparent text-white text-sm focus:outline-none focus:border-b focus:border-teal-500 flex-1 min-w-0 placeholder:text-slate-600"
+                            className="bg-transparent text-[#1B2E26] text-xs font-medium focus:outline-none focus:border-b focus:border-[#24483C] flex-1 min-w-0"
                           />
                           {lecture.content && (
-                            <div className="flex items-center gap-1 bg-teal-500/10 px-2 py-1 rounded border border-teal-500/20 mr-2">
-                              <span className="text-xs text-teal-400 truncate max-w-[150px]" title={lecture.content}>
-                                {lecture.type === 'video' ? `🎥 ${lecture.originalName || 'Video Attached'}` : lecture.type === 'quiz' ? `🏆 Quiz Added` : lecture.type === 'assignment' ? `📝 Assignment` : `📄 Article`}
+                            <div className="flex items-center gap-1.5 bg-[#DCE6D8] px-2.5 py-1 rounded-lg border border-[#24483C]/20 mr-2">
+                              <span className="text-[11px] font-semibold text-[#24483C] truncate max-w-[150px]" title={lecture.content}>
+                                {lecture.type === 'video' ? `🎥 ${lecture.originalName || 'Video Attached'}` : lecture.type === 'quiz' ? `🏆 Quiz Added` : lecture.type === 'assignment' ? `📝 Practicum` : `📄 Article`}
                               </span>
                               <button 
                                 onClick={() => removeContent(section.id, lecture.id)}
-                                className="text-teal-400 hover:text-red-400 hover:bg-red-500/10 p-0.5 rounded transition-colors ml-1"
+                                className="text-[#24483C] hover:text-[#8B381A] p-0.5 rounded transition-colors ml-1"
                                 title="Remove content"
                               >
                                 <X size={12} />
                               </button>
                             </div>
                           )}
-                          <div className="flex gap-2 shrink-0">
+                          <div className="flex gap-1.5 shrink-0">
                             <button 
                               onClick={() => toggleUpload(lecture.id, 'video')}
-                              className={`flex items-center gap-1 text-xs px-2 py-1.5 rounded border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'video' ? 'bg-teal-500/20 text-teal-300 border-teal-500/50' : 'bg-slate-800 hover:bg-slate-700 border-white/10 text-slate-300'}`}
+                              className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'video' ? 'bg-[#24483C] text-[#F8F4EC] border-[#24483C]' : 'bg-[#F8F4EC] hover:bg-[#E9DFCC]/50 border-[#E9DFCC] text-[#24483C]'}`}
                             >
-                              <Video size={14} /> + Video
+                              <Video size={13} /> + Video
                             </button>
                             <button 
                               onClick={() => toggleUpload(lecture.id, 'article')}
-                              className={`flex items-center gap-1 text-xs px-2 py-1.5 rounded border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'article' ? 'bg-teal-500/20 text-teal-300 border-teal-500/50' : 'bg-slate-800 hover:bg-slate-700 border-white/10 text-slate-300'}`}
+                              className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'article' ? 'bg-[#24483C] text-[#F8F4EC] border-[#24483C]' : 'bg-[#F8F4EC] hover:bg-[#E9DFCC]/50 border-[#E9DFCC] text-[#24483C]'}`}
                             >
-                              <FileText size={14} /> + Article
+                              <FileText size={13} /> + Article
                             </button>
                             <button 
                               onClick={() => toggleUpload(lecture.id, 'quiz')}
-                              className={`flex items-center gap-1 text-xs px-2 py-1.5 rounded border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'quiz' ? 'bg-teal-500/20 text-teal-300 border-teal-500/50' : 'bg-slate-800 hover:bg-slate-700 border-white/10 text-slate-300'}`}
+                              className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'quiz' ? 'bg-[#24483C] text-[#F8F4EC] border-[#24483C]' : 'bg-[#F8F4EC] hover:bg-[#E9DFCC]/50 border-[#E9DFCC] text-[#24483C]'}`}
                             >
-                              <Award size={14} /> + Quiz
+                              <Award size={13} /> + Quiz
                             </button>
                             <button 
                               onClick={() => toggleUpload(lecture.id, 'assignment')}
-                              className={`flex items-center gap-1 text-xs px-2 py-1.5 rounded border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'assignment' ? 'bg-teal-500/20 text-teal-300 border-teal-500/50' : 'bg-slate-800 hover:bg-slate-700 border-white/10 text-slate-300'}`}
+                              className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'assignment' ? 'bg-[#24483C] text-[#F8F4EC] border-[#24483C]' : 'bg-[#F8F4EC] hover:bg-[#E9DFCC]/50 border-[#E9DFCC] text-[#24483C]'}`}
                             >
-                              <FileText size={14} /> + Assignment
+                              <FileText size={13} /> + Practicum
                             </button>
-                            <button onClick={() => deleteLecture(section.id, lecture.id)} className="p-1.5 hover:bg-red-500/10 hover:text-red-400 rounded text-slate-500 transition-colors">
-                              <X size={16} />
+                            <button onClick={() => deleteLecture(section.id, lecture.id)} className="p-1.5 hover:text-[#8B381A] rounded text-[#556960] transition-colors" title="Delete lecture">
+                              <X size={15} />
                             </button>
                           </div>
                         </div>
 
                         {/* Interactive Editor / Dropzone */}
                         {activeUpload?.lectureId === lecture.id && (
-                          <div className="px-10 pb-4 pt-2 border-t border-white/10 bg-slate-900/60 animate-in slide-in-from-top-2">
+                          <div className="px-8 pb-5 pt-3 border-t border-[#E9DFCC] bg-[#F8F4EC] rounded-b-xl animate-in slide-in-from-top-1">
                             {activeUpload.type === 'video' ? (
                               <div>
-                                <h4 className="text-sm font-medium text-white mb-2">Video Content</h4>
+                                <h4 className="text-xs font-bold uppercase tracking-wider text-[#3D5A4C] mb-2">Video Resource Delivery</h4>
                                 {lecture.type === 'video' && lecture.content ? (
-                                  <div className="flex items-center justify-between bg-teal-500/10 border border-teal-500/20 p-4 rounded-lg">
+                                  <div className="flex items-center justify-between bg-[#DCE6D8] border border-[#24483C]/20 p-4 rounded-xl">
                                     <div className="flex items-center gap-3">
-                                      <div className="w-10 h-10 bg-teal-500/20 rounded-full flex items-center justify-center text-teal-400">
-                                        <Video size={20} />
+                                      <div className="w-10 h-10 bg-[#24483C] rounded-xl flex items-center justify-center text-[#F8F4EC]">
+                                        <Video size={18} />
                                       </div>
                                       <div>
-                                        <p className="font-bold text-white text-sm">{lecture.originalName || "Video File Attached"}</p>
-                                        <p className="text-xs text-teal-400 font-medium">Successfully uploaded</p>
+                                        <p className="font-bold text-[#1B2E26] text-xs">{lecture.originalName || "Video Attached"}</p>
+                                        <p className="text-[11px] text-[#24483C] font-semibold">Available for secure streaming</p>
                                       </div>
                                     </div>
                                     <button 
                                       onClick={() => handleDeleteContent(section.id, lecture.id)}
-                                      className="p-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded-lg transition-colors border border-red-500/20"
-                                      title="Delete Video"
+                                      className="p-2 bg-[#C96F4A]/10 text-[#8B381A] hover:bg-[#C96F4A]/20 rounded-lg transition-colors border border-[#C96F4A]/30"
+                                      title="Remove Video"
                                     >
-                                      <Trash size={18} />
+                                      <Trash size={16} />
                                     </button>
                                   </div>
                                 ) : (
-                                  <label className="border-2 border-dashed border-white/20 rounded-lg p-8 flex flex-col items-center justify-center text-center hover:bg-slate-800/80 hover:border-teal-500 transition-colors cursor-pointer group relative bg-slate-900/40">
+                                  <label className="border-2 border-dashed border-[#E9DFCC] rounded-xl p-8 flex flex-col items-center justify-center text-center hover:bg-[#FAF7F0] hover:border-[#24483C] transition-colors cursor-pointer group relative bg-[#FAF7F0]">
                                     <input 
                                       type="file" 
                                       accept="video/mp4,video/webm" 
@@ -474,14 +471,14 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
                                     />
                                     {isUploading ? (
                                       <div className="flex flex-col items-center">
-                                        <div className="w-8 h-8 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mb-3"></div>
-                                        <p className="text-sm font-medium text-teal-400">Uploading...</p>
+                                        <div className="w-8 h-8 border-3 border-[#24483C] border-t-transparent rounded-full animate-spin mb-3"></div>
+                                        <p className="text-xs font-semibold text-[#24483C]">Encoding & dispatching to media storage...</p>
                                       </div>
                                     ) : (
                                       <>
-                                        <UploadCloud size={32} className="text-slate-500 group-hover:text-teal-400 mb-3 transition-colors" />
-                                        <p className="text-sm font-medium text-slate-300">Click to upload your video</p>
-                                        <p className="text-xs text-slate-500 mt-1">MP4 or WebM format. Max 4GB.</p>
+                                        <UploadCloud size={32} className="text-[#556960] group-hover:text-[#24483C] mb-2 transition-colors" />
+                                        <p className="text-xs font-semibold text-[#1B2E26]">Select or drag video lecture media</p>
+                                        <p className="text-[11px] text-[#556960] mt-0.5">MP4 or WebM format. High definition recommended.</p>
                                       </>
                                     )}
                                   </label>
@@ -489,16 +486,16 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
                               </div>
                             ) : activeUpload.type === 'article' ? (
                               <div>
-                                <h4 className="text-sm font-medium text-white mb-2">Write Article Content</h4>
+                                <h4 className="text-xs font-bold uppercase tracking-wider text-[#3D5A4C] mb-2">Academic Treatise / Article Text</h4>
                                 <textarea 
                                   rows={5}
-                                  placeholder="Type your article content here..."
-                                  className="w-full bg-slate-800/50 border border-white/10 rounded-lg p-4 text-sm text-white focus:outline-none focus:border-teal-500 resize-y placeholder:text-slate-500"
+                                  placeholder="Author comprehensive lecture discourse and code samples..."
+                                  className="w-full bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl p-4 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C] resize-y"
                                 ></textarea>
                                 <div className="flex justify-end mt-2">
                                   <button 
                                     onClick={() => handleSaveArticle(section.id, lecture.id, "content")}
-                                    className="btn-primary text-xs px-4 py-2"
+                                    className="bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] text-xs font-semibold uppercase tracking-wider px-4 py-2 rounded-xl"
                                   >
                                     Save Article
                                   </button>
@@ -522,9 +519,9 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
                     
                     <button 
                       onClick={() => addLecture(section.id)}
-                      className="mt-4 flex items-center gap-2 text-sm text-teal-400 hover:text-teal-300 font-medium ml-8"
+                      className="mt-4 flex items-center gap-1.5 text-xs text-[#24483C] hover:text-[#1B2E26] font-bold uppercase tracking-wider"
                     >
-                      <Plus size={16} /> Add Lecture
+                      <Plus size={15} /> Append Lecture
                     </button>
                   </div>
                 </div>
@@ -533,96 +530,99 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
 
             <button 
               onClick={addSection}
-              className="mt-8 flex items-center gap-2 px-4 py-2 border border-teal-500/30 bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 font-bold rounded-lg transition-colors"
+              className="mt-6 flex items-center gap-2 px-5 py-2.5 border border-[#24483C]/30 bg-[#DCE6D8] hover:bg-[#24483C] hover:text-[#F8F4EC] text-[#24483C] font-semibold text-xs uppercase tracking-wider rounded-xl transition-colors shadow-sm"
             >
-              <Plus size={18} /> Add Section
+              <Plus size={16} /> Append Curriculum Section
             </button>
           </div>
         )}
 
         {activeTab === 'goals' && course && (
-          <div className="max-w-4xl animate-in fade-in">
-            <h2 className="text-2xl font-bold text-white mb-2">Intended learners</h2>
-            <p className="text-slate-400 mb-8 pb-6 border-b border-white/10">
-              The descriptions you write here will help students decide if your course is the right one for them.
-            </p>
+          <div className="max-w-4xl animate-in fade-in space-y-6">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Pedagogical Objectives</span>
+              <h2 className="font-serif text-2xl font-bold text-[#1B2E26]">Intended Learners & Outcomes</h2>
+              <p className="text-[#556960] text-xs mt-1 pb-4 border-b border-[#E9DFCC]">
+                Detail what competencies scholars will develop and what prerequisites are required.
+              </p>
+            </div>
             
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold text-white mb-2">What will students learn in your course?</h3>
-                <p className="text-sm text-slate-400 mb-4">You must enter at least 1 learning objective or outcome.</p>
+                <h3 className="font-serif text-base font-bold text-[#1B2E26] mb-1">What will scholars master in this curriculum?</h3>
+                <p className="text-xs text-[#556960] mb-3">State tangible learning outcomes (one objective per line).</p>
                 <textarea 
                   value={course.goals?.join('\n') || ''}
                   onChange={(e) => updateCourseField('goals', e.target.value.split('\n'))}
-                  placeholder="Example: Define the roles and responsibilities of a project manager"
+                  placeholder="Example: Design and deploy fault-tolerant microservices architectures"
                   rows={4}
-                  className="w-full bg-slate-800/50 border border-white/10 rounded-lg p-4 text-sm text-white focus:outline-none focus:border-teal-500 placeholder:text-slate-500"
+                  className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl p-4 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]"
                 ></textarea>
-                <p className="text-xs text-slate-500 mt-1">Enter one goal per line.</p>
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-white mb-2">What are the requirements or prerequisites for taking your course?</h3>
+                <h3 className="font-serif text-base font-bold text-[#1B2E26] mb-1">Prerequisites and prior knowledge requirements</h3>
                 <textarea 
                   value={course.requirements?.join('\n') || ''}
                   onChange={(e) => updateCourseField('requirements', e.target.value.split('\n'))}
-                  placeholder="Example: No programming experience needed."
+                  placeholder="Example: Working familiarity with TypeScript and relational data models."
                   rows={3}
-                  className="w-full bg-slate-800/50 border border-white/10 rounded-lg p-4 text-sm text-white focus:outline-none focus:border-teal-500 placeholder:text-slate-500"
+                  className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl p-4 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]"
                 ></textarea>
-                <p className="text-xs text-slate-500 mt-1">Enter one requirement per line.</p>
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-white mb-2">Who is this course for?</h3>
+                <h3 className="font-serif text-base font-bold text-[#1B2E26] mb-1">Target Scholar Profile</h3>
                 <textarea 
                   value={course.targetAudience?.join('\n') || ''}
                   onChange={(e) => updateCourseField('targetAudience', e.target.value.split('\n'))}
-                  placeholder="Example: Beginner Python developers curious about data science"
+                  placeholder="Example: Software engineers and system architects aspiring toward senior leadership."
                   rows={3}
-                  className="w-full bg-slate-800/50 border border-white/10 rounded-lg p-4 text-sm text-white focus:outline-none focus:border-teal-500 placeholder:text-slate-500"
+                  className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl p-4 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]"
                 ></textarea>
-                <p className="text-xs text-slate-500 mt-1">Enter one audience per line.</p>
               </div>
             </div>
           </div>
         )}
 
         {activeTab === 'landing' && course && (
-          <div className="max-w-4xl animate-in fade-in">
-            <h2 className="text-2xl font-bold text-white mb-2">Course landing page</h2>
-            <p className="text-slate-400 mb-8 pb-6 border-b border-white/10">
-              Your course landing page is crucial to your success. If it's done right, it can also help you gain visibility in search engines like Google.
-            </p>
+          <div className="max-w-4xl animate-in fade-in space-y-6">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Public Catalogue Presence</span>
+              <h2 className="font-serif text-2xl font-bold text-[#1B2E26]">Course Landing Page Specification</h2>
+              <p className="text-[#556960] text-xs mt-1 pb-4 border-b border-[#E9DFCC]">
+                The public storefront and syllabus presentation viewed by prospective scholars.
+              </p>
+            </div>
             
-            <div className="space-y-6">
+            <div className="space-y-5">
               <div>
-                <label className="block text-sm font-bold text-slate-300 mb-2">Course title</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#3D5A4C] mb-1.5">Official Title</label>
                 <input 
                   type="text" 
                   value={course.title || ''}
                   onChange={(e) => updateCourseField('title', e.target.value)}
-                  className="w-full bg-slate-800/50 border border-white/10 rounded-lg p-4 text-sm text-white focus:outline-none focus:border-teal-500"
+                  className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl p-3.5 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-300 mb-2">Course description</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#3D5A4C] mb-1.5">Comprehensive Course Overview</label>
                 <textarea 
                   value={course.description || ''}
                   onChange={(e) => updateCourseField('description', e.target.value)}
-                  rows={6}
-                  className="w-full bg-slate-800/50 border border-white/10 rounded-lg p-4 text-sm text-white focus:outline-none focus:border-teal-500"
+                  rows={5}
+                  className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl p-3.5 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]"
                 ></textarea>
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-sm font-bold text-slate-300 mb-2">Category</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#3D5A4C] mb-1.5">Academic Discipline</label>
                   <select 
                     value={course.category || ''}
                     onChange={(e) => updateCourseField('category', e.target.value)}
-                    className="w-full bg-slate-800/50 border border-white/10 rounded-lg p-4 text-sm text-white focus:outline-none focus:border-teal-500 [&>option]:bg-slate-900"
+                    className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl p-3 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]"
                   >
                     <option value="">Select Category</option>
                     <option value="Web Development">Web Development</option>
@@ -634,23 +634,23 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-300 mb-2">Course image (Thumbnail)</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#3D5A4C] mb-1.5">Course Artwork (Thumbnail)</label>
                 <div className="flex flex-col md:flex-row gap-6 items-start">
                   {course.thumbnail ? (
-                    <div className="relative w-64 h-36 bg-slate-900 rounded-lg overflow-hidden border border-white/10 group">
+                    <div className="relative w-64 h-36 bg-[#E9DFCC] rounded-xl overflow-hidden border border-[#E9DFCC] group shadow-sm">
                       <img src={course.thumbnail} alt="Thumbnail preview" className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                      <div className="absolute inset-0 bg-[#24483C]/70 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                          <button 
                             onClick={() => updateCourseField('thumbnail', '')} 
-                            className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
+                            className="bg-[#C96F4A] text-[#F8F4EC] p-2 rounded-xl transition-colors"
                             title="Remove Thumbnail"
                          >
-                            <Trash size={18} />
+                            <Trash size={16} />
                          </button>
                       </div>
                     </div>
                   ) : (
-                    <label className="w-64 h-36 border-2 border-dashed border-white/20 rounded-lg flex flex-col items-center justify-center text-center hover:bg-slate-800/80 hover:border-teal-500 transition-colors cursor-pointer relative bg-slate-900/40">
+                    <label className="w-64 h-36 border-2 border-dashed border-[#E9DFCC] rounded-xl flex flex-col items-center justify-center text-center hover:border-[#24483C] transition-colors cursor-pointer relative bg-[#F8F4EC]">
                       <input 
                         type="file" 
                         accept="image/png,image/jpeg,image/webp" 
@@ -658,13 +658,14 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
                         onChange={handleThumbnailUpload}
                         disabled={isUploading}
                       />
-                      <UploadCloud size={28} className="text-slate-500 mb-2 group-hover:text-teal-400 transition-colors" />
-                      <p className="text-sm font-medium text-slate-300">Upload Image</p>
+                      <UploadCloud size={24} className="text-[#556960] mb-1.5 transition-colors" />
+                      <p className="text-xs font-semibold text-[#1B2E26]">Select Course Artwork</p>
+                      <p className="text-[10px] text-[#556960] mt-0.5">Recommended: 16:9 ratio</p>
                     </label>
                   )}
-                  <div className="flex-1 text-sm text-slate-400 space-y-2">
-                    <p>Upload your course image here. It must meet our image quality standards to be accepted.</p>
-                    <p>Important guidelines: 750x422 pixels; .jpg, .jpeg,. gif, or .png. no text on the image.</p>
+                  <div className="flex-1 text-xs text-[#556960] space-y-1 leading-relaxed">
+                    <p>Select academic artwork suitable for catalogue display and official diplomas.</p>
+                    <p>Recommended specifications: 1280x720 pixels or greater. Clean framing without cluttered text overlays.</p>
                   </div>
                 </div>
               </div>
@@ -673,8 +674,8 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
         )}
 
         {activeTab === 'pricing' && (
-          <div className="h-full flex items-center justify-center text-slate-500">
-            <p>This section is under development. Please use the Curriculum tab to upload videos.</p>
+          <div className="h-full flex items-center justify-center text-[#556960] text-sm">
+            <p>Tuition schedule configurations can be customized here. Use Curriculum modules to author lectures.</p>
           </div>
         )}
       </div>

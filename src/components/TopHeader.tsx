@@ -46,12 +46,12 @@ export default function TopHeader() {
   };
 
   return (
-    <header className="h-16 border-b border-white/10 bg-slate-900/60 backdrop-blur-2xl sticky top-0 z-40 px-6 md:px-10 flex items-center justify-end gap-4 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.5)]">
+    <header className="h-16 border-b border-[#E9DFCC] bg-[#FFFFFF]/90 backdrop-blur-md sticky top-0 z-40 px-6 md:px-10 flex items-center justify-end gap-4 shadow-sm">
       {/* Search */}
       <div className="flex items-center">
         {isSearchOpen ? (
-          <form onSubmit={handleSearch} className="flex items-center bg-slate-800/50 border border-white/10 rounded-full px-3 py-1.5 animate-in slide-in-from-right-4 fade-in">
-            <Search size={16} className="text-slate-400 mr-2" />
+          <form onSubmit={handleSearch} className="flex items-center bg-[#F4EFE6] border border-[#E9DFCC] rounded-full px-3 py-1.5 animate-in slide-in-from-right-4 fade-in">
+            <Search size={16} className="text-[#4A5E54] mr-2" />
             <input
               type="text"
               autoFocus
@@ -59,13 +59,13 @@ export default function TopHeader() {
               onChange={(e) => setSearchQuery(e.target.value)}
               onBlur={() => { if (!searchQuery) setIsSearchOpen(false); }}
               placeholder="Search courses..."
-              className="bg-transparent text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none w-48"
+              className="bg-transparent text-sm text-[#1B2E26] placeholder:text-[#72857C] focus:outline-none w-48"
             />
           </form>
         ) : (
           <button
             onClick={() => setIsSearchOpen(true)}
-            className="p-2 text-slate-400 hover:text-teal-400 hover:bg-teal-500/10 rounded-full transition-colors"
+            className="p-2 text-[#4A5E54] hover:text-[#24483C] hover:bg-[#EEF3EC] rounded-full transition-colors"
             title="Search"
           >
             <Search size={20} />
@@ -74,7 +74,7 @@ export default function TopHeader() {
       </div>
 
       {/* Notifications */}
-      <button className="p-2 text-slate-400 hover:text-teal-400 hover:bg-teal-500/10 rounded-full transition-colors">
+      <button className="p-2 text-[#4A5E54] hover:text-[#24483C] hover:bg-[#EEF3EC] rounded-full transition-colors">
         <Bell size={20} />
       </button>
 
@@ -82,25 +82,25 @@ export default function TopHeader() {
       <div className="relative">
         <button
           onClick={() => setShowProfileMenu(!showProfileMenu)}
-          className="w-9 h-9 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold border border-teal-500/50 hover:bg-teal-500/30 transition-colors"
+          className="w-9 h-9 rounded-full bg-[#24483C] text-[#F8F4EC] flex items-center justify-center font-bold border border-[#19332A] hover:bg-[#19332A] transition-colors shadow-sm"
         >
           {isLoggedIn ? "U" : <User size={18} />}
         </button>
 
         {showProfileMenu && (
-          <div className="absolute right-0 mt-2 w-48 bg-slate-800 border border-white/10 rounded-lg shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2">
+          <div className="absolute right-0 mt-2 w-48 bg-[#FFFFFF] border border-[#E9DFCC] rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2">
             {isLoggedIn ? (
               <>
-                <Link href="/profile" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-2 px-4 py-3 text-sm text-slate-300 hover:text-white hover:bg-slate-700">
+                <Link href="/profile" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-2 px-4 py-3 text-sm text-[#2C3E35] hover:text-[#1B2E26] hover:bg-[#F4EFE6] transition-colors">
                   <User size={16} /> Profile
                 </Link>
-                <div className="h-px bg-white/10 w-full"></div>
-                <button onClick={handleLogout} className="flex w-full items-center gap-2 px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-slate-700">
+                <div className="h-px bg-[#E9DFCC] w-full"></div>
+                <button onClick={handleLogout} className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#C96F4A] hover:text-[#B25D39] hover:bg-[#F4EFE6] transition-colors">
                   <LogOut size={16} /> Sign Out
                 </button>
               </>
             ) : (
-              <Link href="/login" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-2 px-4 py-3 text-sm text-slate-300 hover:text-white hover:bg-slate-700">
+              <Link href="/login" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-2 px-4 py-3 text-sm text-[#2C3E35] hover:text-[#1B2E26] hover:bg-[#F4EFE6] transition-colors">
                 <User size={16} /> Sign In
               </Link>
             )}

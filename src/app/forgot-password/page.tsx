@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, ArrowLeft } from "lucide-react";
+import { Mail, ArrowLeft, KeyRound } from "lucide-react";
 import Link from "next/link";
 
 export default function ForgotPasswordPage() {
@@ -39,51 +39,57 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-[90vh] items-center justify-center py-12 px-4 relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="w-full max-w-md glass-card shadow-2xl rounded-2xl p-8 md:p-10 space-y-8 relative z-10">
-        <Link href="/login" className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors w-fit">
-          <ArrowLeft size={16} /> Back to login
+    <div className="flex min-h-[90vh] items-center justify-center py-12 px-4 relative">
+      <div className="w-full max-w-md bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-8 md:p-10 space-y-6 relative z-10 text-[#1B2E26]">
+        <Link href="/login" className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#556960] hover:text-[#24483C] transition-colors w-fit">
+          <ArrowLeft size={14} /> Back to login
         </Link>
         
-        <div>
-          <h2 className="text-3xl font-extrabold text-white mb-2">Forgot Password</h2>
-          <p className="text-slate-400 text-sm">
-            Enter the email address associated with your account and we'll send you a link to reset your password.
+        <div className="space-y-2">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#24483C] text-[#F8F4EC] shadow-sm mb-1">
+            <KeyRound size={22} />
+          </div>
+          <h2 className="font-serif text-3xl font-bold text-[#1B2E26] tracking-tight">Recover Access</h2>
+          <p className="text-[#556960] text-sm">
+            Enter the academic email address associated with your account and we will dispatch a secure reset token.
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm">
+          <div className="bg-[#C96F4A]/10 border border-[#C96F4A]/30 text-[#8B381A] p-3 rounded-xl text-sm font-medium">
             {error}
           </div>
         )}
         
         {success && (
-          <div className="bg-teal-500/10 border border-teal-500/20 text-teal-400 p-3 rounded-lg text-sm font-medium">
+          <div className="bg-[#DCE6D8] border border-[#24483C]/30 text-[#24483C] p-4 rounded-xl text-sm font-medium">
             {success}
           </div>
         )}
 
         {!success && (
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">Email Address</label>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-wider text-[#3D5A4C]">Email Address</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#556960]" size={18} />
                 <input 
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com" 
-                  className="w-full bg-slate-800/50 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-white placeholder:text-slate-500"
+                  className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:border-[#24483C] focus:ring-1 focus:ring-[#24483C] transition-all text-[#1B2E26] placeholder:text-[#556960]/50"
                   required
                 />
               </div>
             </div>
 
-            <button disabled={loading || !email} type="submit" className="w-full btn-primary py-3 font-semibold text-lg disabled:opacity-50 transition-all">
-              {loading ? "Sending..." : "Send Reset Link"}
+            <button 
+              disabled={loading || !email} 
+              type="submit" 
+              className="w-full py-3.5 font-medium text-base rounded-xl transition-all shadow-sm bg-[#24483C] text-[#F8F4EC] hover:bg-[#1B2E26] disabled:opacity-50"
+            >
+              {loading ? "Transmitting..." : "Send Reset Link"}
             </button>
           </form>
         )}

@@ -61,7 +61,7 @@ export default function CheckoutForm({ courseId }: { courseId: string }) {
           }
         },
         theme: {
-          color: "#10b981", // emerald-500
+          color: "#24483C",
         },
       };
 
@@ -85,9 +85,9 @@ export default function CheckoutForm({ courseId }: { courseId: string }) {
       <button 
         onClick={handlePayment} 
         disabled={loading}
-        className="w-full bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-slate-900/20 flex items-center justify-center gap-2"
+        className="w-full bg-[#24483C] hover:bg-[#19332A] disabled:opacity-50 text-[#F8F4EC] font-bold py-3.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 text-base cursor-pointer hover:-translate-y-0.5"
       >
-        {loading ? <Loader2 className="animate-spin" /> : "Pay Now & Enroll"}
+        {loading ? <Loader2 className="animate-spin" size={18} /> : "Pay Tuition & Confirm Enrollment"}
       </button>
     </>
   );

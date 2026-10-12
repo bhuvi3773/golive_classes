@@ -7,7 +7,12 @@ import TopHeader from "@/components/TopHeader";
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isLandingPage = pathname === "/";
-  const isAuthPage = pathname === "/login" || pathname === "/register";
+  const isAuthPage =
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname === "/forgot-password" ||
+    pathname === "/reset-password" ||
+    pathname === "/verify-email";
   const showSidebar = !isLandingPage && !isAuthPage;
 
   return (

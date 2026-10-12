@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle, XCircle, Search, AlertTriangle, PlayCircle } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, PlayCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function SuperAdminPage() {
@@ -20,7 +20,6 @@ export default function SuperAdminPage() {
   const handleApprove = async (courseId: string) => {
     if (!confirm("Are you sure you want to approve and publish this course?")) return;
     try {
-      // First fetch the course to send the full body back, or just send a partial update if the backend supports it
       const course = courses.find(c => c.id === courseId);
       const res = await fetch(`/api/courses/${courseId}`, {
         method: "PUT",
@@ -57,96 +56,98 @@ export default function SuperAdminPage() {
   const rejectedCourses = courses.filter(c => c.status === 'rejected');
 
   return (
-    <div className="p-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Content Review Dashboard</h1>
-        <p className="text-slate-400">Review courses submitted by teachers for quality and policy compliance.</p>
+    <div className="p-8 space-y-8 text-[#1B2E26]">
+      <div className="pb-4 border-b border-[#E9DFCC]">
+        <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Quality & Accreditation</span>
+        <h1 className="font-serif text-3xl font-bold text-[#1B2E26] tracking-tight">Curriculum Review Dashboard</h1>
+        <p className="text-[#556960] text-sm mt-0.5">Audit academic syllabi submitted by faculty for pedagogical rigor and policy compliance.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-card p-6 rounded-xl border border-yellow-500/30 shadow-[0_0_15px_rgba(234,179,8,0.05)]">
-          <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">Pending Review</h3>
-          <p className="text-4xl font-bold text-yellow-500">{pendingCourses.length}</p>
+        <div className="bg-[#FAF7F0] p-6 rounded-2xl border border-[#E9DFCC] border-l-4 border-l-[#C96F4A] shadow-sm">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#C96F4A] block mb-1">Awaiting Review</span>
+          <p className="font-serif text-4xl font-bold text-[#1B2E26]">{pendingCourses.length}</p>
         </div>
-        <div className="glass-card p-6 rounded-xl border border-teal-500/30 shadow-[0_0_15px_rgba(20,184,166,0.05)]">
-          <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">Approved & Live</h3>
-          <p className="text-4xl font-bold text-teal-400">{publishedCourses.length}</p>
+        <div className="bg-[#FAF7F0] p-6 rounded-2xl border border-[#E9DFCC] border-l-4 border-l-[#24483C] shadow-sm">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#3D5A4C] block mb-1">Accredited & Published</span>
+          <p className="font-serif text-4xl font-bold text-[#24483C]">{publishedCourses.length}</p>
         </div>
-        <div className="glass-card p-6 rounded-xl border border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.05)]">
-          <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">Rejected</h3>
-          <p className="text-4xl font-bold text-red-500">{rejectedCourses.length}</p>
+        <div className="bg-[#FAF7F0] p-6 rounded-2xl border border-[#E9DFCC] border-l-4 border-l-[#8B381A] shadow-sm">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#8B381A] block mb-1">Returned for Revision</span>
+          <p className="font-serif text-4xl font-bold text-[#8B381A]">{rejectedCourses.length}</p>
         </div>
       </div>
 
-      <div className="glass-card rounded-xl border border-white/10 overflow-hidden shadow-2xl">
-        <div className="p-6 border-b border-white/10 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <AlertTriangle className="text-yellow-500" /> Action Required: Pending Courses
+      <div className="bg-[#FAF7F0] rounded-2xl border border-[#E9DFCC] overflow-hidden shadow-sm">
+        <div className="p-6 border-b border-[#E9DFCC] flex items-center justify-between">
+          <h2 className="font-serif text-xl font-bold text-[#1B2E26] flex items-center gap-2">
+            <AlertTriangle className="text-[#C96F4A]" size={20} /> Action Required: Pending Curricula
           </h2>
         </div>
         
         {loading ? (
-          <div className="p-12 text-center text-slate-400">Loading courses...</div>
+          <div className="p-12 text-center text-[#556960] text-sm">Evaluating curriculum submissions...</div>
         ) : pendingCourses.length === 0 ? (
-          <div className="p-12 text-center text-slate-400 flex flex-col items-center">
-            <CheckCircle size={48} className="mb-4 text-green-500/50" />
-            <p>All caught up! No courses pending review.</p>
+          <div className="p-12 text-center text-[#556960] flex flex-col items-center">
+            <div className="w-14 h-14 rounded-2xl bg-[#DCE6D8] text-[#24483C] flex items-center justify-center mb-3">
+              <CheckCircle size={28} />
+            </div>
+            <p className="font-serif font-bold text-base text-[#1B2E26]">All Audits Complete</p>
+            <p className="text-xs text-[#556960] mt-1">There are no course submissions pending accreditation at this time.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-800/50 border-b border-white/10 text-slate-400">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#F8F4EC] border-b border-[#E9DFCC] text-[#3D5A4C]">
                 <tr>
-                  <th className="px-6 py-4 font-semibold">Course Details</th>
-                  <th className="px-6 py-4 font-semibold">Instructor</th>
-                  <th className="px-6 py-4 font-semibold">Content Stats</th>
-                  <th className="px-6 py-4 font-semibold text-right">Actions</th>
+                  <th className="px-6 py-3.5 font-bold uppercase tracking-wider">Curriculum Details</th>
+                  <th className="px-6 py-3.5 font-bold uppercase tracking-wider">Faculty Author</th>
+                  <th className="px-6 py-3.5 font-bold uppercase tracking-wider">Syllabus Scope</th>
+                  <th className="px-6 py-3.5 font-bold uppercase tracking-wider text-right">Audit Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-[#E9DFCC]/60 text-[#1B2E26]">
                 {pendingCourses.map(course => (
-                  <tr key={course.id} className="hover:bg-slate-800/40 transition-colors">
+                  <tr key={course.id} className="hover:bg-[#F8F4EC] transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-16 h-12 bg-gray-800 rounded flex-shrink-0 overflow-hidden border border-white/10">
+                        <div className="w-14 h-10 bg-[#E9DFCC] rounded-lg shrink-0 overflow-hidden border border-[#E9DFCC] flex items-center justify-center">
                           {course.thumbnail ? (
                             <img src={course.thumbnail} className="w-full h-full object-cover" alt="thumbnail" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-xs text-slate-500">No Img</div>
+                            <span className="text-[10px] text-[#556960]">No Art</span>
                           )}
                         </div>
                         <div>
-                          <p className="font-bold text-white line-clamp-1">{course.title}</p>
-                          <p className="text-xs text-yellow-500 mt-0.5 font-medium">Pending Review</p>
+                          <p className="font-serif font-bold text-sm text-[#1B2E26] line-clamp-1">{course.title}</p>
+                          <span className="text-[10px] bg-[#C96F4A]/10 text-[#8B381A] px-2 py-0.2 rounded font-bold uppercase">Awaiting Accreditation</span>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-slate-300">
+                    <td className="px-6 py-4 text-[#1B2E26] font-medium">
                       {course.instructor || 'Unknown'}
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="text-xs text-slate-400">
-                        {course.curriculum?.length || 0} Sections
-                      </span>
+                    <td className="px-6 py-4 text-[#556960]">
+                      {course.curriculum?.length || 0} Sections
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex justify-end gap-2 flex-wrap sm:flex-nowrap">
                         <Link href={`/courses/${course.id}/play`} target="_blank">
-                          <button className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded text-xs font-bold transition-colors flex items-center gap-1 border border-white/10">
-                            <PlayCircle size={14} /> Review
+                          <button className="px-3 py-1.5 bg-[#FAF7F0] hover:bg-[#E9DFCC]/50 text-[#1B2E26] rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors flex items-center gap-1 border border-[#E9DFCC] shadow-sm">
+                            <PlayCircle size={14} /> Audit View
                           </button>
                         </Link>
                         <button 
                           onClick={() => handleApprove(course.id)}
-                          className="px-3 py-1.5 bg-teal-500/20 hover:bg-teal-500 text-teal-400 hover:text-white border border-teal-500/30 hover:border-teal-500 rounded text-xs font-bold transition-colors flex items-center gap-1"
+                          className="px-3.5 py-1.5 bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors flex items-center gap-1 shadow-sm"
                         >
-                          <CheckCircle size={14} /> Approve
+                          <CheckCircle size={14} /> Accredit
                         </button>
                         <button 
                           onClick={() => handleReject(course.id)}
-                          className="px-3 py-1.5 bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/30 hover:border-red-500 rounded text-xs font-bold transition-colors flex items-center gap-1"
+                          className="px-3 py-1.5 bg-[#C96F4A]/10 hover:bg-[#C96F4A]/20 text-[#8B381A] border border-[#C96F4A]/30 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors flex items-center gap-1"
                         >
-                          <XCircle size={14} /> Reject
+                          <XCircle size={14} /> Return
                         </button>
                       </div>
                     </td>

@@ -52,95 +52,101 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-[90vh] items-center justify-center py-12 relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="w-full max-w-lg glass-card shadow-2xl rounded-2xl p-8 md:p-10 space-y-8 relative z-10">
+    <div className="flex min-h-[85vh] items-center justify-center py-12 px-4">
+      <div className="w-full max-w-md editorial-card bg-[#FFFFFF] border border-[#E9DFCC] shadow-md rounded-2xl p-8 sm:p-10 space-y-7">
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-white">Welcome Back</h2>
-          <p className="text-slate-400 mt-2">Log in to your account</p>
+          <span className="text-xs font-bold uppercase tracking-wider text-[#C96F4A]">Academic Portal</span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1B2E26] mt-1">Welcome Back</h2>
+          <p className="text-[#4A5E54] text-xs sm:text-sm mt-1">Sign in to resume your learning curriculum</p>
         </div>
 
-        {/* Role Selection added to Login per user request */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Role Selection */}
+        <div className="grid grid-cols-2 gap-3">
           <div 
             onClick={() => setRole("student")}
-            className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex flex-col items-center text-center gap-2 ${
+            className={`cursor-pointer p-3.5 rounded-xl border transition-all flex flex-col items-center text-center gap-1.5 ${
               role === "student" 
-                ? "border-teal-500 bg-teal-500/10" 
-                : "border-white/10 bg-slate-800/50 hover:border-white/20"
+                ? "border-[#24483C] bg-[#EEF3EC] text-[#24483C] shadow-xs" 
+                : "border-[#E9DFCC] bg-[#FDFCF9] text-[#72857C] hover:border-[#D8CCB5]"
             }`}
           >
-            <BookOpen size={28} className={role === "student" ? "text-teal-400" : "text-slate-400"} />
-            <h3 className="font-semibold text-white">Learner</h3>
+            <BookOpen size={22} className={role === "student" ? "text-[#24483C]" : "text-[#72857C]"} />
+            <span className="font-bold text-xs uppercase tracking-wider">Learner</span>
           </div>
 
           <div 
             onClick={() => setRole("instructor")}
-            className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex flex-col items-center text-center gap-2 ${
+            className={`cursor-pointer p-3.5 rounded-xl border transition-all flex flex-col items-center text-center gap-1.5 ${
               role === "instructor" 
-                ? "border-violet-500 bg-violet-500/10" 
-                : "border-white/10 bg-slate-800/50 hover:border-white/20"
+                ? "border-[#C96F4A] bg-[#C96F4A]/10 text-[#C96F4A] shadow-xs" 
+                : "border-[#E9DFCC] bg-[#FDFCF9] text-[#72857C] hover:border-[#D8CCB5]"
             }`}
           >
-            <GraduationCap size={28} className={role === "instructor" ? "text-violet-400" : "text-slate-400"} />
-            <h3 className="font-semibold text-white">Teacher</h3>
+            <GraduationCap size={22} className={role === "instructor" ? "text-[#C96F4A]" : "text-[#72857C]"} />
+            <span className="font-bold text-xs uppercase tracking-wider">Faculty</span>
           </div>
         </div>
 
         {error && (
-          <div className="bg-red-500/20 border border-red-500 text-red-400 p-3 rounded-lg text-sm text-center">
+          <div className="bg-red-500/10 border border-red-500/20 text-red-700 p-3 rounded-lg text-xs font-medium text-center">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300">Email Address</label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold uppercase tracking-wider text-[#4A5E54]">Email Address</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#72857C]" size={16} />
               <input 
                 type="email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com" 
-                className="w-full bg-slate-800/50 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-white placeholder:text-slate-500"
+                placeholder="you@domain.com" 
+                className="w-full bg-[#FDFCF9] border border-[#E9DFCC] rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-[#24483C] text-[#1B2E26] placeholder:text-[#72857C] transition-all"
                 required
               />
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <div className="flex justify-between items-center">
-              <label className="text-sm font-medium text-slate-300">Password</label>
-              <Link href="/forgot-password" className="text-xs text-teal-400 hover:text-teal-300 cursor-pointer">Forgot password?</Link>
+              <label className="text-xs font-bold uppercase tracking-wider text-[#4A5E54]">Password</label>
+              <Link href="/forgot-password" className="text-xs text-[#24483C] hover:text-[#19332A] font-semibold">Forgot?</Link>
             </div>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#72857C]" size={16} />
               <input 
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••" 
-                className="w-full bg-slate-800/50 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-white placeholder:text-slate-500"
+                className="w-full bg-[#FDFCF9] border border-[#E9DFCC] rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-[#24483C] text-[#1B2E26] placeholder:text-[#72857C] transition-all"
                 required
               />
             </div>
           </div>
 
-          <button disabled={loading} type="submit" className={`w-full py-3 font-semibold text-lg rounded-lg shadow-lg disabled:opacity-50 transition-all ${
-            role === 'instructor' ? 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white' : 'btn-primary'
-          }`}>
-            {loading ? "Signing In..." : `Login as ${role === 'student' ? 'Learner' : 'Teacher'}`}
+          <button 
+            disabled={loading} 
+            type="submit" 
+            className={`w-full py-3 font-semibold text-sm rounded-lg shadow-sm disabled:opacity-50 transition-all cursor-pointer ${
+              role === 'instructor' 
+                ? 'bg-[#C96F4A] hover:bg-[#B25D39] text-[#FFFFFF]' 
+                : 'bg-[#24483C] hover:bg-[#19332A] text-[#F8F4EC]'
+            }`}
+          >
+            {loading ? "Authenticating..." : `Sign In as ${role === 'student' ? 'Learner' : 'Faculty'}`}
           </button>
         </form>
 
-        <div className="relative flex items-center justify-center mt-6 mb-6">
-          <div className="absolute border-t border-white/10 w-full"></div>
-          <span className="bg-slate-900/60 px-4 text-sm text-slate-400 z-10 backdrop-blur-2xl">OR</span>
+        <div className="relative flex items-center justify-center my-4">
+          <div className="absolute border-t border-[#E9DFCC] w-full"></div>
+          <span className="bg-[#FFFFFF] px-3 text-xs text-[#72857C] z-10 uppercase tracking-wider font-semibold">Or</span>
         </div>
 
-        <Link href="/api/auth/google/login" className="w-full flex items-center justify-center gap-3 bg-slate-800/80 hover:bg-slate-700 text-white font-semibold py-3 rounded-lg transition-colors border border-white/10">
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
+        <Link href="/api/auth/google/login" className="w-full flex items-center justify-center gap-3 bg-[#FFFFFF] hover:bg-[#F4EFE6] text-[#1B2E26] font-semibold py-2.5 rounded-lg transition-colors border border-[#E9DFCC] text-sm">
+          <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
@@ -149,10 +155,10 @@ export default function LoginPage() {
           Continue with Google
         </Link>
 
-        <p className="text-center text-sm text-slate-400 mt-6">
-          Don't have an account?{" "}
-          <Link href="/register" className="text-teal-400 hover:text-teal-300 font-medium">
-            Sign up
+        <p className="text-center text-xs text-[#72857C] pt-2">
+          New to GoLive Classes?{" "}
+          <Link href="/register" className="text-[#24483C] hover:text-[#19332A] font-bold">
+            Create an Account
           </Link>
         </p>
       </div>

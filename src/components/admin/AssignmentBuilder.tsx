@@ -18,49 +18,51 @@ export default function AssignmentBuilder({ onSave, initialData }: AssignmentBui
   };
 
   return (
-    <div className="space-y-4">
-      <h4 className="text-sm font-medium text-slate-900 mb-2">Create Assignment</h4>
+    <div className="space-y-4 text-[#1B2E26]">
+      <div className="pb-2 border-b border-[#E9DFCC]">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-[#3D5A4C]">Construct Practicum Assignment</h4>
+      </div>
       
       <div>
-        <label className="text-xs text-slate-500">Assignment Title</label>
+        <label className="text-[11px] font-bold uppercase tracking-wider text-[#3D5A4C] block mb-1">Assignment Title</label>
         <input 
           type="text" 
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="e.g. Build a Portfolio Website"
-          className="w-full bg-white border border-gray-600 rounded px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+          placeholder="e.g. Architect High-Throughput Message Queue"
+          className="w-full bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl px-3.5 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]"
         />
       </div>
 
       <div>
-        <label className="text-xs text-slate-500">Problem Description</label>
+        <label className="text-[11px] font-bold uppercase tracking-wider text-[#3D5A4C] block mb-1">Problem Specification & Requirements</label>
         <textarea 
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Describe what the student needs to build..."
+          placeholder="Detail the technical implementation requirements and constraints..."
           rows={4}
-          className="w-full bg-white border border-gray-600 rounded px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+          className="w-full bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl px-3.5 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C] resize-none"
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-xs text-slate-500">Expected Outcome / Format</label>
+          <label className="text-[11px] font-bold uppercase tracking-wider text-[#3D5A4C] block mb-1">Expected Deliverable Format</label>
           <input 
             type="text" 
             value={expectedOutput}
             onChange={(e) => setExpectedOutput(e.target.value)}
-            placeholder="e.g. GitHub Repo Link"
-            className="w-full bg-white border border-gray-600 rounded px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+            placeholder="e.g. Public GitHub Repository Link"
+            className="w-full bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl px-3.5 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]"
           />
         </div>
         <div>
-          <label className="text-xs text-slate-500">Passing Score (%)</label>
+          <label className="text-[11px] font-bold uppercase tracking-wider text-[#3D5A4C] block mb-1">Benchmark Threshold (%)</label>
           <input 
             type="number" 
             value={passingScore}
             onChange={(e) => setPassingScore(Number(e.target.value))}
-            className="w-full bg-white border border-gray-600 rounded px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+            className="w-full bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl px-3.5 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]"
           />
         </div>
       </div>
@@ -68,9 +70,9 @@ export default function AssignmentBuilder({ onSave, initialData }: AssignmentBui
       <div className="flex justify-end pt-2">
         <button 
           onClick={handleSave}
-          className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded transition-colors"
+          className="bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] text-xs font-semibold uppercase tracking-wider px-5 py-2 rounded-xl transition-colors shadow-sm"
         >
-          Save Assignment
+          Save Practicum Specification
         </button>
       </div>
     </div>

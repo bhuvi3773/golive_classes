@@ -55,27 +55,27 @@ export default function CoursePurchaseCard({ courseId, price, isPurchasedInitial
 
   return (
     <>
-      <div className="text-center mb-6 border-b border-white/10 pb-6">
-        <span className="text-4xl font-extrabold text-white">${price}</span>
+      <div className="text-center mb-6 border-b border-[#E9DFCC] pb-6">
+        <span className="text-4xl font-extrabold text-[#24483C]">${price}</span>
       </div>
       
       {isPurchased ? (
         <Link href={`/courses/${courseId}/play`}>
-          <button className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2">
+          <button className="w-full bg-[#24483C] hover:bg-[#19332A] text-[#F8F4EC] font-bold py-3.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
             <PlayCircle size={20} /> Continue Learning
           </button>
         </Link>
       ) : (
-        <div className="flex gap-2">
-          <button onClick={handleBuy} className="flex-1 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-slate-900 font-bold py-4 rounded-xl transition-all shadow-lg shadow-teal-500/30">
-            Buy Now
+        <div className="flex gap-2.5">
+          <button onClick={handleBuy} className="flex-1 bg-[#C96F4A] hover:bg-[#B25D39] text-[#FFFFFF] font-bold py-3.5 rounded-xl transition-all shadow-sm hover:-translate-y-0.5">
+            Enroll Now
           </button>
           <button 
             onClick={toggleWishlist}
-            className={`px-6 rounded-xl border flex items-center justify-center transition-colors ${inWishlist ? 'border-pink-500 text-pink-500 bg-pink-500/10' : 'border-white/10 hover:bg-slate-800 text-slate-300'}`}
+            className={`px-5 rounded-xl border flex items-center justify-center transition-colors ${inWishlist ? 'border-[#C96F4A] text-[#C96F4A] bg-[#C96F4A]/10' : 'border-[#E9DFCC] hover:bg-[#F4EFE6] text-[#72857C]'}`}
             title={inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
           >
-            <Heart size={24} fill={inWishlist ? "currentColor" : "none"} />
+            <Heart size={20} fill={inWishlist ? "currentColor" : "none"} />
           </button>
         </div>
       )}

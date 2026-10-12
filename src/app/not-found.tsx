@@ -1,39 +1,37 @@
 import Link from "next/link";
-import { Compass, Home, Search } from "lucide-react";
+import { Compass, Home, BookOpen } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
-      
-      <div className="relative z-10 flex flex-col items-center text-center max-w-2xl bg-white/60 backdrop-blur-xl border border-white shadow-2xl rounded-3xl p-12">
-        <div className="w-24 h-24 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-3xl flex items-center justify-center shadow-inner mb-8 transform -rotate-6 border border-white">
-          <Compass size={48} className="text-emerald-600" />
+    <div className="min-h-[80vh] flex flex-col items-center justify-center p-6 relative text-[#1B2E26]">
+      <div className="relative z-10 flex flex-col items-center text-center max-w-lg bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-10 md:p-12">
+        <div className="w-20 h-20 bg-[#DCE6D8] rounded-2xl flex items-center justify-center text-[#24483C] shadow-sm mb-6 border border-[#24483C]/20">
+          <Compass size={40} />
         </div>
         
-        <h1 className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700 mb-4 tracking-tight">
-          404
+        <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A] mb-2">Error 404</span>
+        <h1 className="font-serif text-5xl font-bold text-[#24483C] mb-3">
+          Uncharted Path
         </h1>
-        <h2 className="text-3xl font-bold text-slate-900 mb-4">
-          Looks like you're lost
+        <h2 className="font-serif text-xl font-bold text-[#1B2E26] mb-3">
+          Page or Lecture Not Found
         </h2>
         
-        <p className="text-lg text-slate-500 mb-10 max-w-md">
-          The page or course you are looking for doesn't exist, has been removed, or you don't have access to it.
+        <p className="text-sm text-[#556960] mb-8 leading-relaxed max-w-sm">
+          The requested curriculum module, syllabus section, or account record does not exist or has been archived.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 w-full justify-center">
           <Link href="/">
-            <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
-              <Home size={18} />
+            <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] px-6 py-3 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all shadow-sm">
+              <Home size={15} />
               Return Home
             </button>
           </Link>
           <Link href="/courses">
-            <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white hover:bg-slate-50 border-2 border-emerald-500 text-emerald-700 px-8 py-4 rounded-xl font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-1">
-              <Search size={18} />
-              Browse Courses
+            <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FAF7F0] hover:bg-[#E9DFCC]/50 border border-[#E9DFCC] text-[#24483C] px-6 py-3 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all shadow-sm">
+              <BookOpen size={15} />
+              Browse Catalogue
             </button>
           </Link>
         </div>

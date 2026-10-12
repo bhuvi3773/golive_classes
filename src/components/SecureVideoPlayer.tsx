@@ -43,8 +43,6 @@ const SecureVideoPlayer = forwardRef<SecureVideoPlayerRef, SecureVideoPlayerProp
     return () => clearInterval(interval);
   }, []);
 
-  
-
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
@@ -115,16 +113,13 @@ const SecureVideoPlayer = forwardRef<SecureVideoPlayerRef, SecureVideoPlayerProp
   return (
     <div 
       ref={containerRef}
-      className="relative w-full aspect-video bg-black rounded-xl overflow-hidden group select-none"
-      
+      className="relative w-full aspect-video bg-black rounded-xl overflow-hidden group select-none shadow-md"
     >
       {/* Video Element */}
       <video
         ref={videoRef}
         src={src}
         className="w-full h-full object-contain cursor-pointer"
-        
-        
         playsInline
         preload="auto"
         onPlay={() => setIsPlaying(true)}
@@ -134,59 +129,57 @@ const SecureVideoPlayer = forwardRef<SecureVideoPlayerRef, SecureVideoPlayerProp
         onLoadedMetadata={handleLoadedMetadata}
       />
 
-      {/* Watermark removed */}
-
       {/* Custom Controls (Overlay) */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col pointer-events-none">
+      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col pointer-events-none">
         
         {/* Progress Bar */}
         <div className="w-full mb-3 pointer-events-auto flex items-center gap-3">
-          <span className="text-xs text-slate-900 font-medium w-10 text-right">{formatTime(currentTime)}</span>
+          <span className="text-xs text-[#F8F4EC] font-mono font-medium w-10 text-right">{formatTime(currentTime)}</span>
           <input 
             type="range" 
             min="0" 
             max={duration || 100} 
             value={currentTime} 
             onChange={handleSeek}
-            className="flex-1 h-1.5 bg-white/30 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all"
+            className="flex-1 h-1.5 bg-[#F8F4EC]/30 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:bg-[#C96F4A] [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all"
           />
-          <span className="text-xs text-slate-900 font-medium w-10">{formatTime(duration)}</span>
+          <span className="text-xs text-[#F8F4EC] font-mono font-medium w-10">{formatTime(duration)}</span>
         </div>
 
         {/* Bottom Controls Row */}
         <div className="flex items-center justify-between pointer-events-auto">
           <div className="flex items-center gap-4">
-            <button onClick={(e) => { e.stopPropagation(); togglePlay(); }} className="text-slate-900 hover:text-blue-400 transition-colors">
+            <button onClick={(e) => { e.stopPropagation(); togglePlay(); }} className="text-[#F8F4EC] hover:text-[#C96F4A] transition-colors">
               {isPlaying ? <Pause size={22} /> : <Play size={22} />}
             </button>
-            <button onClick={(e) => { e.stopPropagation(); skip(-10); }} className="text-slate-900 hover:text-blue-400 transition-colors" title="Skip backward 10s">
+            <button onClick={(e) => { e.stopPropagation(); skip(-10); }} className="text-[#F8F4EC] hover:text-[#C96F4A] transition-colors" title="Skip backward 10s">
               <RotateCcw size={18} />
             </button>
-            <button onClick={(e) => { e.stopPropagation(); skip(10); }} className="text-slate-900 hover:text-blue-400 transition-colors" title="Skip forward 10s">
+            <button onClick={(e) => { e.stopPropagation(); skip(10); }} className="text-[#F8F4EC] hover:text-[#C96F4A] transition-colors" title="Skip forward 10s">
               <RotateCw size={18} />
             </button>
             <div className="flex items-center gap-2 ml-2 group/vol">
-              <button onClick={(e) => { e.stopPropagation(); handleVolumeChange({ target: { value: isMuted ? 1 : 0 } } as any); }} className="text-slate-900 hover:text-blue-400 transition-colors">
+              <button onClick={(e) => { e.stopPropagation(); handleVolumeChange({ target: { value: isMuted ? 1 : 0 } } as any); }} className="text-[#F8F4EC] hover:text-[#C96F4A] transition-colors">
                 {isMuted || volume === 0 ? <VolumeX size={20} /> : <Volume2 size={20} />}
               </button>
               <input 
                 type="range" 
-                min="0"
-                max="1"
+                min="0" 
+                max="1" 
                 step="0.05"
                 value={isMuted ? 0 : volume}
                 onChange={handleVolumeChange}
                 onClick={(e) => e.stopPropagation()} 
-                className="w-0 opacity-0 group-hover/vol:w-20 group-hover/vol:opacity-100 transition-all duration-300 h-1 bg-white/30 rounded-full appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:rounded-full" 
+                className="w-0 opacity-0 group-hover/vol:w-20 group-hover/vol:opacity-100 transition-all duration-300 h-1 bg-[#F8F4EC]/30 rounded-full appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-[#C96F4A] [&::-webkit-slider-thumb]:rounded-full" 
               />
             </div>
           </div>
           
           <div className="flex items-center gap-4">
-            <button className="text-slate-900 hover:text-blue-400 transition-colors">
+            <button className="text-[#F8F4EC] hover:text-[#C96F4A] transition-colors">
               <Settings size={20} />
             </button>
-            <button onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} className="text-slate-900 hover:text-blue-400 transition-colors">
+            <button onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} className="text-[#F8F4EC] hover:text-[#C96F4A] transition-colors">
               <Maximize size={20} />
             </button>
           </div>

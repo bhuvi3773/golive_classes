@@ -20,10 +20,10 @@ export default async function LiveClassesPage() {
 
   const getIconForType = (type: string) => {
     switch (type) {
-      case 'course': return <BookOpen size={16} className="text-blue-500" />;
-      case 'webinar': return <Video size={16} className="text-purple-500" />;
-      case 'announcement': return <Megaphone size={16} className="text-orange-500" />;
-      default: return <Video size={16} className="text-emerald-500" />;
+      case 'course': return <BookOpen size={16} className="text-[#24483C]" />;
+      case 'webinar': return <Video size={16} className="text-[#C96F4A]" />;
+      case 'announcement': return <Megaphone size={16} className="text-[#C96F4A]" />;
+      default: return <Video size={16} className="text-[#24483C]" />;
     }
   };
 
@@ -40,13 +40,14 @@ export default async function LiveClassesPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-20 animate-in fade-in">
+    <div className="space-y-8 max-w-7xl mx-auto pb-20">
       <div>
-        <h1 className="text-3xl md:text-4xl font-extrabold flex items-center gap-3 text-slate-900">
-          <Video className="text-red-500" size={36} />
-          Live Classes & Events
+        <span className="text-xs font-bold uppercase tracking-wider text-[#C96F4A]">Real-Time Cohorts</span>
+        <h1 className="text-3xl md:text-4xl font-extrabold flex items-center gap-3 text-[#1B2E26] mt-1">
+          <Video className="text-[#24483C]" size={36} />
+          Live Classes & Masterclasses
         </h1>
-        <p className="text-slate-500 mt-2 text-lg">Join expert-led sessions in real-time or catch upcoming course drops.</p>
+        <p className="text-[#4A5E54] mt-2 text-base md:text-lg">Participate in live architectural reviews, coding sessions, and upcoming module releases.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -54,88 +55,89 @@ export default async function LiveClassesPage() {
         {/* Main Featured Live Class or Next Up */}
         <div className="lg:col-span-2 flex flex-col gap-8">
           {featuredLive ? (
-             <div className="bg-white rounded-3xl overflow-hidden border border-red-200 shadow-xl shadow-red-500/10 flex flex-col">
-               <div className="h-72 bg-slate-900 relative flex items-center justify-center group overflow-hidden">
+             <div className="editorial-card rounded-2xl overflow-hidden bg-[#FFFFFF] flex flex-col">
+               <div className="h-72 bg-[#19332A] relative flex items-center justify-center group overflow-hidden">
                  {featuredLive.thumbnail ? (
                    <img src={featuredLive.thumbnail} alt={featuredLive.title} className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" />
                  ) : (
-                   <div className="absolute inset-0 bg-gradient-to-br from-red-900 to-slate-900"></div>
+                   <div className="absolute inset-0 bg-[#24483C]/80"></div>
                  )}
-                 <div className="absolute top-4 left-4 bg-red-500 text-white text-xs font-extrabold px-3 py-1.5 rounded-full animate-pulse flex items-center gap-2 shadow-lg">
-                   <div className="w-2 h-2 bg-white rounded-full"></div>
-                   LIVE NOW
+                 <div className="absolute top-4 left-4 bg-[#C96F4A] text-[#FFFFFF] text-xs font-extrabold px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
+                   <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                   LIVE BROADCAST
                  </div>
                  {featuredLive.link ? (
-                   <a href={featuredLive.link} target="_blank" rel="noreferrer" className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center cursor-pointer hover:bg-white hover:scale-110 transition-all shadow-2xl group/btn">
-                     <PlayCircle size={48} className="text-white group-hover/btn:text-red-500" />
+                   <a href={featuredLive.link} target="_blank" rel="noreferrer" className="relative z-10 w-16 h-16 bg-[#FFFFFF]/90 backdrop-blur-md rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition-all shadow-md group/btn">
+                     <PlayCircle size={36} className="text-[#24483C]" />
                    </a>
                  ) : (
-                   <div className="relative z-10 text-white font-bold bg-black/50 px-6 py-3 rounded-full backdrop-blur-sm border border-white/20">Check Dashboard for Link</div>
+                   <div className="relative z-10 text-[#F8F4EC] font-bold bg-[#19332A]/80 px-6 py-2.5 rounded-full backdrop-blur-sm border border-[#2E5B4C] text-sm">Session link will appear at start</div>
                  )}
                </div>
                <div className="p-8 space-y-4">
                  <div className="flex justify-between items-start">
-                   <span className="text-xs font-bold px-3 py-1.5 bg-slate-100 text-slate-700 rounded-full">{featuredLive.category}</span>
-                   <div className="flex items-center text-sm text-red-500 font-bold gap-1 bg-red-50 px-3 py-1.5 rounded-full">
-                     <Users size={16} /> Happening right now
+                   <span className="text-xs font-bold px-3 py-1 bg-[#EEF3EC] text-[#24483C] rounded-full border border-[#DCE6D8]">{featuredLive.category}</span>
+                   <div className="flex items-center text-xs text-[#C96F4A] font-bold gap-1.5 bg-[#C96F4A]/10 px-3 py-1 rounded-full border border-[#C96F4A]/20">
+                     <Users size={14} /> Active Session
                    </div>
                  </div>
-                 <h2 className="text-3xl font-extrabold text-slate-900">{featuredLive.title}</h2>
-                 <p className="text-slate-600 text-lg">{featuredLive.description}</p>
-                 <div className="flex items-center gap-2 text-slate-500 font-medium">
-                   <span>Instructor:</span> <span className="text-slate-900">{featuredLive.instructorName}</span>
+                 <h2 className="text-2xl md:text-3xl font-extrabold text-[#1B2E26]">{featuredLive.title}</h2>
+                 <p className="text-[#4A5E54] text-base leading-relaxed">{featuredLive.description}</p>
+                 <div className="flex items-center gap-2 text-sm text-[#4A5E54] pt-2 border-t border-[#E9DFCC]">
+                   <span>Lead Instructor:</span> <span className="text-[#1B2E26] font-bold">{featuredLive.instructorName}</span>
                  </div>
                  {featuredLive.link && (
-                   <a href={featuredLive.link} target="_blank" rel="noreferrer" className="inline-block w-full text-center bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-red-500/30 mt-4">
-                     Join Session Now
+                   <a href={featuredLive.link} target="_blank" rel="noreferrer" className="inline-block w-full text-center bg-[#24483C] hover:bg-[#19332A] text-[#F8F4EC] font-bold py-3.5 rounded-xl transition-all shadow-sm mt-3">
+                     Join Live Classroom
                    </a>
                  )}
                </div>
              </div>
           ) : scheduledSessions.length > 0 ? (
-             <div className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-xl shadow-slate-200/50 flex flex-col">
-               <div className="h-72 bg-slate-900 relative flex items-center justify-center overflow-hidden">
+             <div className="editorial-card rounded-2xl overflow-hidden bg-[#FFFFFF] flex flex-col">
+               <div className="h-72 bg-[#24483C] relative flex items-center justify-center overflow-hidden">
                  {scheduledSessions[0].thumbnail ? (
                    <img src={scheduledSessions[0].thumbnail} alt={scheduledSessions[0].title} className="w-full h-full object-cover opacity-50" />
                  ) : (
-                   <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-emerald-900"></div>
+                   <div className="absolute inset-0 bg-[#24483C]"></div>
                  )}
-                 <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full border border-white/30">
-                   NEXT UP
+                 <div className="absolute top-4 left-4 bg-[#FFFFFF]/20 backdrop-blur-md text-[#F8F4EC] text-xs font-bold px-3 py-1 rounded-full border border-white/20">
+                   NEXT UPCOMING
                  </div>
                  <div className="relative z-10 flex flex-col items-center">
-                   <div className="text-white/80 font-semibold mb-2">Starts in</div>
-                   <div className="text-4xl md:text-5xl font-extrabold text-white bg-black/40 px-6 py-4 rounded-2xl backdrop-blur-md border border-white/10">
+                   <div className="text-[#DCE6D8] font-medium text-xs uppercase tracking-wider mb-2">Scheduled Commencement</div>
+                   <div className="text-3xl md:text-4xl font-extrabold text-[#FFFFFF] bg-[#19332A]/70 px-6 py-3 rounded-xl backdrop-blur-md border border-[#2E5B4C]">
                      {getTimeStr(scheduledSessions[0].launchDate.toString())}
                    </div>
-                   <div className="text-emerald-300 font-bold mt-4">{new Date(scheduledSessions[0].launchDate).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+                   <div className="text-[#DCE6D8] font-bold mt-3 text-sm">{new Date(scheduledSessions[0].launchDate).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</div>
                  </div>
                </div>
                <div className="p-8 space-y-4">
                  <div className="flex items-center gap-2">
                    {getIconForType(scheduledSessions[0].type)}
-                   <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">{scheduledSessions[0].type.replace('-', ' ')}</span>
+                   <span className="text-xs font-bold text-[#72857C] uppercase tracking-wider">{scheduledSessions[0].type.replace('-', ' ')}</span>
                  </div>
-                 <h2 className="text-3xl font-extrabold text-slate-900">{scheduledSessions[0].title}</h2>
-                 <p className="text-slate-600 text-lg leading-relaxed">{scheduledSessions[0].description}</p>
-                 <div className="pt-4 flex items-center justify-between border-t border-slate-100">
-                   <div className="flex items-center gap-2 text-slate-500">
-                     <span className="text-slate-900 font-bold">{scheduledSessions[0].instructorName}</span>
+                 <h2 className="text-2xl md:text-3xl font-extrabold text-[#1B2E26]">{scheduledSessions[0].title}</h2>
+                 <p className="text-[#4A5E54] text-base leading-relaxed">{scheduledSessions[0].description}</p>
+                 <div className="pt-4 flex items-center justify-between border-t border-[#E9DFCC]">
+                   <div className="flex items-center gap-2 text-sm text-[#4A5E54]">
+                     <span>Faculty:</span>
+                     <span className="text-[#1B2E26] font-bold">{scheduledSessions[0].instructorName}</span>
                    </div>
-                   <span className="text-xs font-bold px-3 py-1.5 bg-slate-100 text-slate-700 rounded-full">{scheduledSessions[0].category}</span>
+                   <span className="text-xs font-bold px-3 py-1 bg-[#EEF3EC] text-[#24483C] rounded-full border border-[#DCE6D8]">{scheduledSessions[0].category}</span>
                  </div>
                </div>
              </div>
           ) : (
-            <div className="bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-12 text-center h-[500px]">
-              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg mb-6 text-slate-300">
-                <Calendar size={48} />
+            <div className="bg-[#FFFFFF] rounded-2xl border border-[#E9DFCC] flex flex-col items-center justify-center p-12 text-center h-[450px]">
+              <div className="w-16 h-16 bg-[#EEF3EC] rounded-full flex items-center justify-center mb-4 text-[#24483C]">
+                <Calendar size={32} />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">No Upcoming Events</h2>
-              <p className="text-slate-500 max-w-md">Our instructors are currently planning the next set of live classes and course drops. Check back soon!</p>
+              <h2 className="text-xl font-bold text-[#1B2E26] mb-2">No Live Sessions Currently Scheduled</h2>
+              <p className="text-[#4A5E54] text-sm max-w-md">Our instructors are organizing the next schedule of live lectures and masterclasses.</p>
               <Link href="/courses">
-                <button className="mt-8 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-slate-900/20">
-                  Explore Pre-Recorded Courses
+                <button className="mt-6 bg-[#24483C] hover:bg-[#19332A] text-[#F8F4EC] font-semibold py-2.5 px-6 rounded-lg transition-all text-sm shadow-sm">
+                  Explore Pre-Recorded Catalog
                 </button>
               </Link>
             </div>
@@ -144,22 +146,22 @@ export default async function LiveClassesPage() {
         
         {/* Upcoming Classes List */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl shadow-slate-200/50 sticky top-24">
-            <h3 className="text-xl font-extrabold mb-6 flex items-center gap-2 text-slate-900">
-              <Calendar className="text-emerald-600" />
-              Schedule
+          <div className="editorial-card rounded-2xl p-6 bg-[#FFFFFF] sticky top-24">
+            <h3 className="text-lg font-bold mb-5 flex items-center gap-2 text-[#1B2E26] border-b border-[#E9DFCC] pb-3">
+              <Calendar className="text-[#24483C]" size={20} />
+              Upcoming Schedule
             </h3>
             
-            <div className="space-y-4">
+            <div className="space-y-3.5">
               {remainingLive.map((item: any) => (
-                <div key={item.id.toString()} className="flex gap-4 p-4 rounded-2xl bg-red-50 border border-red-100 hover:border-red-200 transition-colors group">
-                  <div className="flex flex-col items-center justify-center w-16 h-16 bg-white rounded-xl shrink-0 shadow-sm border border-red-100 group-hover:scale-105 transition-transform">
-                    <span className="text-[10px] font-extrabold text-red-500 uppercase">LIVE</span>
-                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse mt-1"></div>
+                <div key={item.id.toString()} className="flex gap-3.5 p-3.5 rounded-xl bg-[#FDFCF9] border border-[#E9DFCC] group">
+                  <div className="flex flex-col items-center justify-center w-14 h-14 bg-[#C96F4A]/10 text-[#C96F4A] rounded-lg shrink-0 font-bold border border-[#C96F4A]/20">
+                    <span className="text-[10px] tracking-wider">LIVE</span>
+                    <div className="w-1.5 h-1.5 bg-[#C96F4A] rounded-full animate-pulse mt-0.5"></div>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-slate-900 mb-1 truncate">{item.title}</h4>
-                    <p className="text-xs text-slate-500 truncate flex items-center gap-1">
+                    <h4 className="font-bold text-[#1B2E26] text-sm mb-1 truncate">{item.title}</h4>
+                    <p className="text-xs text-[#72857C] truncate flex items-center gap-1">
                       {getIconForType(item.type)} {item.type.replace('-', ' ')}
                     </p>
                   </div>
@@ -167,16 +169,16 @@ export default async function LiveClassesPage() {
               ))}
 
               {scheduledSessions.map((item: any, idx: number) => {
-                if (idx === 0 && !featuredLive) return null; // Skip the one shown in hero
+                if (idx === 0 && !featuredLive) return null;
                 return (
-                  <div key={item.id.toString()} className="flex gap-4 p-4 rounded-2xl bg-white border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all cursor-pointer group">
-                    <div className="flex flex-col items-center justify-center w-16 h-16 bg-slate-50 rounded-xl shrink-0 border border-slate-100 group-hover:bg-emerald-50 group-hover:border-emerald-100 transition-colors">
-                      <span className="text-[10px] font-extrabold text-slate-500 uppercase group-hover:text-emerald-600">{getMonthStr(item.launchDate)}</span>
-                      <span className="text-xl font-extrabold text-slate-900 group-hover:text-emerald-700">{getDayStr(item.launchDate)}</span>
+                  <div key={item.id.toString()} className="flex gap-3.5 p-3.5 rounded-xl bg-[#FFFFFF] border border-[#E9DFCC] hover:border-[#24483C] transition-all cursor-pointer group">
+                    <div className="flex flex-col items-center justify-center w-14 h-14 bg-[#F4EFE6] rounded-lg shrink-0 border border-[#E9DFCC] group-hover:bg-[#EEF3EC] group-hover:border-[#DCE6D8] transition-colors">
+                      <span className="text-[10px] font-bold text-[#72857C] uppercase">{getMonthStr(item.launchDate)}</span>
+                      <span className="text-lg font-extrabold text-[#1B2E26] group-hover:text-[#24483C]">{getDayStr(item.launchDate)}</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-slate-900 mb-1 line-clamp-2 leading-tight group-hover:text-emerald-700 transition-colors">{item.title}</h4>
-                      <div className="flex items-center text-xs text-slate-500 gap-2 mt-2">
+                      <h4 className="font-bold text-[#1B2E26] text-sm mb-1 line-clamp-2 leading-snug group-hover:text-[#24483C] transition-colors">{item.title}</h4>
+                      <div className="flex items-center text-xs text-[#72857C] gap-2 mt-1">
                         <span className="flex items-center gap-1"><Clock size={12}/> {getTimeStr(item.launchDate)}</span>
                       </div>
                     </div>
@@ -185,8 +187,8 @@ export default async function LiveClassesPage() {
               })}
 
               {remainingLive.length === 0 && scheduledSessions.length === 0 && featuredLive && (
-                <div className="text-center p-6 text-sm text-slate-500">
-                  No other scheduled events.
+                <div className="text-center p-6 text-xs text-[#72857C]">
+                  No other scheduled sessions.
                 </div>
               )}
             </div>

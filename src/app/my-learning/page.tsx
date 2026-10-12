@@ -9,10 +9,16 @@ export default async function MyLearningPage() {
   const user = await getUserFromCookie();
   if (!user) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-center glass-card p-12 rounded-2xl border border-white/10">
-          <h2 className="text-2xl font-bold text-white mb-4">Please log in to view your learning</h2>
-          <Link href="/login" className="px-6 py-2 bg-teal-500 text-slate-900 rounded-lg hover:bg-teal-400 font-bold transition-colors">Go to Login</Link>
+      <div className="min-h-[80vh] flex items-center justify-center p-4">
+        <div className="text-center bg-[#FAF7F0] p-12 rounded-2xl border border-[#E9DFCC] shadow-sm max-w-md w-full text-[#1B2E26]">
+          <div className="w-16 h-16 rounded-2xl bg-[#DCE6D8] text-[#24483C] flex items-center justify-center mx-auto mb-4">
+            <BookOpen size={28} />
+          </div>
+          <h2 className="font-serif text-2xl font-bold text-[#1B2E26] mb-2">Academic Sign In Required</h2>
+          <p className="text-[#556960] text-sm mb-6">Please log in to your academy account to view your enrolled courses and lecture progress.</p>
+          <Link href="/login" className="inline-block px-6 py-3 bg-[#24483C] text-[#F8F4EC] rounded-xl hover:bg-[#1B2E26] text-sm font-semibold uppercase tracking-wider transition-colors shadow-sm">
+            Go to Login
+          </Link>
         </div>
       </div>
     );
@@ -111,68 +117,77 @@ export default async function MyLearningPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 text-[#1B2E26]">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#E9DFCC]">
         <div>
-          <h1 className="text-3xl font-extrabold text-white">My Learning</h1>
-          <p className="text-slate-400 mt-1">Pick up right where you left off, Student.</p>
+          <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Academic Dashboard</span>
+          <h1 className="font-serif text-3xl font-bold text-[#1B2E26] tracking-tight">My Active Learning</h1>
+          <p className="text-[#556960] text-sm mt-0.5">Every skill has a journey. Continue where you left off.</p>
         </div>
         
         <div className="relative w-full md:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#556960]" size={16} />
           <input 
             type="text" 
-            placeholder="Search my courses..." 
-            className="w-full bg-slate-800/50 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-colors text-white placeholder:text-slate-500"
+            placeholder="Search enrolled courses..." 
+            className="w-full bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl pl-10 pr-4 py-2.5 text-xs focus:outline-none focus:border-[#24483C] transition-colors text-[#1B2E26] placeholder:text-[#556960]/60 shadow-sm"
           />
         </div>
       </div>
 
       {enrichedCourses.length === 0 ? (
-        <div className="glass-card border border-white/10 shadow-2xl rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-4">
-          <div className="w-20 h-20 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-400 mb-2 shadow-inner border border-teal-500/20">
-            <BookOpen size={40} />
+        <div className="bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-12 text-center flex flex-col items-center justify-center space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-[#DCE6D8] flex items-center justify-center text-[#24483C] shadow-sm border border-[#24483C]/20">
+            <BookOpen size={32} />
           </div>
-          <h2 className="text-2xl font-extrabold text-white">You aren't enrolled in any courses yet</h2>
-          <p className="text-slate-400 max-w-md mx-auto text-lg">Browse our catalog to find your next favorite course and expand your skill set.</p>
+          <h2 className="font-serif text-2xl font-bold text-[#1B2E26]">No Active Enrolments Yet</h2>
+          <p className="text-[#556960] max-w-md mx-auto text-sm leading-relaxed">
+            Explore our curated academic catalogue to enroll in your next masterclass and earn recognized certificates.
+          </p>
           <Link href="/courses">
-            <button className="bg-teal-500 hover:bg-teal-400 text-slate-900 px-8 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl mt-4">Explore Catalog</button>
+            <button className="bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] px-6 py-3 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all shadow-sm mt-2">
+              Browse Academic Catalogue
+            </button>
           </Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {enrichedCourses.map((course: any) => (
             <Link href={course.playUrl} key={course.id.toString()} className="group">
-              <div className="glass-card border border-white/10 shadow-lg hover:shadow-2xl hover:border-teal-500/50 rounded-2xl p-5 flex flex-col transition-all hover:-translate-y-1 h-full cursor-pointer relative z-10">
-              <div className="flex gap-4 mb-6">
-                <div className="w-24 h-24 rounded-lg bg-gray-800 overflow-hidden flex-shrink-0">
-                  {course.thumbnail ? (
-                    <img src={course.thumbnail} className="w-full h-full object-cover" alt="thumbnail"/>
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <BookOpen className="text-gray-600" size={24} />
-                    </div>
-                  )}
+              <div className="bg-[#FAF7F0] border border-[#E9DFCC] hover:border-[#24483C]/40 rounded-2xl p-5 flex flex-col transition-all shadow-sm hover:shadow-md h-full cursor-pointer">
+                <div className="flex gap-4 mb-5">
+                  <div className="w-20 h-20 rounded-xl bg-[#E9DFCC] overflow-hidden shrink-0 border border-[#E9DFCC]">
+                    {course.thumbnail ? (
+                      <img src={course.thumbnail} className="w-full h-full object-cover" alt="thumbnail"/>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[#556960]">
+                        <BookOpen size={24} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#C96F4A] block mb-0.5">
+                      {course.category}
+                    </span>
+                    <h3 className="font-serif text-base font-bold text-[#1B2E26] line-clamp-2 leading-snug group-hover:text-[#24483C] transition-colors">
+                      {course.title}
+                    </h3>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white line-clamp-2">{course.title}</h3>
-                  <p className="text-sm text-slate-400 mt-1">{course.category}</p>
+                
+                <div className="mt-auto space-y-3 pt-3 border-t border-[#E9DFCC]/70">
+                  <div className="w-full bg-[#E9DFCC] rounded-full h-1.5 overflow-hidden">
+                    <div className="bg-[#24483C] h-1.5 rounded-full transition-all" style={{ width: `${course.progressPercentage}%` }}></div>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-[#24483C]">{course.progressPercentage}% Completed</span>
+                    <span className="px-3 py-1 bg-[#DCE6D8] text-[#24483C] rounded-lg text-xs font-semibold uppercase tracking-wider group-hover:bg-[#24483C] group-hover:text-[#F8F4EC] transition-colors">
+                      Resume Study
+                    </span>
+                  </div>
                 </div>
               </div>
-              
-              <div className="mt-auto space-y-4">
-                <div className="w-full bg-slate-800 rounded-full h-1.5">
-                  <div className="bg-teal-500 shadow-[0_0_10px_rgba(20,184,166,0.5)] h-1.5 rounded-full" style={{ width: `${course.progressPercentage}%` }}></div>
-                </div>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-sm font-bold text-teal-400">{course.progressPercentage}% Complete</span>
-                  <button className="px-5 py-2 bg-teal-500/10 hover:bg-teal-500 text-teal-400 hover:text-white border border-teal-500/20 hover:border-teal-500 rounded-lg text-sm font-bold transition-colors">
-                    Resume
-                  </button>
-                </div>
-              </div>
-            </div>
             </Link>
           ))}
         </div>
@@ -180,28 +195,31 @@ export default async function MyLearningPage() {
 
       {/* Dynamic Recommendations Section */}
       {recommendedCourses.length > 0 && (
-        <section className="space-y-6 pt-10 mt-10 border-t border-white/10 animate-in fade-in slide-in-from-bottom-4 delay-300">
-          <h2 className="text-2xl font-bold text-white">Recommended for You</h2>
+        <section className="space-y-6 pt-8 mt-10 border-t border-[#E9DFCC]">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Personalized Pathways</span>
+            <h2 className="font-serif text-2xl font-bold text-[#1B2E26]">Recommended For Your Journey</h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {recommendedCourses.map(course => (
-              <Link href={`/courses/${course.id}`} key={course.id.toString()} className="group flex flex-col h-full glass-card rounded-2xl border border-white/10 shadow-lg hover:shadow-xl hover:border-teal-500/50 transition-all duration-300 overflow-hidden cursor-pointer relative z-10 hover:-translate-y-1">
-                <div className="w-full aspect-video bg-slate-800 relative overflow-hidden">
+              <Link href={`/courses/${course.id}`} key={course.id.toString()} className="group flex flex-col h-full bg-[#FAF7F0] rounded-2xl border border-[#E9DFCC] hover:border-[#24483C]/40 shadow-sm hover:shadow-md transition-all overflow-hidden cursor-pointer">
+                <div className="w-full aspect-video bg-[#E9DFCC] relative overflow-hidden">
                   {course.thumbnail ? (
-                    <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-tr from-teal-900/40 to-slate-800 flex items-center justify-center">
-                      <PlayCircle size={32} className="text-teal-500" />
+                    <div className="absolute inset-0 bg-[#DCE6D8] flex items-center justify-center text-[#24483C]">
+                      <PlayCircle size={32} />
                     </div>
                   )}
-                  <div className="absolute top-2 right-2 bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-extrabold text-teal-400 shadow-sm border border-white/10">
+                  <div className="absolute top-2.5 right-2.5 bg-[#FAF7F0]/90 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-[#24483C] border border-[#E9DFCC]">
                     {course.category}
                   </div>
                 </div>
                 <div className="p-4 flex flex-col flex-1">
-                  <h3 className="text-sm font-bold text-white line-clamp-2 leading-tight group-hover:text-teal-400 transition-colors">
+                  <h3 className="font-serif text-sm font-bold text-[#1B2E26] line-clamp-2 leading-snug group-hover:text-[#24483C] transition-colors">
                     {course.title}
                   </h3>
-                  <div className="font-bold text-base text-white mt-auto pt-2">
+                  <div className="font-serif font-bold text-sm text-[#C96F4A] mt-auto pt-3">
                     ${course.price}
                   </div>
                 </div>

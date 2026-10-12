@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} mesh-bg text-slate-200 selection:bg-teal-500/30 min-h-screen bg-fixed`}>
+      <body className={`${inter.className} bg-[#F8F4EC] text-[#1B2E26] selection:bg-[#C96F4A]/25 min-h-screen antialiased`}>
         <LayoutWrapper>
           {children}
         </LayoutWrapper>

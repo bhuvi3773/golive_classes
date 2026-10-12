@@ -48,39 +48,39 @@ export default function QuizBuilder({ onSave, initialData }: QuizBuilderProps) {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h4 className="text-sm font-medium text-slate-900">Create Quiz Questions</h4>
+    <div className="space-y-5 text-[#1B2E26]">
+      <div className="flex items-center justify-between pb-2 border-b border-[#E9DFCC]">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-[#3D5A4C]">Construct Assessment Questions</h4>
         <button 
           onClick={addQuestion}
-          className="text-xs flex items-center gap-1 text-emerald-600 hover:text-blue-300"
+          className="text-xs flex items-center gap-1 font-semibold text-[#24483C] hover:text-[#1B2E26]"
         >
           <Plus size={14} /> Add Question
         </button>
       </div>
 
       {questions.map((q, qIndex) => (
-        <div key={qIndex} className="bg-[#12141f] p-4 rounded-lg border border-slate-200 space-y-4">
+        <div key={qIndex} className="bg-[#FAF7F0] p-4 rounded-xl border border-[#E9DFCC] space-y-4 shadow-sm">
           <div className="flex justify-between items-start gap-4">
-            <div className="flex-1 space-y-2">
-              <label className="text-xs text-slate-500">Question {qIndex + 1}</label>
+            <div className="flex-1 space-y-1.5">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#3D5A4C]">Question {qIndex + 1}</label>
               <input 
                 type="text" 
                 value={q.question}
                 onChange={(e) => updateQuestion(qIndex, e.target.value)}
-                placeholder="What is the capital of France?"
-                className="w-full bg-white border border-gray-600 rounded px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                placeholder="Formulate assessment inquiry..."
+                className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-3.5 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]"
               />
             </div>
             {questions.length > 1 && (
-              <button onClick={() => removeQuestion(qIndex)} className="text-slate-400 hover:text-red-400 mt-6">
-                <Trash size={16} />
+              <button onClick={() => removeQuestion(qIndex)} className="text-[#556960] hover:text-[#8B381A] mt-6" title="Remove question">
+                <Trash size={15} />
               </button>
             )}
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs text-slate-500">Options (Select the correct one)</label>
+            <label className="text-[11px] font-bold uppercase tracking-wider text-[#3D5A4C]">Options (Select the correct benchmark)</label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {q.options.map((opt: string, optIndex: number) => (
                 <div key={optIndex} className="flex items-center gap-2">
@@ -89,14 +89,14 @@ export default function QuizBuilder({ onSave, initialData }: QuizBuilderProps) {
                     name={`correct-${qIndex}`}
                     checked={q.correctAnswerIndex === optIndex}
                     onChange={() => setCorrectAnswer(qIndex, optIndex)}
-                    className="w-4 h-4 text-blue-500 bg-gray-700 border-gray-600 focus:ring-blue-600"
+                    className="w-4 h-4 text-[#24483C] accent-[#24483C] cursor-pointer"
                   />
                   <input 
                     type="text" 
                     value={opt}
                     onChange={(e) => updateOption(qIndex, optIndex, e.target.value)}
                     placeholder={`Option ${optIndex + 1}`}
-                    className={`flex-1 bg-white border rounded px-3 py-1.5 text-sm text-slate-900 focus:outline-none transition-colors ${q.correctAnswerIndex === optIndex ? 'border-blue-500/50' : 'border-gray-600'}`}
+                    className={`flex-1 bg-[#F8F4EC] border rounded-xl px-3 py-1.5 text-xs text-[#1B2E26] focus:outline-none transition-colors ${q.correctAnswerIndex === optIndex ? 'border-[#24483C] bg-[#DCE6D8]/30 font-semibold' : 'border-[#E9DFCC]'}`}
                   />
                 </div>
               ))}
@@ -108,9 +108,9 @@ export default function QuizBuilder({ onSave, initialData }: QuizBuilderProps) {
       <div className="flex justify-end pt-2">
         <button 
           onClick={handleSave}
-          className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded transition-colors"
+          className="bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] text-xs font-semibold uppercase tracking-wider px-5 py-2 rounded-xl transition-colors shadow-sm"
         >
-          Save Quiz
+          Save Assessment Battery
         </button>
       </div>
     </div>
