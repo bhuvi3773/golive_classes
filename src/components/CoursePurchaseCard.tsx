@@ -44,6 +44,22 @@ export default function CoursePurchaseCard({ courseId, price, isPurchasedInitial
       const res = await fetch('/api/auth/me', { cache: 'no-store' });
       const data = await res.json();
       if (data.user) {
+        // Direct free enrollment flow when price is exactly 0
+        if (price === 0) {
+          const enrollRes = await fetch(`/api/courses/${courseId}/enroll`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          const enrollData = await enrollRes.json();
+          if (enrollRes.ok) {
+            setIsPurchased(true);
+            router.push(`/courses/${courseId}/play`);
+            return;
+          } else {
+            alert(enrollData.error || "Enrollment failed. Please try again.");
+            return;
+          }
+        }
         router.push(`/checkout/${courseId}`);
       } else {
         router.push('/login');
@@ -56,7 +72,9 @@ export default function CoursePurchaseCard({ courseId, price, isPurchasedInitial
   return (
     <>
       <div className="text-center mb-6 border-b border-[#E9DFCC] pb-6">
-        <span className="text-4xl font-extrabold text-[#24483C]">${price}</span>
+        <span className="text-4xl font-extrabold text-[#24483C]">
+          {price === 0 ? "Free" : `$${price}`}
+        </span>
       </div>
       
       {isPurchased ? (
@@ -68,7 +86,7 @@ export default function CoursePurchaseCard({ courseId, price, isPurchasedInitial
       ) : (
         <div className="flex gap-2.5">
           <button onClick={handleBuy} className="flex-1 bg-[#C96F4A] hover:bg-[#B25D39] text-[#FFFFFF] font-bold py-3.5 rounded-xl transition-all shadow-sm hover:-translate-y-0.5">
-            Enroll Now
+            {price === 0 ? "Enroll Free" : "Enroll Now"}
           </button>
           <button 
             onClick={toggleWishlist}
