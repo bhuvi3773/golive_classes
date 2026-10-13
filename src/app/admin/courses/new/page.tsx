@@ -46,13 +46,12 @@ export default function NewCourseWizard() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: title || "Untitled Course",
+          title: title.trim() || "Untitled Course",
           description: "Course syllabus overview goes here...",
           price: 0,
-          category,
+          category: category || (categories.length > 0 ? categories[0].name : "General"),
           thumbnail: "",
           status: 'draft',
-          instructor: 'Faculty Admin', 
         }),
       });
 

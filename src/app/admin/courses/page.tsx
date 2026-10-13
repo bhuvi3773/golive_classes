@@ -124,7 +124,7 @@ export default function CoursesManager() {
                         </div>
                         <div>
                           <p className="font-serif font-bold text-sm text-[#1B2E26] line-clamp-1">{course.title}</p>
-                          <p className="text-[11px] text-[#556960]">Instructor: {course.instructor}</p>
+                          <p className="text-[11px] text-[#556960]">Instructor: {course.instructor || 'Faculty Admin'}</p>
                         </div>
                       </div>
                     </td>

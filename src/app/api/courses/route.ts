@@ -34,9 +34,23 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const newCourse = await CourseRepository.create(body);
+    const courseData = {
+      title: (body.title && typeof body.title === 'string' && body.title.trim()) || 'Untitled Course',
+      description: (body.description && typeof body.description === 'string') ? body.description : 'Course syllabus overview goes here...',
+      category: (body.category && typeof body.category === 'string' && body.category.trim()) ? body.category.trim() : 'General',
+      price: typeof body.price === 'number' ? body.price : (parseFloat(body.price) || 0),
+      thumbnail: typeof body.thumbnail === 'string' ? body.thumbnail : '',
+      status: typeof body.status === 'string' ? body.status : 'draft',
+      curriculum: body.curriculum ?? [],
+      goals: Array.isArray(body.goals) ? body.goals.filter((g: any) => typeof g === 'string') : [],
+      requirements: Array.isArray(body.requirements) ? body.requirements.filter((r: any) => typeof r === 'string') : [],
+      targetAudience: Array.isArray(body.targetAudience) ? body.targetAudience.filter((t: any) => typeof t === 'string') : [],
+    };
+
+    const newCourse = await CourseRepository.create(courseData);
     return NextResponse.json(newCourse, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to create course' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Course creation error:', error);
+    return NextResponse.json({ error: error?.message || 'Failed to create course' }, { status: 500 });
   }
 }

@@ -145,7 +145,31 @@ export async function PUT(
     
     const body = await req.json();
 
-    const updatedCourse = await CourseRepository.update(id, body);
+    const allowedFields = [
+      'title',
+      'description',
+      'category',
+      'price',
+      'thumbnail',
+      'status',
+      'curriculum',
+      'goals',
+      'requirements',
+      'targetAudience'
+    ] as const;
+
+    const updateData: Record<string, any> = {};
+    for (const key of allowedFields) {
+      if (key in body) {
+        if (key === 'price') {
+          updateData.price = typeof body.price === 'number' ? body.price : (parseFloat(body.price) || 0);
+        } else {
+          updateData[key] = body[key];
+        }
+      }
+    }
+
+    const updatedCourse = await CourseRepository.update(id, updateData);
 
     if (!updatedCourse) {
       return NextResponse.json({ error: 'Course not found' }, { status: 404 });
