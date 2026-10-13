@@ -59,13 +59,22 @@ export function generateS3Key(fileName: string, folderType: string = 'videos'): 
   const timestamp = Date.now();
   const randomSuffix = Math.random().toString(36).substring(2, 10);
   const cleanFolder = folderType.replace(/[^a-zA-Z0-9_-]/g, '') || 'general';
-  return `course-media/${cleanFolder}/${timestamp}-${randomSuffix}-${safeName}`;
+  const customPrefix = process.env.AWS_S3_KEY_PREFIX?.trim().replace(/^\/+|\/+$/g, '');
+  const prefixPart = customPrefix ? `${customPrefix}/` : '';
+  return `${prefixPart}course-media/${cleanFolder}/${timestamp}-${randomSuffix}-${safeName}`;
 }
 
 export function isS3Url(urlOrKey: string): boolean {
   if (!urlOrKey || typeof urlOrKey !== 'string') return false;
   const bucketName = process.env.AWS_S3_BUCKET_NAME || '';
-  if (urlOrKey.startsWith('course-media/') || urlOrKey.startsWith('courses/')) return true;
+  const customPrefix = process.env.AWS_S3_KEY_PREFIX?.trim().replace(/^\/+|\/+$/g, '');
+  if (
+    urlOrKey.startsWith('course-media/') ||
+    urlOrKey.startsWith('courses/') ||
+    urlOrKey.startsWith('generativeaiofflinevideos/') ||
+    urlOrKey.startsWith('preview/') ||
+    (customPrefix && urlOrKey.startsWith(`${customPrefix}/`))
+  ) return true;
   if (bucketName && urlOrKey.includes(bucketName)) return true;
   if (urlOrKey.includes('.s3.') && urlOrKey.includes('.amazonaws.com/')) return true;
   if (urlOrKey.includes('s3.amazonaws.com/')) return true;
@@ -74,7 +83,14 @@ export function isS3Url(urlOrKey: string): boolean {
 
 export function extractS3Key(urlOrKey: string): string {
   if (!urlOrKey || typeof urlOrKey !== 'string') return '';
-  if (urlOrKey.startsWith('course-media/') || urlOrKey.startsWith('courses/')) return urlOrKey;
+  const customPrefix = process.env.AWS_S3_KEY_PREFIX?.trim().replace(/^\/+|\/+$/g, '');
+  if (
+    urlOrKey.startsWith('course-media/') ||
+    urlOrKey.startsWith('courses/') ||
+    urlOrKey.startsWith('generativeaiofflinevideos/') ||
+    urlOrKey.startsWith('preview/') ||
+    (customPrefix && urlOrKey.startsWith(`${customPrefix}/`))
+  ) return urlOrKey;
 
   try {
     const parsedUrl = new URL(urlOrKey);
@@ -89,10 +105,18 @@ export function extractS3Key(urlOrKey: string): string {
 
     return decodeURIComponent(path);
   } catch {
+    if (customPrefix) {
+      const customIdx = urlOrKey.indexOf(`${customPrefix}/`);
+      if (customIdx !== -1) return urlOrKey.substring(customIdx);
+    }
+    const previewIdx = urlOrKey.indexOf('preview/');
+    if (previewIdx !== -1) return urlOrKey.substring(previewIdx);
     const mediaIdx = urlOrKey.indexOf('course-media/');
     if (mediaIdx !== -1) return urlOrKey.substring(mediaIdx);
     const coursesIdx = urlOrKey.indexOf('courses/');
     if (coursesIdx !== -1) return urlOrKey.substring(coursesIdx);
+    const legacyIdx = urlOrKey.indexOf('generativeaiofflinevideos/');
+    if (legacyIdx !== -1) return urlOrKey.substring(legacyIdx);
     return urlOrKey;
   }
 }
@@ -138,6 +162,11 @@ export async function getPresignedDownloadUrl(
   expiresInSeconds: number = 3600
 ): Promise<string> {
   if (!keyOrUrl) return keyOrUrl;
+
+  // Already a presigned URL
+  if (keyOrUrl.includes('X-Amz-Signature') || keyOrUrl.includes('X-Amz-Algorithm')) {
+    return keyOrUrl;
+  }
 
   // External non-S3 URLs (YouTube, Vimeo, Cloudinary) should be passed through as-is
   if ((keyOrUrl.startsWith('http://') || keyOrUrl.startsWith('https://')) && !isS3Url(keyOrUrl)) {
@@ -196,6 +225,7 @@ export async function getPresignedUploadUrl(
     uploadUrl,
     key,
     fileUrl: `https://${bucketName}.s3.${region}.amazonaws.com/${key}`,
+    contentType,
   };
 }
 

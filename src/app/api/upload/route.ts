@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     // Mode 1: Presigned Direct Upload URL Request (JSON)
     if (contentType.includes('application/json')) {
       const body = await request.json();
-      const { fileName, fileType, folderType = 'video' } = body;
+      const { fileName, fileType, folderType = 'video', fileSize, courseId } = body;
 
       if (!fileName || !fileType) {
         return NextResponse.json({ success: false, error: 'fileName and fileType are required.' }, { status: 400 });
@@ -26,6 +26,27 @@ export async function POST(request: Request) {
           success: false, 
           error: `Invalid file type '${fileType}' for asset category '${folderType}'.` 
         }, { status: 400 });
+      }
+
+      // Verify course existence and edit permission if courseId provided
+      if (courseId) {
+        const { CourseRepository } = await import('@/lib/repositories/course.repository');
+        const course = await CourseRepository.findById(courseId);
+        if (!course) {
+          return NextResponse.json({ success: false, error: 'Course not found.' }, { status: 404 });
+        }
+      }
+
+      // Server-side size validation before presigning
+      if (fileSize && typeof fileSize === 'number') {
+        const maxSize = (MAX_FILE_SIZES as Record<string, number>)[folderType] || MAX_FILE_SIZES.general;
+        if (fileSize > maxSize) {
+          const maxMB = Math.round(maxSize / (1024 * 1024));
+          return NextResponse.json({ 
+            success: false, 
+            error: `File size exceeds the allowable limit of ${maxMB}MB.` 
+          }, { status: 400 });
+        }
       }
 
       const presigned = await getPresignedUploadUrl(fileName, fileType, folderType);

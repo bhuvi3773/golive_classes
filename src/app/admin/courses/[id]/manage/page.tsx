@@ -41,18 +41,25 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
   ]);
 
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<string>("");
   const [activeUpload, setActiveUpload] = useState<{lectureId: number, type: 'video' | 'article' | 'quiz' | 'assignment'} | null>(null);
 
   useEffect(() => {
     fetch(`/api/courses/${courseId}`)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to load course details");
+        return res.json();
+      })
       .then(data => {
+        if (!data || data.error) return;
         setCourse(data);
-        if (data.curriculum && data.curriculum.length > 0) {
+        if (data.curriculum && Array.isArray(data.curriculum) && data.curriculum.length > 0) {
           setSections(data.curriculum);
         }
       })
-      .catch(() => {});
+      .catch(err => {
+        console.error("Error loading course:", err);
+      });
   }, [courseId]);
 
   const addSection = () => {
@@ -95,38 +102,114 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
 
   const handleFileUpload = async (sectionId: number, lectureId: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setIsUploading(true);
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folderType', 'video');
-      
-      try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-          setSections(sections.map(sec => {
-            if (sec.id === sectionId) {
-              return {
-                ...sec,
-                lectures: sec.lectures.map(lec => lec.id === lectureId ? { ...lec, content: data.url, type: 'video', originalName: file.name } : lec)
-              };
-            }
-            return sec;
-          }));
-        } else {
-          alert(`Upload failed: ${data.error || "Please check upload configuration"}`);
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsUploading(false);
-        setActiveUpload(null);
+    if (!file) return;
+
+    // Reset input so re-selecting same file triggers change
+    e.target.value = '';
+
+    // 1. Client-side MIME validation
+    const allowedVideoMimes = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-matroska'];
+    if (!allowedVideoMimes.includes(file.type)) {
+      alert(`Invalid video format (${file.type || 'unknown'}). Please upload an MP4, WebM, or QuickTime video file.`);
+      return;
+    }
+
+    // 2. Client-side size validation (500 MB max)
+    const maxVideoSize = 500 * 1024 * 1024;
+    if (file.size > maxVideoSize) {
+      alert(`File size (${(file.size / (1024 * 1024)).toFixed(1)} MB) exceeds allowable maximum of 500 MB.`);
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadStatus("Authorizing direct cloud upload...");
+
+    try {
+      // 3. Request presigned direct S3 upload URL from server
+      const presignRes = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileType: file.type,
+          folderType: 'video',
+          fileSize: file.size,
+          courseId: courseId,
+        })
+      });
+
+      const presignData = await presignRes.json();
+      if (!presignRes.ok || !presignData.success || !presignData.uploadUrl) {
+        throw new Error(presignData.error || 'Failed to obtain direct upload authorization.');
       }
+
+      // 4. Upload binary directly from browser to AWS S3 using presigned URL
+      setUploadStatus("Uploading video directly to cloud storage...");
+      const s3UploadRes = await fetch(presignData.uploadUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': presignData.contentType || file.type,
+        },
+        body: file,
+      });
+
+      if (!s3UploadRes.ok) {
+        throw new Error(`Cloud storage upload failed (HTTP ${s3UploadRes.status}). Please verify S3 CORS and storage configuration.`);
+      }
+
+      // 5. Build updated curriculum with S3 object key and metadata
+      const s3Key = presignData.key;
+      const updatedSections = sections.map(sec => {
+        if (sec.id === sectionId) {
+          return {
+            ...sec,
+            lectures: sec.lectures.map(lec => {
+              if (lec.id === lectureId) {
+                return {
+                  ...lec,
+                  content: s3Key,
+                  type: 'video',
+                  originalName: file.name,
+                  s3Key: s3Key,
+                  fileSize: file.size,
+                  mimeType: file.type,
+                  uploadedAt: new Date().toISOString()
+                };
+              }
+              return lec;
+            })
+          };
+        }
+        return sec;
+      });
+
+      // 6. Persist curriculum immediately to PostgreSQL
+      setUploadStatus("Saving curriculum to database...");
+      const saveRes = await fetch(`/api/courses/${courseId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          curriculum: updatedSections
+        })
+      });
+
+      if (!saveRes.ok) {
+        // Retain local state so the uploaded reference is not lost, but alert failure
+        setSections(updatedSections);
+        const saveErr = await saveRes.json().catch(() => ({}));
+        throw new Error(`Video uploaded to cloud storage, but failed to save curriculum to database: ${saveErr.error || saveRes.statusText}. Please click 'Save Draft' to retry.`);
+      }
+
+      // 7. Success: update state and notify author
+      setSections(updatedSections);
+      setActiveUpload(null);
+      alert("Video lecture uploaded and persisted to course curriculum successfully!");
+    } catch (err: any) {
+      console.error("Video upload workflow error:", err);
+      alert(`Upload failed: ${err.message}`);
+    } finally {
+      setIsUploading(false);
+      setUploadStatus("");
     }
   };
 
@@ -144,29 +227,84 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
 
   const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setIsUploading(true);
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folderType', 'thumbnail');
-      
-      try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-          updateCourseField('thumbnail', data.url);
-        } else {
-          alert(`Upload failed: ${data.error}`);
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsUploading(false);
+    if (!file) return;
+
+    e.target.value = '';
+
+    const allowedImageMimes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedImageMimes.includes(file.type)) {
+      alert(`Invalid image format (${file.type || 'unknown'}). Please upload a JPEG, PNG, or WebP image.`);
+      return;
+    }
+
+    const maxImageSize = 10 * 1024 * 1024;
+    if (file.size > maxImageSize) {
+      alert(`Image size (${(file.size / (1024 * 1024)).toFixed(1)} MB) exceeds 10 MB limit.`);
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadStatus("Authorizing artwork upload...");
+
+    try {
+      // 1. Request presigned upload URL
+      const presignRes = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileType: file.type,
+          folderType: 'thumbnail',
+          fileSize: file.size,
+          courseId: courseId,
+        })
+      });
+
+      const presignData = await presignRes.json();
+      if (!presignRes.ok || !presignData.success || !presignData.uploadUrl) {
+        throw new Error(presignData.error || 'Failed to obtain thumbnail upload authorization.');
       }
+
+      // 2. Direct binary upload to S3
+      setUploadStatus("Uploading artwork to cloud storage...");
+      const s3UploadRes = await fetch(presignData.uploadUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': presignData.contentType || file.type,
+        },
+        body: file,
+      });
+
+      if (!s3UploadRes.ok) {
+        throw new Error(`Artwork cloud storage upload failed (HTTP ${s3UploadRes.status}).`);
+      }
+
+      const thumbnailRef = presignData.fileUrl || presignData.key;
+
+      // 3. Persist thumbnail to PostgreSQL
+      setUploadStatus("Saving artwork to course record...");
+      const saveRes = await fetch(`/api/courses/${courseId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          thumbnail: thumbnailRef
+        })
+      });
+
+      if (!saveRes.ok) {
+        updateCourseField('thumbnail', thumbnailRef);
+        const saveErr = await saveRes.json().catch(() => ({}));
+        throw new Error(`Artwork uploaded to cloud storage, but failed to save to database: ${saveErr.error || saveRes.statusText}. Please click 'Save Draft' to retry.`);
+      }
+
+      updateCourseField('thumbnail', thumbnailRef);
+      alert("Course artwork uploaded and saved successfully!");
+    } catch (err: any) {
+      console.error("Thumbnail upload error:", err);
+      alert(`Artwork upload failed: ${err.message}`);
+    } finally {
+      setIsUploading(false);
+      setUploadStatus("");
     }
   };
 

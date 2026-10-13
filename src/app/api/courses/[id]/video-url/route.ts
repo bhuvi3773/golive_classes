@@ -77,15 +77,17 @@ export async function GET(
     }
 
     // Role-based authorization
+    // Role-based authorization
     const isStaff = ["admin", "superadmin"].includes(user.role?.toLowerCase());
     
     // Check enrollment
     const dbUser = await UserRepository.findById(user.userId);
     const isEnrolled = dbUser?.purchasedCourses?.some((c: any) => c.id === course.id);
+    const isFree = Number(course.price) === 0;
     const isFirstLecture = firstLectureId !== null && lectureId === firstLectureId;
 
-    // Access granted if: staff, enrolled student, or first lecture (free preview)
-    const hasAccess = isStaff || isEnrolled || isFirstLecture;
+    // Access granted if: staff, enrolled student, free course, or first lecture (free preview)
+    const hasAccess = isStaff || isEnrolled || isFree || isFirstLecture;
 
     if (!hasAccess) {
       return NextResponse.json(
@@ -97,7 +99,7 @@ export async function GET(
       );
     }
 
-    const rawContent = requestedLecture.content;
+    const rawContent = requestedLecture.content || requestedLecture.s3Key;
     if (!rawContent) {
       return NextResponse.json({
         success: true,
@@ -107,7 +109,7 @@ export async function GET(
     }
 
     // Check if content is an S3 asset or key
-    if (isS3Url(rawContent) || rawContent.startsWith("courses/")) {
+    if (isS3Url(rawContent) || rawContent.startsWith("courses/") || rawContent.startsWith("course-media/") || rawContent.startsWith("generativeaiofflinevideos/")) {
       const s3Key = extractS3Key(rawContent);
       if (!s3Key) {
         return NextResponse.json(
@@ -142,7 +144,7 @@ export async function GET(
   } catch (error: any) {
     console.error("Error generating secure video URL:", error);
     return NextResponse.json(
-      { success: false, error: "Internal server error retrieving secure video URL" },
+      { success: false, error: error.message || "Internal server error retrieving secure video URL" },
       { status: 500 }
     );
   }

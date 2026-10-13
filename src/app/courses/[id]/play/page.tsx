@@ -74,7 +74,8 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
   const dbUser = await UserRepository.findById(user.userId);
   const isOwner = dbUser && dbUser.purchasedCourses && dbUser.purchasedCourses.some((c: any) => c.id === course.id);
   const isStaff = ["admin", "superadmin"].includes(user.role?.toLowerCase() || "");
-  const hasAccess = isOwner || isStaff;
+  const isFree = Number(course.price) === 0;
+  const hasAccess = isOwner || isStaff || isFree;
   
   if (!hasAccess) {
     // If they don't own it and are not staff, and trying to access a lecture that is NOT the first lecture, redirect them
@@ -97,10 +98,11 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
 
   // Resolve private S3 video content to short-lived presigned URL
   let playableLecture = activeLecture;
-  if (activeLecture?.type === 'video' && activeLecture?.content) {
+  const rawLectureContent = activeLecture?.content || activeLecture?.s3Key;
+  if (activeLecture?.type === 'video' && rawLectureContent) {
     const { isS3Url, extractS3Key, getPresignedDownloadUrl } = await import('@/lib/s3');
-    if (isS3Url(activeLecture.content) || activeLecture.content.startsWith('courses/')) {
-      const s3Key = extractS3Key(activeLecture.content);
+    if (isS3Url(rawLectureContent) || rawLectureContent.startsWith('courses/') || rawLectureContent.startsWith('course-media/')) {
+      const s3Key = extractS3Key(rawLectureContent);
       if (s3Key) {
         try {
           const presignedUrl = await getPresignedDownloadUrl(s3Key, 3600);

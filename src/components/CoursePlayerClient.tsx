@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import SecureVideoPlayer, { SecureVideoPlayerRef } from "./SecureVideoPlayer";
 import CourseDiscussions from "./CourseDiscussions";
 import CourseNotes from "./CourseNotes";
@@ -19,6 +19,62 @@ export default function CoursePlayerClient({
 }: any) {
   const videoRef = useRef<SecureVideoPlayerRef>(null);
   const [activeTab, setActiveTab] = useState<'discussions' | 'notes'>('discussions');
+
+  const [videoSrc, setVideoSrc] = useState<string>(() => {
+    if (activeLecture?.type === 'video' && activeLecture?.content) {
+      if (activeLecture.content.startsWith('http') && (!activeLecture.content.includes('amazonaws.com') || activeLecture.content.includes('X-Amz-Signature'))) {
+        return activeLecture.content;
+      }
+    }
+    return '';
+  });
+  const [videoError, setVideoError] = useState<string | null>(null);
+  const [isLoadingVideo, setIsLoadingVideo] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (activeLecture?.type !== 'video' || !activeLecture?.content) {
+      setVideoSrc('');
+      setVideoError(null);
+      setIsLoadingVideo(false);
+      return;
+    }
+
+    // If it's already an active presigned URL or external streaming link
+    if (activeLecture.content.startsWith('http') && (!activeLecture.content.includes('amazonaws.com') || activeLecture.content.includes('X-Amz-Signature'))) {
+      setVideoSrc(activeLecture.content);
+      setVideoError(null);
+      setIsLoadingVideo(false);
+      return;
+    }
+
+    // Otherwise, fetch short-lived secure playback URL from authenticated endpoint
+    let isMounted = true;
+    setIsLoadingVideo(true);
+    setVideoError(null);
+
+    fetch(`/api/courses/${course.id}/video-url?lectureId=${activeLectureId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!isMounted) return;
+        if (data.success && data.url) {
+          setVideoSrc(data.url);
+          setVideoError(null);
+        } else {
+          setVideoError(data.error || "Unable to retrieve secure video stream.");
+        }
+      })
+      .catch(err => {
+        if (!isMounted) return;
+        setVideoError(err.message || "Network error loading video stream.");
+      })
+      .finally(() => {
+        if (isMounted) setIsLoadingVideo(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [course?.id, activeLectureId, activeLecture?.content, activeLecture?.type]);
 
   const getCurrentTime = () => {
     if (videoRef.current) {
@@ -52,18 +108,60 @@ export default function CoursePlayerClient({
            />
         ) : activeLecture?.type === 'video' && activeLecture?.content ? (
            <div className="w-full h-full flex flex-col items-center justify-center animate-in fade-in relative">
-              <SecureVideoPlayer ref={videoRef} src={activeLecture.content} userEmail={userEmail || "Student"} />
-              <div className="absolute top-4 left-4 z-10 bg-[#24483C]/85 backdrop-blur-md text-[#F8F4EC] px-3.5 py-1.5 rounded-xl text-xs font-medium border border-[#E9DFCC]/30 pointer-events-none shadow-sm flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#C96F4A] animate-pulse"></span>
-                <span>Active Lecture: {activeLecture.title}</span>
-              </div>
-              <div className="absolute bottom-4 right-4 z-20">
-                <MarkCompleteButton 
-                  courseId={course.id.toString()} 
-                  lectureId={Number(activeLectureId)} 
-                  isCompleted={completedLectures.includes(Number(activeLectureId))} 
-                />
-              </div>
+              {isLoadingVideo ? (
+                <div className="flex flex-col items-center justify-center py-20 text-[#DCE6D8]/80 text-center px-4">
+                  <div className="w-10 h-10 border-2 border-[#C96F4A] border-t-transparent rounded-full animate-spin mb-4" />
+                  <p className="font-serif text-sm">Authorizing secure media playback...</p>
+                </div>
+              ) : videoError ? (
+                <div className="flex flex-col items-center justify-center py-16 px-6 text-center max-w-md">
+                  <div className="w-12 h-12 rounded-full bg-red-900/30 border border-red-500/30 flex items-center justify-center text-red-400 mb-4">
+                    <FileText size={24} />
+                  </div>
+                  <h4 className="font-serif text-lg font-bold text-[#F8F4EC] mb-2">Media Stream Unavailable</h4>
+                  <p className="text-xs text-[#DCE6D8]/80 mb-4 leading-relaxed">{videoError}</p>
+                  <button 
+                    onClick={() => {
+                      setIsLoadingVideo(true);
+                      setVideoError(null);
+                      fetch(`/api/courses/${course.id}/video-url?lectureId=${activeLectureId}`)
+                        .then(res => res.json())
+                        .then(data => {
+                          if (data.success && data.url) {
+                            setVideoSrc(data.url);
+                          } else {
+                            setVideoError(data.error || "Unable to retrieve secure video stream.");
+                          }
+                        })
+                        .catch(err => setVideoError(err.message))
+                        .finally(() => setIsLoadingVideo(false));
+                    }}
+                    className="px-4 py-2 bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] border border-[#E9DFCC]/30 rounded-lg text-xs font-semibold transition-colors"
+                  >
+                    Retry Authorization
+                  </button>
+                </div>
+              ) : videoSrc ? (
+                <>
+                  <SecureVideoPlayer ref={videoRef} src={videoSrc} userEmail={userEmail || "Student"} />
+                  <div className="absolute top-4 left-4 z-10 bg-[#24483C]/85 backdrop-blur-md text-[#F8F4EC] px-3.5 py-1.5 rounded-xl text-xs font-medium border border-[#E9DFCC]/30 pointer-events-none shadow-sm flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#C96F4A] animate-pulse"></span>
+                    <span>Active Lecture: {activeLecture.title}</span>
+                  </div>
+                  <div className="absolute bottom-4 right-4 z-20">
+                    <MarkCompleteButton 
+                      courseId={course.id.toString()} 
+                      lectureId={Number(activeLectureId)} 
+                      isCompleted={completedLectures.includes(Number(activeLectureId))} 
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-[#DCE6D8]/80 text-center px-4">
+                  <FileText size={48} className="mb-4 text-[#DCE6D8]/50" />
+                  <p className="font-serif text-sm">No video stream available for this lecture.</p>
+                </div>
+              )}
            </div>
         ) : (
            <div className="flex-1 text-[#DCE6D8]/80 flex flex-col items-center justify-center animate-in fade-in py-20 px-4 text-center">
