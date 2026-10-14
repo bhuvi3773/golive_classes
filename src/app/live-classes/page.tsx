@@ -1,15 +1,35 @@
 import { Video, Calendar, Users, Clock, PlayCircle, BookOpen, Megaphone } from "lucide-react";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import { getUserFromCookie } from "@/lib/auth";
+import { UserRepository } from "@/lib/repositories/user.repository";
+import { canUserAccessLaunchLink, sanitizeLaunchForUser } from "@/lib/repositories/launch.repository";
 
 export const dynamic = 'force-dynamic';
 
 export default async function LiveClassesPage() {
-  const launches = await prisma.upcomingLaunch.findMany({
+  const sessionUser = await getUserFromCookie();
+  let enrolledCategories = new Set<string>();
+
+  if (sessionUser && sessionUser.role === 'student') {
+    const dbUser = await UserRepository.findById(sessionUser.userId);
+    if (dbUser && dbUser.purchasedCourses) {
+      dbUser.purchasedCourses.forEach((c: any) => {
+        if (c.category) enrolledCategories.add(c.category.toLowerCase().trim());
+      });
+    }
+  }
+
+  const rawLaunches = await prisma.upcomingLaunch.findMany({
     where: {
       status: { in: ['scheduled', 'live'] }
     },
     orderBy: { launchDate: 'asc' }
+  });
+
+  const launches = rawLaunches.map((l: any) => {
+    const canAccess = canUserAccessLaunchLink(sessionUser?.role, enrolledCategories, l);
+    return sanitizeLaunchForUser(l, canAccess);
   });
 
   const liveSessions = launches.filter((l: any) => l.status === 'live');
@@ -43,11 +63,11 @@ export default async function LiveClassesPage() {
     <div className="space-y-8 max-w-7xl mx-auto pb-20">
       <div>
         <span className="text-xs font-bold uppercase tracking-wider text-[#C96F4A]">Real-Time Cohorts</span>
-        <h1 className="text-3xl md:text-4xl font-extrabold flex items-center gap-3 text-[#1B2E26] mt-1">
-          <Video className="text-[#24483C]" size={36} />
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold flex items-center gap-3 text-[#1B2E26] mt-1">
+          <Video className="text-[#24483C] shrink-0 w-8 h-8 sm:w-9 sm:h-9" />
           Live Classes & Masterclasses
         </h1>
-        <p className="text-[#4A5E54] mt-2 text-base md:text-lg">Participate in live architectural reviews, coding sessions, and upcoming module releases.</p>
+        <p className="text-[#4A5E54] mt-2 text-sm sm:text-base md:text-lg">Participate in live architectural reviews, coding sessions, and upcoming module releases.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -70,27 +90,41 @@ export default async function LiveClassesPage() {
                    <a href={featuredLive.link} target="_blank" rel="noreferrer" className="relative z-10 w-16 h-16 bg-[#FFFFFF]/90 backdrop-blur-md rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition-all shadow-md group/btn">
                      <PlayCircle size={36} className="text-[#24483C]" />
                    </a>
+                 ) : !sessionUser ? (
+                   <Link href={`/login?redirect=${encodeURIComponent('/live-classes')}`} className="relative z-10 text-[#F8F4EC] font-bold bg-[#19332A]/90 hover:bg-[#19332A] px-6 py-2.5 rounded-full backdrop-blur-sm border border-[#2E5B4C] text-sm transition-all shadow-sm">
+                     Sign in to join session
+                   </Link>
                  ) : (
-                   <div className="relative z-10 text-[#F8F4EC] font-bold bg-[#19332A]/80 px-6 py-2.5 rounded-full backdrop-blur-sm border border-[#2E5B4C] text-sm">Session link will appear at start</div>
+                   <div className="relative z-10 text-[#F8F4EC] font-bold bg-[#19332A]/80 px-6 py-2.5 rounded-full backdrop-blur-sm border border-[#2E5B4C] text-sm">
+                     {sessionUser.role === 'student' ? 'Enrollment required to join' : 'Session link will appear at start'}
+                   </div>
                  )}
                </div>
-               <div className="p-8 space-y-4">
+               <div className="p-5 sm:p-8 space-y-4">
                  <div className="flex justify-between items-start">
                    <span className="text-xs font-bold px-3 py-1 bg-[#EEF3EC] text-[#24483C] rounded-full border border-[#DCE6D8]">{featuredLive.category}</span>
                    <div className="flex items-center text-xs text-[#C96F4A] font-bold gap-1.5 bg-[#C96F4A]/10 px-3 py-1 rounded-full border border-[#C96F4A]/20">
                      <Users size={14} /> Active Session
                    </div>
                  </div>
-                 <h2 className="text-2xl md:text-3xl font-extrabold text-[#1B2E26]">{featuredLive.title}</h2>
+                 <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#1B2E26]">{featuredLive.title}</h2>
                  <p className="text-[#4A5E54] text-base leading-relaxed">{featuredLive.description}</p>
                  <div className="flex items-center gap-2 text-sm text-[#4A5E54] pt-2 border-t border-[#E9DFCC]">
                    <span>Lead Instructor:</span> <span className="text-[#1B2E26] font-bold">{featuredLive.instructorName}</span>
                  </div>
-                 {featuredLive.link && (
+                 {featuredLive.link ? (
                    <a href={featuredLive.link} target="_blank" rel="noreferrer" className="inline-block w-full text-center bg-[#24483C] hover:bg-[#19332A] text-[#F8F4EC] font-bold py-3.5 rounded-xl transition-all shadow-sm mt-3">
                      Join Live Classroom
                    </a>
-                 )}
+                 ) : !sessionUser ? (
+                   <Link href={`/login?redirect=${encodeURIComponent('/live-classes')}`} className="inline-block w-full text-center bg-[#C96F4A] hover:bg-[#b05d3b] text-[#FFFFFF] font-bold py-3.5 rounded-xl transition-all shadow-sm mt-3">
+                     Sign In to Access Live Classroom
+                   </Link>
+                 ) : sessionUser.role === 'student' ? (
+                   <Link href="/courses" className="inline-block w-full text-center bg-[#24483C]/80 hover:bg-[#24483C] text-[#F8F4EC] font-bold py-3.5 rounded-xl transition-all shadow-sm mt-3">
+                     Enroll in Course to Access Classroom
+                   </Link>
+                 ) : null}
                </div>
              </div>
           ) : scheduledSessions.length > 0 ? (
@@ -112,12 +146,12 @@ export default async function LiveClassesPage() {
                    <div className="text-[#DCE6D8] font-bold mt-3 text-sm">{new Date(scheduledSessions[0].launchDate).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</div>
                  </div>
                </div>
-               <div className="p-8 space-y-4">
+               <div className="p-5 sm:p-8 space-y-4">
                  <div className="flex items-center gap-2">
                    {getIconForType(scheduledSessions[0].type)}
                    <span className="text-xs font-bold text-[#72857C] uppercase tracking-wider">{scheduledSessions[0].type.replace('-', ' ')}</span>
                  </div>
-                 <h2 className="text-2xl md:text-3xl font-extrabold text-[#1B2E26]">{scheduledSessions[0].title}</h2>
+                 <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#1B2E26]">{scheduledSessions[0].title}</h2>
                  <p className="text-[#4A5E54] text-base leading-relaxed">{scheduledSessions[0].description}</p>
                  <div className="pt-4 flex items-center justify-between border-t border-[#E9DFCC]">
                    <div className="flex items-center gap-2 text-sm text-[#4A5E54]">
@@ -129,7 +163,7 @@ export default async function LiveClassesPage() {
                </div>
              </div>
           ) : (
-            <div className="bg-[#FFFFFF] rounded-2xl border border-[#E9DFCC] flex flex-col items-center justify-center p-12 text-center h-[450px]">
+            <div className="bg-[#FFFFFF] rounded-2xl border border-[#E9DFCC] flex flex-col items-center justify-center p-6 sm:p-12 text-center min-h-[350px]">
               <div className="w-16 h-16 bg-[#EEF3EC] rounded-full flex items-center justify-center mb-4 text-[#24483C]">
                 <Calendar size={32} />
               </div>

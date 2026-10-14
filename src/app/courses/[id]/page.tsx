@@ -62,8 +62,8 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-20">
       {/* Course Hero */}
-      <div className="editorial-card rounded-2xl p-8 md:p-12 mb-10 bg-[#FFFFFF]">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div className="editorial-card rounded-2xl p-5 sm:p-8 md:p-12 mb-6 sm:mb-10 bg-[#FFFFFF]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <div className="flex flex-col justify-center">
             <div className="flex items-center gap-3 mb-5">
               <span className="text-xs font-bold px-3 py-1 bg-[#EEF3EC] text-[#24483C] rounded-full border border-[#DCE6D8]">
@@ -77,7 +77,7 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
                 </div>
               )}
             </div>
-            <h1 className="text-3xl md:text-5xl font-extrabold text-[#1B2E26] leading-tight mb-4">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-[#1B2E26] leading-tight mb-4">
               {course.title}
             </h1>
             <p className="text-[#4A5E54] text-base md:text-lg leading-relaxed">
@@ -111,14 +111,14 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
         
         {/* Course Content / Syllabus */}
         <div className="lg:col-span-2 space-y-8">
-          <div className="editorial-card p-8 bg-[#FFFFFF]">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E9DFCC]">
+          <div className="editorial-card p-4 sm:p-8 bg-[#FFFFFF]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-[#E9DFCC]">
               <div>
-                <h2 className="text-2xl font-bold text-[#1B2E26]">Course Syllabus</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-[#1B2E26]">Course Syllabus</h2>
                 <p className="text-xs text-[#72857C] mt-0.5">{curriculum.length} Sections • {totalLectures} Lectures</p>
               </div>
               {user && totalLectures > 0 && (
-                <div className="flex flex-col items-end">
+                <div className="flex flex-col items-start sm:items-end w-full sm:w-auto">
                   <span className="text-xs font-bold text-[#24483C] mb-1">{progressPercentage}% Completed</span>
                   <div className="w-32 h-2 bg-[#E9DFCC] rounded-full overflow-hidden">
                     <div className="h-full bg-[#24483C] rounded-full transition-all duration-700" style={{ width: `${progressPercentage}%` }}></div>
@@ -134,8 +134,8 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
                 curriculum.map((section: any, sIdx: number) => (
                   <div key={section.id || sIdx} className="border border-[#E9DFCC] rounded-xl overflow-hidden bg-[#FFFFFF]">
                     <div className="p-4 bg-[#FDFCF9] font-semibold flex justify-between items-center border-b border-[#E9DFCC]">
-                      <span className="text-[#1B2E26] text-sm md:text-base">Module {sIdx + 1}: {section.title}</span>
-                      <span className="text-xs text-[#72857C] font-normal">{section.lectures?.length || 0} Lectures</span>
+                      <span className="text-[#1B2E26] text-xs sm:text-sm md:text-base pr-2">Module {sIdx + 1}: {section.title}</span>
+                      <span className="text-xs text-[#72857C] font-normal shrink-0">{section.lectures?.length || 0} Lectures</span>
                     </div>
                     <div className="p-4 space-y-2.5">
                       {section.lectures?.map((lecture: any, lIdx: number) => {
@@ -147,11 +147,11 @@ export default async function CourseDetailsPage({ params }: { params: Promise<{ 
                             ) : (
                               <FileText size={16} className="text-[#72857C] shrink-0 mt-0.5" />
                             )}
-                            <div className="flex-1 flex justify-between items-center pr-2">
+                            <div className="flex-1 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1.5 sm:gap-2 pr-2">
                               <p className={`text-sm ${completedLectures.includes(lecture.id) ? 'text-[#72857C] line-through font-normal' : 'text-[#2C3E35] font-medium'}`}>{lecture.title}</p>
                               {isFirstLecture && !isPurchased && (
                                 <Link href={`/courses/${id}/play?lectureId=${lecture.id}`}>
-                                   <span className="text-[11px] bg-[#EEF3EC] text-[#24483C] px-2.5 py-0.5 rounded-full font-bold hover:bg-[#DCE6D8] cursor-pointer transition-colors border border-[#DCE6D8] whitespace-nowrap">Free Preview</span>
+                                   <span className="text-[11px] bg-[#EEF3EC] text-[#24483C] px-2.5 py-0.5 rounded-full font-bold hover:bg-[#DCE6D8] cursor-pointer transition-colors border border-[#DCE6D8] whitespace-nowrap self-start sm:self-auto">Free Preview</span>
                                 </Link>
                               )}
                             </div>

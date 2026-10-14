@@ -132,7 +132,7 @@ export default function AdminLaunchesPage() {
 
       <div className="bg-[#FAF7F0] rounded-2xl border border-[#E9DFCC] overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs whitespace-nowrap min-w-max">
+          <table className="w-full text-left text-xs whitespace-nowrap min-w-[620px]">
             <thead className="bg-[#F8F4EC] border-b border-[#E9DFCC] text-[#3D5A4C]">
               <tr>
                 <th className="px-6 py-3.5 font-bold uppercase tracking-wider">Event Details</th>
@@ -191,33 +191,33 @@ export default function AdminLaunchesPage() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-3 sm:p-4">
           <div className="bg-[#FAF7F0] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-[#E9DFCC] shadow-xl text-[#1B2E26]">
-            <div className="p-6 border-b border-[#E9DFCC] flex justify-between items-center sticky top-0 bg-[#FAF7F0] z-10">
-              <h3 className="font-serif text-xl font-bold text-[#1B2E26]">{currentLaunch ? 'Edit Launch Event' : 'Create Launch Event'}</h3>
+            <div className="p-4 sm:p-6 border-b border-[#E9DFCC] flex justify-between items-center sticky top-0 bg-[#FAF7F0] z-10">
+              <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1B2E26]">{currentLaunch ? 'Edit Launch Event' : 'Create Launch Event'}</h3>
               <button onClick={() => setShowModal(false)} className="text-[#556960] hover:text-[#1B2E26] transition-colors p-1"><X size={18} /></button>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="sm:col-span-2">
                   <label className="block font-bold uppercase tracking-wider text-[#3D5A4C] mb-1">Title</label>
                   <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-4 py-2.5 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]" />
                 </div>
-                <div className="col-span-2">
+                <div className="sm:col-span-2">
                   <label className="block font-bold uppercase tracking-wider text-[#3D5A4C] mb-1">Description</label>
                   <textarea required rows={2} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-4 py-2.5 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C] resize-none"></textarea>
                 </div>
                 <div>
                   <label className="block font-bold uppercase tracking-wider text-[#3D5A4C] mb-1">Date & Time</label>
-                  <input required type="datetime-local" value={formData.launchDate} onChange={e => setFormData({...formData, launchDate: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]" />
+                  <input required type="datetime-local" value={formData.launchDate} onChange={e => setFormData({...formData, launchDate: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-3 sm:px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]" />
                 </div>
                 <div>
                   <label className="block font-bold uppercase tracking-wider text-[#3D5A4C] mb-1">Discipline Category</label>
-                  <input required type="text" placeholder="e.g. Distributed Computing" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]" />
+                  <input required type="text" placeholder="e.g. Distributed Computing" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-3 sm:px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]" />
                 </div>
                 <div>
                   <label className="block font-bold uppercase tracking-wider text-[#3D5A4C] mb-1">Event Type</label>
-                  <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]">
+                  <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-3 sm:px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]">
                     <option value="live-session">Live Masterclass</option>
                     <option value="course">New Course Release</option>
                     <option value="webinar">Academic Colloquium</option>
@@ -226,7 +226,7 @@ export default function AdminLaunchesPage() {
                 </div>
                 <div>
                   <label className="block font-bold uppercase tracking-wider text-[#3D5A4C] mb-1">Status</label>
-                  <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]">
+                  <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-3 sm:px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]">
                     <option value="scheduled">Scheduled</option>
                     <option value="live">Live Now</option>
                     <option value="completed">Completed</option>
@@ -235,15 +235,15 @@ export default function AdminLaunchesPage() {
                 </div>
                 <div>
                   <label className="block font-bold uppercase tracking-wider text-[#3D5A4C] mb-1">Lead Faculty / Speaker</label>
-                  <input type="text" value={formData.instructorName} onChange={e => setFormData({...formData, instructorName: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]" />
+                  <input type="text" value={formData.instructorName} onChange={e => setFormData({...formData, instructorName: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-3 sm:px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]" />
                 </div>
                 <div>
                   <label className="block font-bold uppercase tracking-wider text-[#3D5A4C] mb-1">Broadcast Link (Zoom/YouTube/Meet)</label>
-                  <input type="url" value={formData.link} onChange={e => setFormData({...formData, link: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]" placeholder="https://" />
+                  <input type="url" value={formData.link} onChange={e => setFormData({...formData, link: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-3 sm:px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]" placeholder="https://" />
                 </div>
-                <div className="col-span-2">
+                <div className="sm:col-span-2">
                   <label className="block font-bold uppercase tracking-wider text-[#3D5A4C] mb-1">Cover Artwork URL</label>
-                  <input type="url" value={formData.thumbnail} onChange={e => setFormData({...formData, thumbnail: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]" placeholder="https://" />
+                  <input type="url" value={formData.thumbnail} onChange={e => setFormData({...formData, thumbnail: e.target.value})} className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-3 sm:px-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C]" placeholder="https://" />
                 </div>
               </div>
               <div className="pt-4 flex justify-end gap-3 border-t border-[#E9DFCC]">

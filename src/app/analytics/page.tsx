@@ -41,11 +41,11 @@ export default function AnalyticsPage() {
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in text-[#1B2E26]">
       <div className="pb-6 border-b border-[#E9DFCC]">
         <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Academic Intelligence</span>
-        <h1 className="font-serif text-3xl font-bold text-[#1B2E26] tracking-tight">Performance Analytics</h1>
+        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B2E26] tracking-tight">Performance Analytics</h1>
         <p className="text-[#556960] text-sm mt-0.5 capitalize">{data.role === 'admin' ? 'Faculty Member' : data.role} Dashboard</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {/* KPI Cards depending on role */}
         {data.role === 'student' && (
           <>
@@ -75,7 +75,7 @@ export default function AnalyticsPage() {
       </div>
 
       {(data.role === 'superadmin' || data.role === 'admin') && data.stats.topSelling && data.stats.topSelling.length > 0 && (
-        <div className="bg-[#FAF7F0] border border-[#E9DFCC] p-8 rounded-2xl shadow-sm">
+        <div className="bg-[#FAF7F0] border border-[#E9DFCC] p-5 sm:p-8 rounded-2xl shadow-sm">
           <div className="flex items-center gap-2 mb-6">
             <TrendingUp className="text-[#C96F4A]" size={20} />
             <h2 className="font-serif text-xl font-bold text-[#1B2E26]">Premier Enrolling Masterclasses</h2>
@@ -102,7 +102,7 @@ export default function AnalyticsPage() {
 
       {/* Student Detailed Course Progress */}
       {data.studentStats && data.studentStats.courseProgressStats && data.studentStats.courseProgressStats.length > 0 && (
-        <div className="bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm p-8 rounded-2xl">
+        <div className="bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm p-5 sm:p-8 rounded-2xl">
           <div className="flex items-center gap-3 mb-6">
             <Activity className="text-[#C96F4A]" size={20} />
             <h2 className="font-serif text-2xl font-bold text-[#1B2E26]">

@@ -14,7 +14,9 @@ export async function GET(req: Request) {
     const cookieStore = await cookies();
     const savedState = cookieStore.get('oauth_state')?.value;
 
-    const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
+    const proto = req.headers.get('x-forwarded-proto') || (host && host.includes('localhost') ? 'http' : 'https');
+    const APP_URL = host ? `${proto}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000');
 
     if (!code) {
       return NextResponse.redirect(`${APP_URL}/login?error=OAuthCodeMissing`);

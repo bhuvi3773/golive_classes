@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Video, Home, User, LogOut, Shield, Heart, FileText, Award, Receipt, Sparkles, BarChart, Menu, X } from "lucide-react";
+import { BookOpen, Video, Home, User, LogOut, Shield, Heart, FileText, Award, Receipt, Sparkles, BarChart, Menu, X, Rocket, FolderTree, Settings, Users } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -22,6 +22,25 @@ export default function Sidebar() {
       })
       .catch(() => { });
   }, []);
+
+  // Lock body scroll and listen for Escape key when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setIsMobileMenuOpen(false);
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = '';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [isMobileMenuOpen]);
 
   const handleLogout = async () => {
     try {
@@ -157,59 +176,156 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {/* Mobile More Menu Overlay */}
+      {/* Mobile Drawer Backdrop */}
       {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-x-0 bottom-[64px] bg-[#FFFFFF] border-t border-[#E9DFCC] z-40 p-5 shadow-2xl rounded-t-2xl animate-in slide-in-from-bottom-4">
-          <div className="flex items-center justify-between mb-4 px-1">
-            <h3 className="text-[#1B2E26] font-bold text-base">More Options</h3>
-            <button onClick={() => setIsMobileMenuOpen(false)} className="text-[#4A5E54] hover:text-[#1B2E26] bg-[#F4EFE6] p-1.5 rounded-full">
+        <div 
+          className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-50 transition-opacity animate-in fade-in"
+          onClick={() => setIsMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Mobile More Menu Drawer */}
+      {isMobileMenuOpen && (
+        <div 
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation and academic tools"
+          className="md:hidden fixed inset-x-0 bottom-[64px] bg-[#FFFFFF] border-t border-[#E9DFCC] z-50 p-5 shadow-2xl rounded-t-3xl max-h-[82vh] overflow-y-auto animate-in slide-in-from-bottom-6 text-[#1B2E26]"
+        >
+          <div className="flex items-center justify-between mb-4 pb-2 border-b border-[#E9DFCC]">
+            <div>
+              <h3 className="text-[#1B2E26] font-serif font-bold text-base">Academic Tools & Navigation</h3>
+              <p className="text-[11px] text-[#556960]">Access your learning pathway and management consoles</p>
+            </div>
+            <button 
+              onClick={() => setIsMobileMenuOpen(false)} 
+              className="text-[#4A5E54] hover:text-[#1B2E26] bg-[#F4EFE6] p-1.5 rounded-full transition-colors"
+              aria-label="Close navigation menu"
+            >
               <X size={18} />
             </button>
           </div>
-          <div className="grid grid-cols-3 gap-3">
-            <Link href="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3.5 bg-[#FDFCF9] border border-[#E9DFCC] rounded-xl text-[#2C3E35] hover:border-[#24483C] transition-all">
-              <Heart size={22} className="mb-1.5 text-[#C96F4A]" />
-              <span className="text-xs font-medium">Wishlist</span>
-            </Link>
-            <Link href="/recommendations" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3.5 bg-[#FDFCF9] border border-[#E9DFCC] rounded-xl text-[#2C3E35] hover:border-[#24483C] transition-all text-center">
-              <Sparkles size={22} className="mb-1.5 text-[#24483C]" />
-              <span className="text-xs font-medium">For You</span>
-            </Link>
-            <Link href="/certificates" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3.5 bg-[#FDFCF9] border border-[#E9DFCC] rounded-xl text-[#2C3E35] hover:border-[#24483C] transition-all">
-              <Award size={22} className="mb-1.5 text-[#C96F4A]" />
-              <span className="text-xs font-medium">Certificates</span>
-            </Link>
+
+          {/* Student Learning Tools */}
+          <div className="mb-4">
+            <span className="text-[10px] font-bold text-[#C96F4A] uppercase tracking-wider block mb-2 px-1">Learning Tools</span>
+            <div className="grid grid-cols-3 gap-2.5">
+              <Link href="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3 bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl text-[#2C3E35] hover:border-[#24483C] transition-all">
+                <Heart size={20} className="mb-1 text-[#C96F4A]" />
+                <span className="text-[11px] font-semibold text-center">Wishlist</span>
+              </Link>
+              <Link href="/recommendations" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3 bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl text-[#2C3E35] hover:border-[#24483C] transition-all text-center">
+                <Sparkles size={20} className="mb-1 text-[#24483C]" />
+                <span className="text-[11px] font-semibold">For You</span>
+              </Link>
+              <Link href="/certificates" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3 bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl text-[#2C3E35] hover:border-[#24483C] transition-all">
+                <Award size={20} className="mb-1 text-[#C96F4A]" />
+                <span className="text-[11px] font-semibold text-center">Certificates</span>
+              </Link>
+              <Link href="/analytics" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3 bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl text-[#2C3E35] hover:border-[#24483C] transition-all">
+                <BarChart size={20} className="mb-1 text-[#24483C]" />
+                <span className="text-[11px] font-semibold text-center">Analytics</span>
+              </Link>
+              <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3 bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl text-[#2C3E35] hover:border-[#24483C] transition-all">
+                <Receipt size={20} className="mb-1 text-[#556960]" />
+                <span className="text-[11px] font-semibold text-center">Billing</span>
+              </Link>
+              <Link href="/courses" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3 bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl text-[#2C3E35] hover:border-[#24483C] transition-all">
+                <Home size={20} className="mb-1 text-[#24483C]" />
+                <span className="text-[11px] font-semibold text-center">Catalog</span>
+              </Link>
+            </div>
           </div>
+
+          {/* Faculty & Admin Tools (Conditional) */}
+          {(role === 'admin' || role === 'superadmin') && (
+            <div className="mb-4 pt-3 border-t border-[#E9DFCC]">
+              <span className="text-[10px] font-bold text-[#24483C] uppercase tracking-wider block mb-2 px-1">Faculty & Console</span>
+              <div className="grid grid-cols-3 gap-2.5">
+                <Link href="/admin/courses" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3 bg-[#EEF3EC] border border-[#DCE6D8] rounded-xl text-[#24483C] hover:border-[#24483C] transition-all text-center">
+                  <Shield size={20} className="mb-1 text-[#24483C]" />
+                  <span className="text-[11px] font-bold">Curricula</span>
+                </Link>
+                <Link href="/admin/launches" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3 bg-[#EEF3EC] border border-[#DCE6D8] rounded-xl text-[#24483C] hover:border-[#24483C] transition-all text-center">
+                  <Rocket size={20} className="mb-1 text-[#C96F4A]" />
+                  <span className="text-[11px] font-bold">Cohorts</span>
+                </Link>
+                <Link href="/admin/categories" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3 bg-[#EEF3EC] border border-[#DCE6D8] rounded-xl text-[#24483C] hover:border-[#24483C] transition-all text-center">
+                  <FolderTree size={20} className="mb-1 text-[#24483C]" />
+                  <span className="text-[11px] font-bold">Disciplines</span>
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* Superadmin Tools (Conditional) */}
+          {role === 'superadmin' && (
+            <div className="mb-4 pt-3 border-t border-[#E9DFCC]">
+              <span className="text-[10px] font-bold text-[#8B381A] uppercase tracking-wider block mb-2 px-1">Provost Executive HQ</span>
+              <div className="grid grid-cols-3 gap-2.5">
+                <Link href="/superadmin" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3 bg-[#C96F4A]/10 border border-[#C96F4A]/30 rounded-xl text-[#8B381A] hover:border-[#8B381A] transition-all text-center">
+                  <Shield size={20} className="mb-1 text-[#C96F4A]" />
+                  <span className="text-[11px] font-bold">Audits HQ</span>
+                </Link>
+                <Link href="/superadmin/users" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3 bg-[#C96F4A]/10 border border-[#C96F4A]/30 rounded-xl text-[#8B381A] hover:border-[#8B381A] transition-all text-center">
+                  <Users size={20} className="mb-1 text-[#8B381A]" />
+                  <span className="text-[11px] font-bold">Registry</span>
+                </Link>
+                <Link href="/superadmin/settings" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-3 bg-[#C96F4A]/10 border border-[#C96F4A]/30 rounded-xl text-[#8B381A] hover:border-[#8B381A] transition-all text-center">
+                  <Settings size={20} className="mb-1 text-[#8B381A]" />
+                  <span className="text-[11px] font-bold">Settings</span>
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* Account Logout Action */}
+          {isLoggedIn && (
+            <div className="pt-3 border-t border-[#E9DFCC]">
+              <button 
+                onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#FAF7F0] hover:bg-[#C96F4A]/10 text-[#8B381A] border border-[#E9DFCC] hover:border-[#C96F4A]/30 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors shadow-xs"
+              >
+                <LogOut size={16} /> Sign Out of Academy
+              </button>
+            </div>
+          )}
         </div>
       )}
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#24483C] border-t border-[#19332A] z-50 px-2 py-2 pb-safe flex justify-around items-center shadow-lg text-[#DCE6D8]">
-        <Link href="/courses" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-2 hover:text-[#FFFFFF]">
+      <nav 
+        aria-label="Mobile primary navigation"
+        className="md:hidden fixed bottom-0 left-0 right-0 bg-[#24483C] border-t border-[#19332A] z-50 px-2 py-1.5 pb-safe flex justify-around items-center shadow-lg text-[#DCE6D8]"
+      >
+        <Link href="/courses" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-2 hover:text-[#FFFFFF] transition-colors">
           <Home size={20} />
           <span className="text-[10px] mt-1 font-medium">Courses</span>
         </Link>
-        <Link href="/my-learning" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-2 hover:text-[#FFFFFF]">
+        <Link href="/my-learning" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-2 hover:text-[#FFFFFF] transition-colors">
           <BookOpen size={20} />
           <span className="text-[10px] mt-1 font-medium">Learn</span>
         </Link>
-        <Link href="/analytics" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-2 hover:text-[#FFFFFF]">
-          <BarChart size={20} />
-          <span className="text-[10px] mt-1 font-medium">Analytics</span>
+        <Link href="/live-classes" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-2 hover:text-[#FFFFFF] transition-colors">
+          <Video size={20} />
+          <span className="text-[10px] mt-1 font-medium">Live</span>
         </Link>
         {isLoggedIn ? (
-          <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-2 hover:text-[#FFFFFF]">
+          <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-2 hover:text-[#FFFFFF] transition-colors">
             <User size={20} />
             <span className="text-[10px] mt-1 font-medium">Profile</span>
           </Link>
         ) : (
-          <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-2 hover:text-[#FFFFFF]">
+          <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center p-2 hover:text-[#FFFFFF] transition-colors">
             <User size={20} />
             <span className="text-[10px] mt-1 font-medium">Login</span>
           </Link>
         )}
         <button 
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-expanded={isMobileMenuOpen}
+          aria-label="Toggle more navigation options"
           className={`flex flex-col items-center p-2 transition-colors ${isMobileMenuOpen ? 'text-[#C96F4A]' : 'hover:text-[#FFFFFF]'}`}
         >
           <Menu size={20} />

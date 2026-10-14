@@ -431,53 +431,54 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
   };
 
   return (
-    <div className="flex min-h-[75vh] bg-[#FAF7F0] rounded-2xl overflow-hidden border border-[#E9DFCC] mt-6 shadow-sm text-[#1B2E26]">
+    <div className="flex flex-col lg:flex-row min-h-[75vh] bg-[#FAF7F0] rounded-2xl overflow-hidden border border-[#E9DFCC] mt-6 shadow-sm text-[#1B2E26] w-full">
       {/* Faculty Sidebar */}
-      <div className="w-64 bg-[#F8F4EC] border-r border-[#E9DFCC] flex flex-col p-5 shrink-0">
-        <h3 className="text-xs font-bold text-[#3D5A4C] uppercase tracking-wider mb-4 px-2">Plan Curriculum</h3>
-        <button 
-          onClick={() => setActiveTab('goals')}
-          className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors text-left text-xs font-semibold ${activeTab === 'goals' ? 'bg-[#DCE6D8] text-[#24483C] border-l-2 border-[#24483C]' : 'text-[#556960] hover:bg-[#E9DFCC]/40 hover:text-[#1B2E26]'}`}
-        >
-          <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${activeTab === 'goals' ? 'border-[#24483C] bg-[#24483C]' : 'border-[#556960]'}`}></div>
-          Intended Scholars
-        </button>
+      <div className="w-full lg:w-64 bg-[#F8F4EC] border-b lg:border-b-0 lg:border-r border-[#E9DFCC] flex flex-col p-4 sm:p-5 shrink-0">
+        <h3 className="text-xs font-bold text-[#3D5A4C] uppercase tracking-wider mb-2.5 sm:mb-4 px-1">Curriculum Studio</h3>
+        <div className="flex lg:flex-col gap-1.5 overflow-x-auto pb-2 lg:pb-0 scrollbar-none">
+          <button 
+            onClick={() => setActiveTab('goals')}
+            className={`flex items-center gap-2.5 sm:gap-3 px-3 py-2 rounded-xl transition-colors text-left text-xs font-semibold shrink-0 whitespace-nowrap ${activeTab === 'goals' ? 'bg-[#DCE6D8] text-[#24483C] border-l-2 border-[#24483C]' : 'text-[#556960] hover:bg-[#E9DFCC]/40 hover:text-[#1B2E26]'}`}
+          >
+            <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${activeTab === 'goals' ? 'border-[#24483C] bg-[#24483C]' : 'border-[#556960]'}`}></div>
+            Intended Scholars
+          </button>
 
-        <h3 className="text-xs font-bold text-[#3D5A4C] uppercase tracking-wider mt-8 mb-4 px-2">Course Syllabus</h3>
-        <button 
-          onClick={() => setActiveTab('curriculum')}
-          className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors text-left text-xs font-semibold ${activeTab === 'curriculum' ? 'bg-[#DCE6D8] text-[#24483C] border-l-2 border-[#24483C]' : 'text-[#556960] hover:bg-[#E9DFCC]/40 hover:text-[#1B2E26]'}`}
-        >
-          <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${activeTab === 'curriculum' ? 'border-[#24483C] bg-[#24483C]' : 'border-[#556960]'}`}></div>
-          Curriculum Modules
-        </button>
+          <button 
+            onClick={() => setActiveTab('curriculum')}
+            className={`flex items-center gap-2.5 sm:gap-3 px-3 py-2 rounded-xl transition-colors text-left text-xs font-semibold shrink-0 whitespace-nowrap ${activeTab === 'curriculum' ? 'bg-[#DCE6D8] text-[#24483C] border-l-2 border-[#24483C]' : 'text-[#556960] hover:bg-[#E9DFCC]/40 hover:text-[#1B2E26]'}`}
+          >
+            <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${activeTab === 'curriculum' ? 'border-[#24483C] bg-[#24483C]' : 'border-[#556960]'}`}></div>
+            Curriculum Modules
+          </button>
 
-        <h3 className="text-xs font-bold text-[#3D5A4C] uppercase tracking-wider mt-8 mb-4 px-2">Publishing & Listing</h3>
-        <button 
-          onClick={() => setActiveTab('landing')}
-          className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors text-left text-xs font-semibold ${activeTab === 'landing' ? 'bg-[#DCE6D8] text-[#24483C] border-l-2 border-[#24483C]' : 'text-[#556960] hover:bg-[#E9DFCC]/40 hover:text-[#1B2E26]'}`}
-        >
-          <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${activeTab === 'landing' ? 'border-[#24483C] bg-[#24483C]' : 'border-[#556960]'}`}></div>
-          Course Landing Page
-        </button>
-        <button 
-          onClick={() => setActiveTab('pricing')}
-          className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors text-left text-xs font-semibold ${activeTab === 'pricing' ? 'bg-[#DCE6D8] text-[#24483C] border-l-2 border-[#24483C]' : 'text-[#556960] hover:bg-[#E9DFCC]/40 hover:text-[#1B2E26]'}`}
-        >
-          <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${activeTab === 'pricing' ? 'border-[#24483C] bg-[#24483C]' : 'border-[#556960]'}`}></div>
-          Tuition Pricing
-        </button>
+          <button 
+            onClick={() => setActiveTab('landing')}
+            className={`flex items-center gap-2.5 sm:gap-3 px-3 py-2 rounded-xl transition-colors text-left text-xs font-semibold shrink-0 whitespace-nowrap ${activeTab === 'landing' ? 'bg-[#DCE6D8] text-[#24483C] border-l-2 border-[#24483C]' : 'text-[#556960] hover:bg-[#E9DFCC]/40 hover:text-[#1B2E26]'}`}
+          >
+            <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${activeTab === 'landing' ? 'border-[#24483C] bg-[#24483C]' : 'border-[#556960]'}`}></div>
+            Course Landing Page
+          </button>
 
-        <div className="mt-auto pt-8 pb-2 space-y-2.5">
+          <button 
+            onClick={() => setActiveTab('pricing')}
+            className={`flex items-center gap-2.5 sm:gap-3 px-3 py-2 rounded-xl transition-colors text-left text-xs font-semibold shrink-0 whitespace-nowrap ${activeTab === 'pricing' ? 'bg-[#DCE6D8] text-[#24483C] border-l-2 border-[#24483C]' : 'text-[#556960] hover:bg-[#E9DFCC]/40 hover:text-[#1B2E26]'}`}
+          >
+            <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${activeTab === 'pricing' ? 'border-[#24483C] bg-[#24483C]' : 'border-[#556960]'}`}></div>
+            Tuition Pricing
+          </button>
+        </div>
+
+        <div className="mt-4 lg:mt-auto pt-3 lg:pt-8 pb-1 flex lg:flex-col gap-2">
           <button 
             onClick={saveCourse}
-            className="w-full bg-[#FAF7F0] hover:bg-[#E9DFCC]/50 text-[#1B2E26] py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors border border-[#E9DFCC] shadow-sm"
+            className="flex-1 lg:w-full bg-[#FAF7F0] hover:bg-[#E9DFCC]/50 text-[#1B2E26] py-2 sm:py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors border border-[#E9DFCC] shadow-sm text-center"
           >
             Save Draft
           </button>
           <button 
             onClick={publishCourse}
-            className="w-full bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
+            className="flex-1 lg:w-full bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] py-2 sm:py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm text-center"
           >
             Submit For Review
           </button>
@@ -485,13 +486,13 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 p-8 bg-[#FAF7F0] overflow-y-auto">
+      <div className="flex-1 p-4 sm:p-6 lg:p-8 bg-[#FAF7F0] overflow-y-auto min-w-0">
         
         {activeTab === 'curriculum' && (
           <div className="max-w-4xl animate-in fade-in space-y-6">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Curriculum Architecture</span>
-              <h2 className="font-serif text-2xl font-bold text-[#1B2E26]">Syllabus Modules & Content</h2>
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1B2E26]">Syllabus Modules & Content</h2>
               <p className="text-[#556960] text-xs mt-1 pb-4 border-b border-[#E9DFCC]">
                 Structure your course into cohesive chronological sections, lectures, assignments, and knowledge evaluations.
               </p>
@@ -501,81 +502,86 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
               {sections.map((section, sIdx) => (
                 <div key={section.id} className="bg-[#F8F4EC] border border-[#E9DFCC] rounded-2xl overflow-hidden shadow-sm">
                   {/* Section Header */}
-                  <div className="bg-[#FAF7F0] p-4 flex items-center gap-3 border-b border-[#E9DFCC] group">
-                    <span className="font-bold text-xs uppercase tracking-wider text-[#3D5A4C]">Section {sIdx + 1}:</span>
+                  <div className="bg-[#FAF7F0] p-3.5 sm:p-4 flex items-center gap-3 border-b border-[#E9DFCC] group">
+                    <span className="font-bold text-xs uppercase tracking-wider text-[#3D5A4C] shrink-0">Section {sIdx + 1}:</span>
                     <input 
                       type="text" 
                       value={section.title}
                       onChange={(e) => updateTitle(section.id, null, e.target.value)}
-                      className="bg-transparent text-[#1B2E26] font-serif font-bold text-base focus:outline-none focus:border-b focus:border-[#24483C] w-full"
+                      className="bg-transparent text-[#1B2E26] font-serif font-bold text-sm sm:text-base focus:outline-none focus:border-b focus:border-[#24483C] flex-1 min-w-0"
                     />
-                    <button onClick={() => deleteSection(section.id)} className="opacity-0 group-hover:opacity-100 text-[#556960] hover:text-[#8B381A] transition-opacity p-1.5" title="Delete section">
+                    <button onClick={() => deleteSection(section.id)} className="text-[#556960] hover:text-[#8B381A] transition-colors p-1.5 shrink-0" title="Delete section">
                       <X size={16} />
                     </button>
                   </div>
 
                   {/* Lectures */}
-                  <div className="p-4 space-y-3">
+                  <div className="p-3 sm:p-4 space-y-3">
                     {section.lectures.map((lecture, lIdx) => (
                       <div key={lecture.id} className={`border bg-[#FAF7F0] rounded-xl transition-colors ${activeUpload?.lectureId === lecture.id ? 'border-[#24483C] shadow-sm' : 'border-[#E9DFCC]'}`}>
-                        <div className="p-3 flex items-center gap-3 group">
-                          <GripVertical size={15} className="text-[#556960] cursor-grab opacity-0 group-hover:opacity-100" />
-                          <CheckCircle size={16} className={lecture.content ? "text-[#24483C]" : "text-[#556960]/40"} />
-                          <span className="font-bold text-xs uppercase tracking-wider text-[#556960] whitespace-nowrap">Lecture {lIdx + 1}:</span>
-                          <input 
-                            type="text" 
-                            value={lecture.title}
-                            onChange={(e) => updateTitle(section.id, lecture.id, e.target.value)}
-                            className="bg-transparent text-[#1B2E26] text-xs font-medium focus:outline-none focus:border-b focus:border-[#24483C] flex-1 min-w-0"
-                          />
-                          {lecture.content && (
-                            <div className="flex items-center gap-1.5 bg-[#DCE6D8] px-2.5 py-1 rounded-lg border border-[#24483C]/20 mr-2">
-                              <span className="text-[11px] font-semibold text-[#24483C] truncate max-w-[150px]" title={lecture.content}>
-                                {lecture.type === 'video' ? `🎥 ${lecture.originalName || 'Video Attached'}` : lecture.type === 'quiz' ? `🏆 Quiz Added` : lecture.type === 'assignment' ? `📝 Practicum` : `📄 Article`}
-                              </span>
+                        <div className="p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 group">
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <GripVertical size={15} className="text-[#556960] cursor-grab hidden sm:block opacity-0 group-hover:opacity-100 shrink-0" />
+                            <CheckCircle size={16} className={`shrink-0 ${lecture.content ? "text-[#24483C]" : "text-[#556960]/40"}`} />
+                            <span className="font-bold text-xs uppercase tracking-wider text-[#556960] whitespace-nowrap shrink-0">L{lIdx + 1}:</span>
+                            <input 
+                              type="text" 
+                              value={lecture.title}
+                              onChange={(e) => updateTitle(section.id, lecture.id, e.target.value)}
+                              className="bg-transparent text-[#1B2E26] text-xs font-medium focus:outline-none focus:border-b focus:border-[#24483C] flex-1 min-w-0"
+                            />
+                          </div>
+
+                          <div className="flex items-center gap-1.5 flex-wrap sm:flex-nowrap justify-between sm:justify-end shrink-0">
+                            {lecture.content && (
+                              <div className="flex items-center gap-1.5 bg-[#DCE6D8] px-2 py-0.5 rounded-lg border border-[#24483C]/20 shrink-0">
+                                <span className="text-[11px] font-semibold text-[#24483C] truncate max-w-[120px] sm:max-w-[150px]" title={lecture.content}>
+                                  {lecture.type === 'video' ? `🎥 ${lecture.originalName || 'Video'}` : lecture.type === 'quiz' ? `🏆 Quiz` : lecture.type === 'assignment' ? `📝 Practicum` : `📄 Article`}
+                                </span>
+                                <button 
+                                  onClick={() => removeContent(section.id, lecture.id)}
+                                  className="text-[#24483C] hover:text-[#8B381A] p-0.5 rounded transition-colors ml-0.5"
+                                  title="Remove content"
+                                >
+                                  <X size={12} />
+                                </button>
+                              </div>
+                            )}
+                            <div className="flex items-center gap-1 shrink-0 overflow-x-auto">
                               <button 
-                                onClick={() => removeContent(section.id, lecture.id)}
-                                className="text-[#24483C] hover:text-[#8B381A] p-0.5 rounded transition-colors ml-1"
-                                title="Remove content"
+                                onClick={() => toggleUpload(lecture.id, 'video')}
+                                className={`flex items-center gap-1 text-[11px] font-semibold px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'video' ? 'bg-[#24483C] text-[#F8F4EC] border-[#24483C]' : 'bg-[#F8F4EC] hover:bg-[#E9DFCC]/50 border-[#E9DFCC] text-[#24483C]'}`}
                               >
-                                <X size={12} />
+                                <Video size={13} /> + Video
+                              </button>
+                              <button 
+                                onClick={() => toggleUpload(lecture.id, 'article')}
+                                className={`flex items-center gap-1 text-[11px] font-semibold px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'article' ? 'bg-[#24483C] text-[#F8F4EC] border-[#24483C]' : 'bg-[#F8F4EC] hover:bg-[#E9DFCC]/50 border-[#E9DFCC] text-[#24483C]'}`}
+                              >
+                                <FileText size={13} /> + Article
+                              </button>
+                              <button 
+                                onClick={() => toggleUpload(lecture.id, 'quiz')}
+                                className={`flex items-center gap-1 text-[11px] font-semibold px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'quiz' ? 'bg-[#24483C] text-[#F8F4EC] border-[#24483C]' : 'bg-[#F8F4EC] hover:bg-[#E9DFCC]/50 border-[#E9DFCC] text-[#24483C]'}`}
+                              >
+                                <Award size={13} /> + Quiz
+                              </button>
+                              <button 
+                                onClick={() => toggleUpload(lecture.id, 'assignment')}
+                                className={`flex items-center gap-1 text-[11px] font-semibold px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'assignment' ? 'bg-[#24483C] text-[#F8F4EC] border-[#24483C]' : 'bg-[#F8F4EC] hover:bg-[#E9DFCC]/50 border-[#E9DFCC] text-[#24483C]'}`}
+                              >
+                                <FileText size={13} /> + Practicum
+                              </button>
+                              <button onClick={() => deleteLecture(section.id, lecture.id)} className="p-1 sm:p-1.5 hover:text-[#8B381A] rounded text-[#556960] transition-colors" title="Delete lecture">
+                                <X size={15} />
                               </button>
                             </div>
-                          )}
-                          <div className="flex gap-1.5 shrink-0">
-                            <button 
-                              onClick={() => toggleUpload(lecture.id, 'video')}
-                              className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'video' ? 'bg-[#24483C] text-[#F8F4EC] border-[#24483C]' : 'bg-[#F8F4EC] hover:bg-[#E9DFCC]/50 border-[#E9DFCC] text-[#24483C]'}`}
-                            >
-                              <Video size={13} /> + Video
-                            </button>
-                            <button 
-                              onClick={() => toggleUpload(lecture.id, 'article')}
-                              className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'article' ? 'bg-[#24483C] text-[#F8F4EC] border-[#24483C]' : 'bg-[#F8F4EC] hover:bg-[#E9DFCC]/50 border-[#E9DFCC] text-[#24483C]'}`}
-                            >
-                              <FileText size={13} /> + Article
-                            </button>
-                            <button 
-                              onClick={() => toggleUpload(lecture.id, 'quiz')}
-                              className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'quiz' ? 'bg-[#24483C] text-[#F8F4EC] border-[#24483C]' : 'bg-[#F8F4EC] hover:bg-[#E9DFCC]/50 border-[#E9DFCC] text-[#24483C]'}`}
-                            >
-                              <Award size={13} /> + Quiz
-                            </button>
-                            <button 
-                              onClick={() => toggleUpload(lecture.id, 'assignment')}
-                              className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border transition-colors ${activeUpload?.lectureId === lecture.id && activeUpload.type === 'assignment' ? 'bg-[#24483C] text-[#F8F4EC] border-[#24483C]' : 'bg-[#F8F4EC] hover:bg-[#E9DFCC]/50 border-[#E9DFCC] text-[#24483C]'}`}
-                            >
-                              <FileText size={13} /> + Practicum
-                            </button>
-                            <button onClick={() => deleteLecture(section.id, lecture.id)} className="p-1.5 hover:text-[#8B381A] rounded text-[#556960] transition-colors" title="Delete lecture">
-                              <X size={15} />
-                            </button>
                           </div>
                         </div>
 
                         {/* Interactive Editor / Dropzone */}
                         {activeUpload?.lectureId === lecture.id && (
-                          <div className="px-8 pb-5 pt-3 border-t border-[#E9DFCC] bg-[#F8F4EC] rounded-b-xl animate-in slide-in-from-top-1">
+                          <div className="px-4 sm:px-8 pb-4 sm:pb-5 pt-3 border-t border-[#E9DFCC] bg-[#F8F4EC] rounded-b-xl animate-in slide-in-from-top-1">
                             {activeUpload.type === 'video' ? (
                               <div>
                                 <h4 className="text-xs font-bold uppercase tracking-wider text-[#3D5A4C] mb-2">Video Resource Delivery</h4>
@@ -754,7 +760,7 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
                 ></textarea>
               </div>
 
-              <div className="grid grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#3D5A4C] mb-1.5">Academic Discipline</label>
                   <select 
@@ -773,9 +779,9 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-[#3D5A4C] mb-1.5">Course Artwork (Thumbnail)</label>
-                <div className="flex flex-col md:flex-row gap-6 items-start">
+                <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-start">
                   {course.thumbnail ? (
-                    <div className="relative w-64 h-36 bg-[#E9DFCC] rounded-xl overflow-hidden border border-[#E9DFCC] group shadow-sm">
+                    <div className="relative w-full max-w-xs sm:w-64 h-36 bg-[#E9DFCC] rounded-xl overflow-hidden border border-[#E9DFCC] group shadow-sm">
                       <img src={course.thumbnail} alt="Thumbnail preview" className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-[#24483C]/70 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                          <button 
@@ -788,7 +794,7 @@ export default function CourseManagementDashboard({ params }: { params: Promise<
                       </div>
                     </div>
                   ) : (
-                    <label className="w-64 h-36 border-2 border-dashed border-[#E9DFCC] rounded-xl flex flex-col items-center justify-center text-center hover:border-[#24483C] transition-colors cursor-pointer relative bg-[#F8F4EC]">
+                    <label className="w-full max-w-xs sm:w-64 h-36 border-2 border-dashed border-[#E9DFCC] rounded-xl flex flex-col items-center justify-center text-center hover:border-[#24483C] transition-colors cursor-pointer relative bg-[#F8F4EC]">
                       <input 
                         type="file" 
                         accept="image/png,image/jpeg,image/webp" 

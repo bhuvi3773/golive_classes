@@ -117,30 +117,30 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] overflow-hidden bg-[#F8F4EC] text-[#1B2E26]">
+    <div className="flex flex-col min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] lg:overflow-hidden bg-[#F8F4EC] text-[#1B2E26] w-full">
       {/* Player Topbar */}
-      <div className="bg-[#FAF7F0] h-14 border-b border-[#E9DFCC] flex items-center px-4 shrink-0 justify-between shadow-sm">
-        <div className="flex items-center gap-3">
+      <div className="bg-[#FAF7F0] h-14 border-b border-[#E9DFCC] flex items-center px-3 sm:px-4 shrink-0 justify-between shadow-sm">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Link 
             href={`/courses/${course.id}`} 
-            className="p-1.5 rounded-lg text-[#556960] hover:text-[#24483C] hover:bg-[#E9DFCC]/50 transition-colors"
+            className="p-1.5 rounded-lg text-[#556960] hover:text-[#24483C] hover:bg-[#E9DFCC]/50 transition-colors shrink-0"
             title="Return to course overview"
           >
             <ChevronLeft size={22} />
           </Link>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-[#DCE6D8] text-[#24483C] px-2 py-0.5 rounded">
-              Academy Player
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-[#DCE6D8] text-[#24483C] px-2 py-0.5 rounded shrink-0">
+              Player
             </span>
-            <h1 className="font-serif font-bold text-sm md:text-base text-[#1B2E26] line-clamp-1">{course.title}</h1>
+            <h1 className="font-serif font-bold text-xs sm:text-sm md:text-base text-[#1B2E26] truncate">{course.title}</h1>
           </div>
         </div>
-        <div className="text-xs text-[#556960] font-mono hidden sm:block">
+        <div className="text-xs text-[#556960] font-mono hidden sm:block shrink-0">
           {completedLectures.length} Completed
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
+      <div className="flex flex-1 flex-col lg:flex-row lg:overflow-hidden min-h-0">
         {/* Main Content Area */}
         <CoursePlayerClient 
           course={course}
@@ -152,11 +152,11 @@ export default async function CoursePlayPage({ params, searchParams }: { params:
         />
 
         {/* Sidebar Curriculum List */}
-        <div className="w-full lg:w-80 xl:w-96 bg-[#FAF7F0] border-l border-[#E9DFCC] flex flex-col overflow-y-auto shrink-0 border-t lg:border-t-0">
-          <div className="p-4 border-b border-[#E9DFCC] bg-[#FAF7F0] sticky top-0 z-10 flex items-center justify-between">
+        <div className="w-full lg:w-80 xl:w-96 bg-[#FAF7F0] lg:border-l border-[#E9DFCC] flex flex-col overflow-y-auto shrink-0 border-t lg:border-t-0 max-h-[50vh] lg:max-h-none">
+          <div className="p-3.5 sm:p-4 border-b border-[#E9DFCC] bg-[#FAF7F0] sticky top-0 z-10 flex items-center justify-between">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#C96F4A]">Curriculum</span>
-              <h2 className="font-serif text-base font-bold text-[#1B2E26]">Syllabus Modules</h2>
+              <h2 className="font-serif text-sm sm:text-base font-bold text-[#1B2E26]">Syllabus Modules</h2>
             </div>
             <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#DCE6D8] text-[#24483C]">
               {curriculum.length} Sections

@@ -3,7 +3,9 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-  const NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
+  const proto = req.headers.get('x-forwarded-proto') || (host && host.includes('localhost') ? 'http' : 'https');
+  const NEXT_PUBLIC_APP_URL = host ? `${proto}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000');
   const REDIRECT_URI = `${NEXT_PUBLIC_APP_URL}/api/auth/google/callback`;
 
   if (!GOOGLE_CLIENT_ID) {

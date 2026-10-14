@@ -38,13 +38,13 @@ export default async function CertificatesPage() {
     <div className="space-y-8 animate-in fade-in max-w-6xl mx-auto pb-16">
       <div>
         <span className="text-xs font-bold uppercase tracking-wider text-[#C96F4A]">Credentials</span>
-        <h1 className="text-3xl font-extrabold text-[#1B2E26] mt-0.5 mb-1">Academic Certificates</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1B2E26] mt-0.5 mb-1">Academic Certificates</h1>
         <p className="text-[#4A5E54] text-sm">Verified certificates awarded upon 100% completion of course syllabus and exercises.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {coursesWithProgress.map((item, idx) => (
-          <div key={idx} className={`editorial-card rounded-xl p-6 flex flex-col bg-[#FFFFFF] ${item.isCompleted ? 'border-[#24483C]/40 shadow-sm' : 'border-[#E9DFCC] opacity-80'}`}>
+          <div key={idx} className={`editorial-card rounded-xl p-5 sm:p-6 flex flex-col bg-[#FFFFFF] ${item.isCompleted ? 'border-[#24483C]/40 shadow-sm' : 'border-[#E9DFCC] opacity-80'}`}>
             <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${item.isCompleted ? 'bg-[#EEF3EC] text-[#24483C] border border-[#DCE6D8]' : 'bg-[#F4EFE6] text-[#72857C] border border-[#E9DFCC]'}`}>
               <Award size={24} className={item.isCompleted ? "text-[#C96F4A]" : "text-[#72857C]"} />
             </div>

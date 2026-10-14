@@ -52,11 +52,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-[85vh] items-center justify-center py-12 px-4">
-      <div className="w-full max-w-md editorial-card bg-[#FFFFFF] border border-[#E9DFCC] shadow-md rounded-2xl p-8 sm:p-10 space-y-7">
+    <div className="flex min-h-[85vh] items-center justify-center py-6 sm:py-12 px-3 sm:px-4">
+      <div className="w-full max-w-md editorial-card bg-[#FFFFFF] border border-[#E9DFCC] shadow-md rounded-2xl p-5 sm:p-8 md:p-10 space-y-5 sm:space-y-7">
         <div className="text-center">
           <span className="text-xs font-bold uppercase tracking-wider text-[#C96F4A]">Academic Portal</span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1B2E26] mt-1">Welcome Back</h2>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#1B2E26] mt-1">Welcome Back</h2>
           <p className="text-[#4A5E54] text-xs sm:text-sm mt-1">Sign in to resume your learning curriculum</p>
         </div>
 

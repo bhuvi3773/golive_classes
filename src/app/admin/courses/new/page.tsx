@@ -99,11 +99,11 @@ export default function NewCourseWizard() {
         {step === 1 && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 text-center">
             <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A] block mb-2">Stage 1: Format</span>
-            <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#1B2E26] mb-10">What style of academic curriculum are you authoring?</h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-[#1B2E26] mb-8 sm:mb-10">What style of academic curriculum are you authoring?</h1>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-2xl mx-auto">
               <div 
                 onClick={() => setCourseType("course")}
-                className={`bg-[#FAF7F0] p-8 rounded-2xl border-2 cursor-pointer transition-all flex flex-col items-center text-center gap-4 shadow-sm ${courseType === 'course' ? 'border-[#24483C] bg-[#DCE6D8]/30 shadow-md' : 'border-[#E9DFCC] hover:border-[#24483C]/30'}`}
+                className={`bg-[#FAF7F0] p-6 sm:p-8 rounded-2xl border-2 cursor-pointer transition-all flex flex-col items-center text-center gap-4 shadow-sm ${courseType === 'course' ? 'border-[#24483C] bg-[#DCE6D8]/30 shadow-md' : 'border-[#E9DFCC] hover:border-[#24483C]/30'}`}
               >
                 <div className="w-14 h-14 rounded-2xl bg-[#DCE6D8] text-[#24483C] flex items-center justify-center">
                   <PlaySquare size={28} />
@@ -113,7 +113,7 @@ export default function NewCourseWizard() {
               </div>
               <div 
                 onClick={() => setCourseType("practice")}
-                className={`bg-[#FAF7F0] p-8 rounded-2xl border-2 cursor-pointer transition-all flex flex-col items-center text-center gap-4 shadow-sm ${courseType === 'practice' ? 'border-[#24483C] bg-[#DCE6D8]/30 shadow-md' : 'border-[#E9DFCC] hover:border-[#24483C]/30'}`}
+                className={`bg-[#FAF7F0] p-6 sm:p-8 rounded-2xl border-2 cursor-pointer transition-all flex flex-col items-center text-center gap-4 shadow-sm ${courseType === 'practice' ? 'border-[#24483C] bg-[#DCE6D8]/30 shadow-md' : 'border-[#E9DFCC] hover:border-[#24483C]/30'}`}
               >
                 <div className="w-14 h-14 rounded-2xl bg-[#DCE6D8] text-[#24483C] flex items-center justify-center">
                   <FileSignature size={28} />
@@ -129,7 +129,7 @@ export default function NewCourseWizard() {
         {step === 2 && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 text-center max-w-2xl mx-auto w-full">
             <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A] block mb-2">Stage 2: Nomenclature</span>
-            <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#1B2E26] mb-3">Provide a working curriculum title</h1>
+            <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-[#1B2E26] mb-3">Provide a working curriculum title</h1>
             <p className="text-[#556960] text-sm mb-8">You can refine and localize this working title at any point prior to publication.</p>
             <input 
               type="text" 
@@ -145,7 +145,7 @@ export default function NewCourseWizard() {
         {step === 3 && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 text-center max-w-2xl mx-auto w-full">
             <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A] block mb-2">Stage 3: Discipline</span>
-            <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#1B2E26] mb-3">Which academic category best classifies your knowledge?</h1>
+            <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-[#1B2E26] mb-3">Which academic category best classifies your knowledge?</h1>
             <p className="text-[#556960] text-sm mb-8">This determines the departmental catalog taxonomy and search indexing.</p>
             <select 
               value={category}
@@ -164,7 +164,7 @@ export default function NewCourseWizard() {
         {step === 4 && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 text-center max-w-2xl mx-auto w-full">
             <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A] block mb-2">Stage 4: Dedication</span>
-            <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#1B2E26] mb-3">Estimated scholar effort per week?</h1>
+            <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-[#1B2E26] mb-3">Estimated scholar effort per week?</h1>
             <p className="text-[#556960] text-sm mb-8">Sets appropriate pacing guidance and cohort schedules for enrolled learners.</p>
             
             <div className="space-y-3 text-left">
@@ -192,24 +192,24 @@ export default function NewCourseWizard() {
       </div>
 
       {/* Footer Controls */}
-      <footer className="w-full h-20 border-t border-[#E9DFCC] flex items-center px-6 bg-[#FAF7F0] shadow-sm">
-        <div className="w-full max-w-4xl mx-auto flex justify-between items-center">
+      <footer className="w-full h-20 border-t border-[#E9DFCC] flex items-center px-4 sm:px-6 bg-[#FAF7F0] shadow-sm">
+        <div className="w-full max-w-4xl mx-auto flex justify-between items-center gap-2">
           {step > 1 ? (
-            <button onClick={handleBack} className="px-5 py-2.5 rounded-xl border border-[#E9DFCC] text-[#1B2E26] text-xs font-semibold uppercase tracking-wider hover:bg-[#E9DFCC]/30 transition-colors shadow-sm">
+            <button onClick={handleBack} className="px-4 sm:px-5 py-2.5 rounded-xl border border-[#E9DFCC] text-[#1B2E26] text-xs font-semibold uppercase tracking-wider hover:bg-[#E9DFCC]/30 transition-colors shadow-sm">
               Previous
             </button>
           ) : <div></div>}
 
           {step < totalSteps ? (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
               <button 
                 onClick={handleCreateCourse} 
                 disabled={saving}
-                className="text-[#556960] hover:text-[#1B2E26] text-xs font-semibold uppercase tracking-wider mr-2 transition-colors disabled:opacity-50"
+                className="text-[#556960] hover:text-[#1B2E26] text-xs font-semibold uppercase tracking-wider transition-colors disabled:opacity-50"
               >
-                Skip for now
+                Skip
               </button>
-              <button onClick={handleNext} className="bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] px-6 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow-sm transition-colors">
+              <button onClick={handleNext} className="bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] px-5 sm:px-6 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow-sm transition-colors">
                 Continue
               </button>
             </div>
@@ -217,9 +217,9 @@ export default function NewCourseWizard() {
             <button 
               onClick={handleCreateCourse} 
               disabled={saving}
-              className="bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] px-7 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow-sm transition-colors disabled:opacity-50"
+              className="bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] px-4 sm:px-7 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider shadow-sm transition-colors disabled:opacity-50 text-center truncate"
             >
-              {saving ? "Creating Course..." : "Create & Manage Syllabus"}
+              {saving ? "Creating..." : "Create & Manage"}
             </button>
           )}
         </div>

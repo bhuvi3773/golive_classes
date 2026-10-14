@@ -79,16 +79,43 @@ export default function CheckoutForm({ courseId }: { courseId: string }) {
     }
   };
 
+  const isCheckoutDisabled = process.env.NEXT_PUBLIC_DISABLE_CHECKOUT !== 'false';
+
   return (
     <>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
-      <button 
-        onClick={handlePayment} 
-        disabled={loading}
-        className="w-full bg-[#24483C] hover:bg-[#19332A] disabled:opacity-50 text-[#F8F4EC] font-bold py-3.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 text-base cursor-pointer hover:-translate-y-0.5"
-      >
-        {loading ? <Loader2 className="animate-spin" size={18} /> : "Pay Tuition & Confirm Enrollment"}
-      </button>
+      {isCheckoutDisabled ? (
+        <div className="space-y-4">
+          <div className="bg-[#FAF0E6] border border-[#E8C5B0] rounded-xl p-4 flex items-start gap-3">
+            <div className="w-2 h-2 rounded-full bg-[#C96F4A] mt-2 shrink-0" />
+            <div>
+              <h4 className="text-[#1B2E26] font-bold text-sm mb-1">Payment Gateway Notice</h4>
+              <p className="text-xs text-[#5C4D44] leading-relaxed">
+                The Razorpay payment gateway is currently deferred for a future release and is safely paused in this preview demo. Real charges are disabled, and paid course access requires verified payment. You can enroll in free courses directly without payment.
+              </p>
+            </div>
+          </div>
+          <button 
+            disabled={true}
+            className="w-full bg-[#E9DFCC] text-[#72857C] font-bold py-3.5 rounded-xl cursor-not-allowed flex items-center justify-center gap-2 text-base shadow-xs"
+          >
+            Paid Checkout Paused in Demo
+          </button>
+          <div className="text-center pt-2">
+            <a href="/courses" className="text-xs text-[#C96F4A] font-bold hover:underline">
+              &larr; Return to Courses &amp; Explore Free Cohorts
+            </a>
+          </div>
+        </div>
+      ) : (
+        <button 
+          onClick={handlePayment} 
+          disabled={loading}
+          className="w-full bg-[#24483C] hover:bg-[#19332A] disabled:opacity-50 text-[#F8F4EC] font-bold py-3.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 text-base cursor-pointer hover:-translate-y-0.5"
+        >
+          {loading ? <Loader2 className="animate-spin" size={18} /> : "Pay Tuition & Confirm Enrollment"}
+        </button>
+      )}
     </>
   );
 }

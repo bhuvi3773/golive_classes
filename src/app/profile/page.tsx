@@ -30,14 +30,14 @@ export default async function ProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-20 md:pb-8 text-[#1B2E26]">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Academic Record</span>
-          <h1 className="font-serif text-3xl font-bold text-[#1B2E26]">My Scholar Profile</h1>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B2E26]">My Scholar Profile</h1>
         </div>
         <Link 
           href="/profile-setup" 
-          className="flex items-center gap-2 px-4 py-2.5 bg-[#FAF7F0] hover:bg-[#E9DFCC]/50 border border-[#E9DFCC] rounded-xl text-xs font-semibold uppercase tracking-wider text-[#24483C] transition-colors shadow-sm"
+          className="flex items-center gap-2 px-4 py-2.5 bg-[#FAF7F0] hover:bg-[#E9DFCC]/50 border border-[#E9DFCC] rounded-xl text-xs font-semibold uppercase tracking-wider text-[#24483C] transition-colors shadow-sm self-start sm:self-auto"
         >
           <Edit size={14} /> Edit Profile
         </Link>
@@ -53,7 +53,7 @@ export default async function ProfilePage() {
         </div>
         
         {/* Profile Info */}
-        <div className="p-8 relative">
+        <div className="p-5 sm:p-8 relative">
           <div className="absolute -top-16 left-8 w-28 h-28 rounded-2xl border-4 border-[#FAF7F0] bg-[#DCE6D8] overflow-hidden flex items-center justify-center shadow-md">
             {user.avatar ? (
               <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
@@ -122,7 +122,7 @@ export default async function ProfilePage() {
       </div>
 
       {user.purchasedCourses && user.purchasedCourses.length > 0 && (
-        <div className="bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-8">
+        <div className="bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-5 sm:p-8">
           <div className="flex items-center justify-between mb-6">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-[#C96F4A]">Tuition Records</span>

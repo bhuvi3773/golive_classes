@@ -57,14 +57,14 @@ function ResetPasswordContent() {
 
   if (!token) {
     return (
-      <div className="flex min-h-[90vh] items-center justify-center py-12 px-4 text-center relative">
-        <div className="bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-10 max-w-md w-full relative z-10 text-[#1B2E26]">
+      <div className="flex min-h-[90vh] items-center justify-center py-6 sm:py-12 px-3 sm:px-4 text-center relative">
+        <div className="bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-5 sm:p-10 max-w-md w-full relative z-10 text-[#1B2E26]">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#C96F4A]/10 text-[#C96F4A] mb-3">
             <Lock size={22} />
           </div>
-          <h2 className="font-serif text-2xl font-bold text-[#1B2E26] mb-2">Invalid or Expired Link</h2>
-          <p className="text-[#556960] text-sm mb-6">This password reset link is invalid or missing the required secure authorization token.</p>
-          <Link href="/forgot-password" className="w-full inline-block py-3 rounded-xl font-medium bg-[#24483C] text-[#F8F4EC] hover:bg-[#1B2E26] transition-colors">
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#1B2E26] mb-2">Invalid or Expired Link</h2>
+          <p className="text-[#556960] text-xs sm:text-sm mb-6">This password reset link is invalid or missing the required secure authorization token.</p>
+          <Link href="/forgot-password" className="w-full inline-block py-2.5 sm:py-3 rounded-xl font-medium bg-[#24483C] text-[#F8F4EC] hover:bg-[#1B2E26] transition-colors text-xs sm:text-sm">
             Request New Link
           </Link>
         </div>
@@ -73,14 +73,14 @@ function ResetPasswordContent() {
   }
 
   return (
-    <div className="flex min-h-[90vh] items-center justify-center py-12 px-4 relative">
-      <div className="w-full max-w-md bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-8 md:p-10 space-y-6 relative z-10 text-[#1B2E26]">
+    <div className="flex min-h-[90vh] items-center justify-center py-6 sm:py-12 px-3 sm:px-4 relative">
+      <div className="w-full max-w-md bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-5 sm:p-8 md:p-10 space-y-6 relative z-10 text-[#1B2E26]">
         <div className="space-y-2">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#24483C] text-[#F8F4EC] shadow-sm mb-1">
             <ShieldCheck size={22} />
           </div>
-          <h2 className="font-serif text-3xl font-bold text-[#1B2E26] tracking-tight">Set New Password</h2>
-          <p className="text-[#556960] text-sm">
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B2E26] tracking-tight">Set New Password</h2>
+          <p className="text-[#556960] text-xs sm:text-sm">
             Enter and verify your new credentials below.
           </p>
         </div>

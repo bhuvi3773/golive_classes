@@ -34,26 +34,28 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
 
         {/* Order Summary Card */}
         <div className="editorial-card rounded-2xl overflow-hidden bg-[#FFFFFF] border border-[#E9DFCC] shadow-sm">
-          <div className="p-6 bg-[#FDFCF9] border-b border-[#E9DFCC] flex items-center gap-4">
-            {course.thumbnail ? (
-              <img src={course.thumbnail} alt={course.title} className="w-20 h-14 object-cover rounded-lg border border-[#E9DFCC] shadow-xs" />
-            ) : (
-              <div className="w-20 h-14 bg-[#EEF3EC] rounded-lg border border-[#DCE6D8] flex items-center justify-center">
-                <BookOpen className="text-[#24483C]" size={24} />
+          <div className="p-4 sm:p-6 bg-[#FDFCF9] border-b border-[#E9DFCC] flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="flex items-center gap-3.5 min-w-0">
+              {course.thumbnail ? (
+                <img src={course.thumbnail} alt={course.title} className="w-16 h-12 sm:w-20 sm:h-14 object-cover rounded-lg border border-[#E9DFCC] shadow-xs shrink-0" />
+              ) : (
+                <div className="w-16 h-12 sm:w-20 sm:h-14 bg-[#EEF3EC] rounded-lg border border-[#DCE6D8] flex items-center justify-center shrink-0">
+                  <BookOpen className="text-[#24483C]" size={22} />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <span className="text-[11px] font-bold text-[#C96F4A] uppercase tracking-wider">{course.category}</span>
+                <h3 className="text-[#1B2E26] font-bold text-sm sm:text-base truncate">{course.title}</h3>
               </div>
-            )}
-            <div className="flex-1 min-w-0">
-              <span className="text-[11px] font-bold text-[#C96F4A] uppercase tracking-wider">{course.category}</span>
-              <h3 className="text-[#1B2E26] font-bold text-base truncate">{course.title}</h3>
             </div>
-            <div className="text-right">
+            <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 pt-2 sm:pt-0 border-[#E9DFCC]">
               <span className="text-xs text-[#72857C] block font-medium">Tuition</span>
               <div className="text-xl font-extrabold text-[#24483C]">${course.price}</div>
             </div>
           </div>
 
-          <div className="p-8">
-            <div className="bg-[#EEF3EC] border border-[#DCE6D8] rounded-xl p-4 mb-8 flex items-start gap-3">
+          <div className="p-4 sm:p-8">
+            <div className="bg-[#EEF3EC] border border-[#DCE6D8] rounded-xl p-3.5 sm:p-4 mb-6 sm:mb-8 flex items-start gap-3">
               <CreditCard className="text-[#24483C] shrink-0 mt-0.5" size={20} />
               <div>
                 <h4 className="text-[#24483C] font-bold text-sm mb-1">Encrypted Gateway Processing</h4>

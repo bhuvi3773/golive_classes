@@ -122,7 +122,7 @@ export default async function MyLearningPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#E9DFCC]">
         <div>
           <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Academic Dashboard</span>
-          <h1 className="font-serif text-3xl font-bold text-[#1B2E26] tracking-tight">My Active Learning</h1>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B2E26] tracking-tight">My Active Learning</h1>
           <p className="text-[#556960] text-sm mt-0.5">Every skill has a journey. Continue where you left off.</p>
         </div>
         
@@ -137,7 +137,7 @@ export default async function MyLearningPage() {
       </div>
 
       {enrichedCourses.length === 0 ? (
-        <div className="bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-12 text-center flex flex-col items-center justify-center space-y-4">
+        <div className="bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-6 sm:p-12 text-center flex flex-col items-center justify-center space-y-4">
           <div className="w-16 h-16 rounded-2xl bg-[#DCE6D8] flex items-center justify-center text-[#24483C] shadow-sm border border-[#24483C]/20">
             <BookOpen size={32} />
           </div>
@@ -200,7 +200,7 @@ export default async function MyLearningPage() {
             <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Personalized Pathways</span>
             <h2 className="font-serif text-2xl font-bold text-[#1B2E26]">Recommended For Your Journey</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {recommendedCourses.map(course => (
               <Link href={`/courses/${course.id}`} key={course.id.toString()} className="group flex flex-col h-full bg-[#FAF7F0] rounded-2xl border border-[#E9DFCC] hover:border-[#24483C]/40 shadow-sm hover:shadow-md transition-all overflow-hidden cursor-pointer">
                 <div className="w-full aspect-video bg-[#E9DFCC] relative overflow-hidden">

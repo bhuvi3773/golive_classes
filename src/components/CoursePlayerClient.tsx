@@ -144,11 +144,11 @@ export default function CoursePlayerClient({
               ) : videoSrc ? (
                 <>
                   <SecureVideoPlayer ref={videoRef} src={videoSrc} userEmail={userEmail || "Student"} />
-                  <div className="absolute top-4 left-4 z-10 bg-[#24483C]/85 backdrop-blur-md text-[#F8F4EC] px-3.5 py-1.5 rounded-xl text-xs font-medium border border-[#E9DFCC]/30 pointer-events-none shadow-sm flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#C96F4A] animate-pulse"></span>
-                    <span>Active Lecture: {activeLecture.title}</span>
+                  <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 z-10 bg-[#24483C]/85 backdrop-blur-md text-[#F8F4EC] px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-medium border border-[#E9DFCC]/30 pointer-events-none shadow-sm flex items-center gap-1.5 sm:gap-2 max-w-[70%]">
+                    <span className="w-2 h-2 rounded-full bg-[#C96F4A] animate-pulse shrink-0"></span>
+                    <span className="truncate">Active: {activeLecture.title}</span>
                   </div>
-                  <div className="absolute bottom-4 right-4 z-20">
+                  <div className="hidden sm:block absolute bottom-4 right-4 z-20">
                     <MarkCompleteButton 
                       courseId={course.id.toString()} 
                       lectureId={Number(activeLectureId)} 
@@ -180,13 +180,29 @@ export default function CoursePlayerClient({
            </div>
         )}
       </div>
+
+      {/* Mobile Player Actions Bar */}
+      {activeLecture?.type === 'video' && videoSrc && (
+        <div className="sm:hidden px-4 py-3 bg-[#FAF7F0] border-b border-[#E9DFCC] flex items-center justify-between gap-3 shadow-xs">
+          <span className="text-xs font-serif font-bold text-[#1B2E26] truncate">
+            {activeLecture?.title}
+          </span>
+          <div className="shrink-0">
+            <MarkCompleteButton 
+              courseId={course.id.toString()} 
+              lectureId={Number(activeLectureId)} 
+              isCompleted={completedLectures.includes(Number(activeLectureId))} 
+            />
+          </div>
+        </div>
+      )}
       
-      <div className="w-full max-w-5xl mx-auto py-8 px-4 sm:px-6">
+      <div className="w-full max-w-5xl mx-auto py-6 sm:py-8 px-3 sm:px-6">
         {/* Tabs for Discussions and Notes */}
-        <div className="flex gap-6 border-b border-[#E9DFCC] mb-6">
+        <div className="flex gap-4 sm:gap-6 border-b border-[#E9DFCC] mb-6 overflow-x-auto scrollbar-none">
           <button 
             onClick={() => setActiveTab('discussions')}
-            className={`pb-3 font-medium text-xs uppercase tracking-wider flex items-center gap-2 transition-colors border-b-2 ${
+            className={`pb-3 font-medium text-xs uppercase tracking-wider flex items-center gap-2 transition-colors border-b-2 shrink-0 whitespace-nowrap ${
               activeTab === 'discussions' 
                 ? 'border-[#24483C] text-[#24483C] font-bold' 
                 : 'border-transparent text-[#556960] hover:text-[#1B2E26]'
@@ -198,7 +214,7 @@ export default function CoursePlayerClient({
           {activeLecture?.type === 'video' && (
             <button 
               onClick={() => setActiveTab('notes')}
-              className={`pb-3 font-medium text-xs uppercase tracking-wider flex items-center gap-2 transition-colors border-b-2 ${
+              className={`pb-3 font-medium text-xs uppercase tracking-wider flex items-center gap-2 transition-colors border-b-2 shrink-0 whitespace-nowrap ${
                 activeTab === 'notes' 
                   ? 'border-[#24483C] text-[#24483C] font-bold' 
                   : 'border-transparent text-[#556960] hover:text-[#1B2E26]'

@@ -37,7 +37,7 @@ export default function RecommendationsPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in max-w-7xl mx-auto pb-16">
-      <div className="editorial-card bg-[#FFFFFF] border border-[#E9DFCC] p-8 flex flex-col md:flex-row items-center gap-6 rounded-2xl shadow-sm">
+      <div className="editorial-card bg-[#FFFFFF] border border-[#E9DFCC] p-5 sm:p-8 flex flex-col md:flex-row items-center gap-4 sm:gap-6 rounded-2xl shadow-sm">
         <div className="w-14 h-14 bg-[#EEF3EC] rounded-xl flex items-center justify-center shrink-0 border border-[#DCE6D8]">
           <Sparkles className="text-[#24483C] w-7 h-7" />
         </div>
@@ -56,7 +56,7 @@ export default function RecommendationsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
         {recommendations.map((course) => (
           <div key={course.id} className="editorial-card rounded-xl overflow-hidden flex flex-col h-full bg-[#FFFFFF]">
             <div className="h-44 bg-[#F4EFE6] relative overflow-hidden border-b border-[#E9DFCC]">

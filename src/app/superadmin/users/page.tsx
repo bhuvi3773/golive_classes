@@ -60,16 +60,16 @@ export default function UserManagementPage() {
   );
 
   return (
-    <div className="p-8 space-y-8 text-[#1B2E26]">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 text-[#1B2E26] w-full">
       <div className="pb-4 border-b border-[#E9DFCC]">
         <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Registry Administration</span>
-        <h1 className="font-serif text-3xl font-bold text-[#1B2E26] tracking-tight">Scholar & Faculty Registry</h1>
-        <p className="text-[#556960] text-sm mt-0.5">Audit account standing, manage credentials, and administer access permissions.</p>
+        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B2E26] tracking-tight">Scholar & Faculty Registry</h1>
+        <p className="text-[#556960] text-xs sm:text-sm mt-0.5">Audit account standing, manage credentials, and administer access permissions.</p>
       </div>
 
       <div className="bg-[#FAF7F0] rounded-2xl border border-[#E9DFCC] overflow-hidden shadow-sm">
-        <div className="p-6 border-b border-[#E9DFCC] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-[#FAF7F0]">
-          <h2 className="font-serif text-xl font-bold text-[#1B2E26] flex items-center gap-2 whitespace-nowrap">
+        <div className="p-4 sm:p-6 border-b border-[#E9DFCC] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-[#FAF7F0]">
+          <h2 className="font-serif text-lg sm:text-xl font-bold text-[#1B2E26] flex items-center gap-2 whitespace-nowrap">
             <Users className="text-[#24483C]" size={20} /> Academy Members
           </h2>
           <div className="relative w-full md:max-w-md">
@@ -85,13 +85,13 @@ export default function UserManagementPage() {
         </div>
         
         {loading ? (
-          <div className="p-12 text-center text-[#556960] flex flex-col items-center">
+          <div className="p-8 sm:p-12 text-center text-[#556960] flex flex-col items-center">
             <div className="w-8 h-8 border-3 border-[#24483C] border-t-transparent rounded-full animate-spin mb-3"></div>
             Loading scholar records...
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left text-xs min-w-[580px]">
               <thead className="bg-[#F8F4EC] border-b border-[#E9DFCC] text-[#3D5A4C]">
                 <tr>
                   <th className="px-6 py-3.5 font-bold uppercase tracking-wider">Member Details</th>

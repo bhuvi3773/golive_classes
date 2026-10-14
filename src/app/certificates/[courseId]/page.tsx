@@ -51,7 +51,7 @@ export default async function CertificateViewPage({ params }: { params: Promise<
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] space-y-8 animate-in fade-in pb-16">
       {/* Formal Academic Diploma Frame */}
-      <div className="w-full max-w-4xl bg-[#FDFCF9] text-[#1B2E26] rounded-xl p-6 sm:p-14 aspect-[1.4/1] shadow-xl relative overflow-hidden border-[14px] border-[#24483C] mx-auto">
+      <div className="w-full max-w-4xl bg-[#FDFCF9] text-[#1B2E26] rounded-xl p-5 sm:p-10 md:p-14 min-h-[520px] sm:min-h-0 sm:aspect-[1.4/1] shadow-xl relative overflow-hidden border-8 sm:border-[14px] border-[#24483C] mx-auto">
         
         {/* Subtle Certificate Corner Accents */}
         <div className="absolute top-2 left-2 w-8 h-8 border-t-2 border-l-2 border-[#C96F4A]"></div>
@@ -59,33 +59,33 @@ export default async function CertificateViewPage({ params }: { params: Promise<
         <div className="absolute bottom-2 left-2 w-8 h-8 border-b-2 border-l-2 border-[#C96F4A]"></div>
         <div className="absolute bottom-2 right-2 w-8 h-8 border-b-2 border-r-2 border-[#C96F4A]"></div>
         
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center space-y-5">
-          <Award size={56} className="text-[#C96F4A] mb-1" />
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center space-y-4 sm:space-y-5">
+          <Award size={48} className="text-[#C96F4A] mb-1 sm:w-14 sm:h-14" />
           
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-extrabold text-[#24483C] uppercase tracking-widest">
+          <h1 className="text-xl sm:text-3xl md:text-5xl font-serif font-extrabold text-[#24483C] uppercase tracking-wider sm:tracking-widest">
             Certificate of Mastery
           </h1>
           
-          <p className="text-sm sm:text-base text-[#4A5E54] uppercase tracking-wider font-medium mt-4">This certifies that</p>
+          <p className="text-xs sm:text-base text-[#4A5E54] uppercase tracking-wider font-medium mt-2 sm:mt-4">This certifies that</p>
           
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#1B2E26] border-b-2 border-[#E9DFCC] pb-2 px-10">
+          <h2 className="text-lg sm:text-2xl md:text-4xl font-extrabold text-[#1B2E26] border-b-2 border-[#E9DFCC] pb-2 px-4 sm:px-10 break-words max-w-full">
             {dbUser.name}
           </h2>
           
-          <p className="text-sm sm:text-base text-[#4A5E54]">has successfully fulfilled all curriculum requirements for</p>
+          <p className="text-xs sm:text-base text-[#4A5E54]">has successfully fulfilled all curriculum requirements for</p>
           
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-[#24483C] px-4 max-w-xl">
+          <h3 className="text-base sm:text-xl md:text-3xl font-serif font-bold text-[#24483C] px-2 sm:px-4 max-w-xl">
             {course.title}
           </h3>
           
-          <div className="flex justify-between w-full max-w-2xl mt-8 pt-8 border-t border-[#E9DFCC]">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-0 justify-between w-full max-w-2xl mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-[#E9DFCC]">
             <div className="text-center">
               <p className="font-bold text-[#1B2E26] text-sm">{date}</p>
               <p className="text-xs text-[#72857C] uppercase tracking-wider">Date Conferred</p>
             </div>
             
             <div className="text-center">
-              <p className="font-serif italic text-lg font-bold text-[#24483C]">GoLive Academy</p>
+              <p className="font-serif italic text-base sm:text-lg font-bold text-[#24483C]">GoLive Academy</p>
               <p className="text-xs text-[#72857C] uppercase tracking-wider">Office of Academic Affairs</p>
             </div>
           </div>

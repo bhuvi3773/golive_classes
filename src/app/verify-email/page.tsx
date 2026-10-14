@@ -101,7 +101,7 @@ function VerifyEmailContent() {
 
   return (
     <div className="flex min-h-[90vh] items-center justify-center py-12 px-4 relative">
-      <div className="w-full max-w-md bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-8 md:p-10 space-y-6 text-center relative z-10 text-[#1B2E26]">
+      <div className="w-full max-w-md bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-5 sm:p-8 md:p-10 space-y-6 text-center relative z-10 text-[#1B2E26]">
         <div className="flex justify-center mb-2">
           <div className="w-14 h-14 bg-[#DCE6D8] rounded-2xl flex items-center justify-center border border-[#24483C]/20 text-[#24483C]">
             <MailCheck size={28} />
@@ -109,10 +109,10 @@ function VerifyEmailContent() {
         </div>
         
         <div>
-          <h2 className="font-serif text-3xl font-bold text-[#1B2E26] mb-2 tracking-tight">Verify Your Email</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B2E26] mb-2 tracking-tight">Verify Your Email</h2>
           <p className="text-[#556960] text-sm">
             We have dispatched a 6-digit verification code to:<br/>
-            <strong className="text-[#1B2E26] mt-1 block font-mono text-sm">{email}</strong>
+            <strong className="text-[#1B2E26] mt-1 block font-mono text-sm break-all">{email}</strong>
           </p>
         </div>
 
@@ -137,7 +137,7 @@ function VerifyEmailContent() {
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
               placeholder="000000" 
-              className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-4 py-3.5 text-center text-3xl tracking-[0.6em] focus:outline-none focus:border-[#24483C] focus:ring-1 focus:ring-[#24483C] transition-all text-[#1B2E26] font-mono placeholder:text-[#556960]/30"
+              className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl px-2 sm:px-4 py-3 sm:py-3.5 text-center text-2xl sm:text-3xl tracking-[0.3em] sm:tracking-[0.6em] focus:outline-none focus:border-[#24483C] focus:ring-1 focus:ring-[#24483C] transition-all text-[#1B2E26] font-mono placeholder:text-[#556960]/30"
               required
             />
           </div>

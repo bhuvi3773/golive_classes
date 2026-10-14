@@ -39,8 +39,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-[90vh] items-center justify-center py-12 px-4 relative">
-      <div className="w-full max-w-md bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-8 md:p-10 space-y-6 relative z-10 text-[#1B2E26]">
+    <div className="flex min-h-[90vh] items-center justify-center py-6 sm:py-12 px-3 sm:px-4 relative">
+      <div className="w-full max-w-md bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-5 sm:p-8 md:p-10 space-y-6 relative z-10 text-[#1B2E26]">
         <Link href="/login" className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#556960] hover:text-[#24483C] transition-colors w-fit">
           <ArrowLeft size={14} /> Back to login
         </Link>
@@ -49,8 +49,8 @@ export default function ForgotPasswordPage() {
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#24483C] text-[#F8F4EC] shadow-sm mb-1">
             <KeyRound size={22} />
           </div>
-          <h2 className="font-serif text-3xl font-bold text-[#1B2E26] tracking-tight">Recover Access</h2>
-          <p className="text-[#556960] text-sm">
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B2E26] tracking-tight">Recover Access</h2>
+          <p className="text-[#556960] text-xs sm:text-sm">
             Enter the academic email address associated with your account and we will dispatch a secure reset token.
           </p>
         </div>

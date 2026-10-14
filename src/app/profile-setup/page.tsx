@@ -57,10 +57,10 @@ export default function ProfileSetupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 relative">
-      <div className="w-full max-w-2xl bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-8 md:p-12 space-y-8 relative z-10 text-[#1B2E26]">
+      <div className="w-full max-w-2xl bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-5 sm:p-8 md:p-12 space-y-8 relative z-10 text-[#1B2E26]">
         <div className="text-center space-y-2">
           <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Scholar Onboarding</span>
-          <h2 className="font-serif text-3xl font-bold text-[#1B2E26]">Complete Your Academy Profile</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B2E26]">Complete Your Academy Profile</h2>
           <p className="text-[#556960] text-sm">Tell us about your learning journey so mentors and peers can collaborate with you.</p>
         </div>
 

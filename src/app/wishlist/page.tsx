@@ -34,14 +34,14 @@ export default function WishlistPage() {
     <div className="space-y-8 max-w-7xl mx-auto pb-16">
       <div>
         <span className="text-xs font-bold uppercase tracking-wider text-[#C96F4A]">Saved Modules</span>
-        <h1 className="text-3xl font-extrabold text-[#1B2E26] mt-0.5 mb-1">My Academic Wishlist</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1B2E26] mt-0.5 mb-1">My Academic Wishlist</h1>
         <p className="text-[#4A5E54] text-sm">Courses and certifications saved for future enrollment.</p>
       </div>
 
       {loading ? (
         <div className="text-[#72857C] text-sm">Loading saved modules...</div>
       ) : wishlist.length === 0 ? (
-        <div className="editorial-card bg-[#FFFFFF] border border-[#E9DFCC] rounded-2xl p-12 text-center flex flex-col items-center max-w-md mx-auto">
+        <div className="editorial-card bg-[#FFFFFF] border border-[#E9DFCC] rounded-2xl p-6 sm:p-12 text-center flex flex-col items-center max-w-md mx-auto">
           <Heart size={44} className="text-[#D8CCB5] mb-3" />
           <h2 className="text-xl font-bold text-[#1B2E26] mb-1.5">Your wishlist is currently empty</h2>
           <p className="text-[#4A5E54] text-sm mb-6">Explore our curriculum catalog to find subjects you wish to master.</p>
@@ -50,7 +50,7 @@ export default function WishlistPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {wishlist.map(course => (
             <div key={course.id} className="editorial-card rounded-xl overflow-hidden bg-[#FFFFFF] flex flex-col group">
               <div className="aspect-video bg-[#F4EFE6] relative overflow-hidden border-b border-[#E9DFCC]">

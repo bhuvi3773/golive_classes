@@ -42,15 +42,15 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-[90vh] items-center justify-center py-12 px-4 relative">
-      <div className="w-full max-w-lg bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-8 md:p-10 space-y-8 relative z-10 text-[#1B2E26]">
+    <div className="flex min-h-[90vh] items-center justify-center py-6 sm:py-12 px-3 sm:px-4 relative">
+      <div className="w-full max-w-lg bg-[#FAF7F0] border border-[#E9DFCC] shadow-sm rounded-2xl p-5 sm:p-8 md:p-10 space-y-6 sm:space-y-8 relative z-10 text-[#1B2E26]">
         {/* Emblem */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#24483C] text-[#F8F4EC] shadow-sm mb-2">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#24483C] text-[#F8F4EC] shadow-sm mb-1 sm:mb-2">
             <BookOpen size={24} />
           </div>
-          <h2 className="font-serif text-3xl font-bold text-[#1B2E26] tracking-tight">Begin Your Journey</h2>
-          <p className="text-[#556960] text-sm">Create an academy account to unlock live masterclasses and structured learning paths.</p>
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B2E26] tracking-tight">Begin Your Journey</h2>
+          <p className="text-[#556960] text-xs sm:text-sm">Create an academy account to unlock live masterclasses and structured learning paths.</p>
         </div>
 
         {error && (

@@ -98,10 +98,10 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
       {!query ? (
         <>
           {/* Welcome Banner */}
-          <div className="w-full bg-[#24483C] text-[#F8F4EC] rounded-2xl p-8 border border-[#19332A] relative overflow-hidden shadow-md">
+          <div className="w-full bg-[#24483C] text-[#F8F4EC] rounded-2xl p-5 sm:p-8 border border-[#19332A] relative overflow-hidden shadow-md">
             <div className="relative z-10">
               <span className="text-xs uppercase tracking-wider text-[#DCE6D8] font-bold">Academic Portal</span>
-              <h1 className="text-3xl font-extrabold text-[#FFFFFF] mt-1 mb-2">Welcome back, {user.name || "Scholar"}!</h1>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#FFFFFF] mt-1 mb-2">Welcome back, {user.name || "Scholar"}!</h1>
               <p className="text-[#DCE6D8] font-normal text-sm md:text-base">Explore structured modules, build practical projects, and advance your technical craft.</p>
             </div>
           </div>
@@ -139,7 +139,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
       {/* Courses Section */}
       <section className="space-y-6">
         {!query && (
-          <div className="flex items-end justify-between border-b border-[#E9DFCC] pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-[#E9DFCC] pb-3">
             <div>
               <h2 className="text-2xl font-bold text-[#1B2E26]">Curriculum Catalog</h2>
               <p className="text-xs text-[#72857C] mt-0.5">Courses currently open for enrollment</p>
@@ -227,7 +227,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
             <h2 className="text-xl font-bold text-[#1B2E26]">{recommendTitle}</h2>
             <p className="text-xs text-[#72857C]">Suggested based on your learning trajectory</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {recommendedCourses.map(course => (
               <Link href={`/courses/${course.id}`} key={course.id.toString()} className="editorial-card rounded-xl flex flex-col h-full bg-[#FFFFFF] group relative overflow-hidden">
                 <div className="w-full aspect-video bg-[#F4EFE6] relative overflow-hidden border-b border-[#E9DFCC]">

@@ -56,39 +56,39 @@ export default function SuperAdminPage() {
   const rejectedCourses = courses.filter(c => c.status === 'rejected');
 
   return (
-    <div className="p-8 space-y-8 text-[#1B2E26]">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 text-[#1B2E26] w-full">
       <div className="pb-4 border-b border-[#E9DFCC]">
         <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Quality & Accreditation</span>
-        <h1 className="font-serif text-3xl font-bold text-[#1B2E26] tracking-tight">Curriculum Review Dashboard</h1>
-        <p className="text-[#556960] text-sm mt-0.5">Audit academic syllabi submitted by faculty for pedagogical rigor and policy compliance.</p>
+        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B2E26] tracking-tight">Curriculum Review Dashboard</h1>
+        <p className="text-[#556960] text-xs sm:text-sm mt-0.5">Audit academic syllabi submitted by faculty for pedagogical rigor and policy compliance.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-[#FAF7F0] p-6 rounded-2xl border border-[#E9DFCC] border-l-4 border-l-[#C96F4A] shadow-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+        <div className="bg-[#FAF7F0] p-4 sm:p-6 rounded-2xl border border-[#E9DFCC] border-l-4 border-l-[#C96F4A] shadow-sm">
           <span className="text-xs font-bold uppercase tracking-wider text-[#C96F4A] block mb-1">Awaiting Review</span>
-          <p className="font-serif text-4xl font-bold text-[#1B2E26]">{pendingCourses.length}</p>
+          <p className="font-serif text-3xl sm:text-4xl font-bold text-[#1B2E26]">{pendingCourses.length}</p>
         </div>
-        <div className="bg-[#FAF7F0] p-6 rounded-2xl border border-[#E9DFCC] border-l-4 border-l-[#24483C] shadow-sm">
+        <div className="bg-[#FAF7F0] p-4 sm:p-6 rounded-2xl border border-[#E9DFCC] border-l-4 border-l-[#24483C] shadow-sm">
           <span className="text-xs font-bold uppercase tracking-wider text-[#3D5A4C] block mb-1">Accredited & Published</span>
-          <p className="font-serif text-4xl font-bold text-[#24483C]">{publishedCourses.length}</p>
+          <p className="font-serif text-3xl sm:text-4xl font-bold text-[#24483C]">{publishedCourses.length}</p>
         </div>
-        <div className="bg-[#FAF7F0] p-6 rounded-2xl border border-[#E9DFCC] border-l-4 border-l-[#8B381A] shadow-sm">
+        <div className="bg-[#FAF7F0] p-4 sm:p-6 rounded-2xl border border-[#E9DFCC] border-l-4 border-l-[#8B381A] shadow-sm sm:col-span-2 md:col-span-1">
           <span className="text-xs font-bold uppercase tracking-wider text-[#8B381A] block mb-1">Returned for Revision</span>
-          <p className="font-serif text-4xl font-bold text-[#8B381A]">{rejectedCourses.length}</p>
+          <p className="font-serif text-3xl sm:text-4xl font-bold text-[#8B381A]">{rejectedCourses.length}</p>
         </div>
       </div>
 
       <div className="bg-[#FAF7F0] rounded-2xl border border-[#E9DFCC] overflow-hidden shadow-sm">
-        <div className="p-6 border-b border-[#E9DFCC] flex items-center justify-between">
-          <h2 className="font-serif text-xl font-bold text-[#1B2E26] flex items-center gap-2">
+        <div className="p-4 sm:p-6 border-b border-[#E9DFCC] flex items-center justify-between">
+          <h2 className="font-serif text-lg sm:text-xl font-bold text-[#1B2E26] flex items-center gap-2">
             <AlertTriangle className="text-[#C96F4A]" size={20} /> Action Required: Pending Curricula
           </h2>
         </div>
         
         {loading ? (
-          <div className="p-12 text-center text-[#556960] text-sm">Evaluating curriculum submissions...</div>
+          <div className="p-8 sm:p-12 text-center text-[#556960] text-sm">Evaluating curriculum submissions...</div>
         ) : pendingCourses.length === 0 ? (
-          <div className="p-12 text-center text-[#556960] flex flex-col items-center">
+          <div className="p-8 sm:p-12 text-center text-[#556960] flex flex-col items-center">
             <div className="w-14 h-14 rounded-2xl bg-[#DCE6D8] text-[#24483C] flex items-center justify-center mb-3">
               <CheckCircle size={28} />
             </div>
@@ -97,7 +97,7 @@ export default function SuperAdminPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left text-xs min-w-[620px]">
               <thead className="bg-[#F8F4EC] border-b border-[#E9DFCC] text-[#3D5A4C]">
                 <tr>
                   <th className="px-6 py-3.5 font-bold uppercase tracking-wider">Curriculum Details</th>

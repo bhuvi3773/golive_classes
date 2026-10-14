@@ -57,24 +57,24 @@ export default function PlatformSettingsPage() {
   }
 
   return (
-    <div className="p-8 max-w-4xl animate-in fade-in text-[#1B2E26]">
-      <div className="mb-8 pb-4 border-b border-[#E9DFCC]">
+    <div className="p-4 sm:p-6 md:p-8 max-w-4xl animate-in fade-in text-[#1B2E26] w-full">
+      <div className="mb-6 sm:mb-8 pb-4 border-b border-[#E9DFCC]">
         <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">System Configuration</span>
-        <h1 className="font-serif text-3xl font-bold text-[#1B2E26] flex items-center gap-3">
-          <Settings className="text-[#24483C]" size={28} />
-          Global Academy Parameters
+        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B2E26] flex items-center gap-2.5 sm:gap-3">
+          <Settings className="text-[#24483C] shrink-0" size={26} />
+          <span>Global Academy Parameters</span>
         </h1>
-        <p className="text-[#556960] text-sm mt-1">Configure platform identity, faculty tuition share, and institutional protocols.</p>
+        <p className="text-[#556960] text-xs sm:text-sm mt-1">Configure platform identity, faculty tuition share, and institutional protocols.</p>
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Core Config */}
-        <div className="bg-[#FAF7F0] border border-[#E9DFCC] rounded-2xl p-6 md:p-8 shadow-sm">
-          <h2 className="font-serif text-lg font-bold text-[#1B2E26] flex items-center gap-2 mb-6 pb-3 border-b border-[#E9DFCC]">
-            <Globe className="text-[#C96F4A]" size={18} />
+        <div className="bg-[#FAF7F0] border border-[#E9DFCC] rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm">
+          <h2 className="font-serif text-base sm:text-lg font-bold text-[#1B2E26] flex items-center gap-2 mb-4 sm:mb-6 pb-3 border-b border-[#E9DFCC]">
+            <Globe className="text-[#C96F4A] shrink-0" size={18} />
             Institutional Identity & Communication
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#3D5A4C] mb-1.5">Academy Title</label>
               <input
@@ -100,12 +100,12 @@ export default function PlatformSettingsPage() {
         </div>
 
         {/* Business Config */}
-        <div className="bg-[#FAF7F0] border border-[#E9DFCC] rounded-2xl p-6 md:p-8 shadow-sm">
-          <h2 className="font-serif text-lg font-bold text-[#1B2E26] flex items-center gap-2 mb-6 pb-3 border-b border-[#E9DFCC]">
-            <DollarSign className="text-[#24483C]" size={18} />
+        <div className="bg-[#FAF7F0] border border-[#E9DFCC] rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm">
+          <h2 className="font-serif text-base sm:text-lg font-bold text-[#1B2E26] flex items-center gap-2 mb-4 sm:mb-6 pb-3 border-b border-[#E9DFCC]">
+            <DollarSign className="text-[#24483C] shrink-0" size={18} />
             Tuition & Faculty Commission
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#3D5A4C] mb-1.5">Academy Retained Commission (%)</label>
               <div className="flex items-center gap-3">
@@ -124,7 +124,7 @@ export default function PlatformSettingsPage() {
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#3D5A4C] mb-1.5">Open Faculty Onboarding</label>
               <label className="flex items-center gap-3 mt-2 cursor-pointer">
-                <div className="relative">
+                <div className="relative shrink-0">
                   <input
                     type="checkbox"
                     className="sr-only"
@@ -142,14 +142,14 @@ export default function PlatformSettingsPage() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between bg-[#FAF7F0] p-6 rounded-2xl border border-[#E9DFCC] shadow-sm">
+        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between bg-[#FAF7F0] p-4 sm:p-6 rounded-2xl border border-[#E9DFCC] shadow-sm">
           <p className={`text-xs font-bold ${message.includes('success') ? 'text-[#24483C]' : 'text-[#8B381A]'}`}>
             {message}
           </p>
           <button 
             type="submit" 
             disabled={saving}
-            className="flex items-center gap-2 bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] px-6 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm disabled:opacity-50"
+            className="flex items-center justify-center gap-2 bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] px-6 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm disabled:opacity-50"
           >
             {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
             {saving ? "Saving..." : "Save Parameters"}
