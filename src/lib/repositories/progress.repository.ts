@@ -12,7 +12,7 @@ export const ProgressRepository = {
   async markLectureCompleted(userId: string, courseId: string, lectureId: number) {
     const progress = await this.findProgress(userId, courseId);
     
-    let completedLectures = progress?.completedLectures || [];
+    const completedLectures = progress?.completedLectures || [];
     if (!completedLectures.includes(lectureId)) {
       completedLectures.push(lectureId);
     }

@@ -1,7 +1,41 @@
 import { NextResponse } from 'next/server';
-import { LaunchRepository } from '@/lib/repositories/launch.repository';
-import prisma from '@/lib/prisma';
+import { LaunchRepository, canUserAccessLaunchLink, sanitizeLaunchForUser } from '@/lib/repositories/launch.repository';
+import { UserRepository } from '@/lib/repositories/user.repository';
 import { getUserFromCookie } from '@/lib/auth';
+
+export async function GET(
+  req: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await context.params;
+    const launch = await LaunchRepository.findById(id);
+
+    if (!launch) {
+      return NextResponse.json({ error: 'Launch not found' }, { status: 404 });
+    }
+
+    const sessionUser = await getUserFromCookie();
+    let enrolledCategories = new Set<string>();
+
+    if (sessionUser && sessionUser.role === 'student') {
+      const dbUser = await UserRepository.findById(sessionUser.userId);
+      if (dbUser && dbUser.purchasedCourses) {
+        dbUser.purchasedCourses.forEach((c: any) => {
+          if (c.category) enrolledCategories.add(c.category.toLowerCase().trim());
+        });
+      }
+    }
+
+    const canAccess = canUserAccessLaunchLink(sessionUser?.role, enrolledCategories, launch);
+    const sanitized = sanitizeLaunchForUser(launch, canAccess);
+
+    return NextResponse.json(sanitized, { status: 200 });
+  } catch (error) {
+    console.error('Get Launch Error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
 
 export async function DELETE(
   req: Request,

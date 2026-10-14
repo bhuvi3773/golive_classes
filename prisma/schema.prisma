@@ -47,6 +47,7 @@ model User {
   discussions               Discussion[]
   discussionReplies         DiscussionReply[]
   videoNotes                VideoNote[]
+  orders                    Order[]
 }
 
 model Course {
@@ -70,6 +71,7 @@ model Course {
   reviews        Review[]
   discussions    Discussion[]
   videoNotes     VideoNote[]
+  orders         Order[]
 }
 
 model Category {
@@ -168,4 +170,25 @@ model PlatformSetting {
   siteName                    String   @default("GoLive Classes")
   contactEmail                String   @default("support@goliveclasses.com")
   updatedAt                   DateTime @default(now()) @updatedAt
+}
+
+model Order {
+  id            String   @id @default(uuid())
+  orderId       String   @unique
+  paymentId     String?  @unique
+  signature     String?
+  userId        String
+  courseId      String
+  amountInPaise Int
+  currency      String   @default("INR")
+  status        String   @default("created")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id])
+  course        Course   @relation(fields: [courseId], references: [id])
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([status])
 }

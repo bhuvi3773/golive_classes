@@ -29,13 +29,13 @@ export default function MarkCompleteButton({ courseId, lectureId, isCompleted }:
     <button 
       onClick={markComplete}
       disabled={isCompleted || loading}
-      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all shadow-sm ${
         isCompleted 
-          ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-          : 'bg-slate-900 hover:bg-slate-800 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]'
+          ? 'bg-[#DCE6D8] text-[#24483C] border border-[#24483C]/30' 
+          : 'bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] border border-[#E9DFCC]/20'
       }`}
     >
-      <CheckCircle size={16} />
+      <CheckCircle size={15} />
       {isCompleted ? 'Completed' : loading ? 'Saving...' : 'Mark as Complete'}
     </button>
   );

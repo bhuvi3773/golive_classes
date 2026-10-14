@@ -28,7 +28,7 @@ test.describe('UI Navigation Tests', () => {
   test('My Learning page should show empty state or login prompt', async ({ page }) => {
     await page.goto('/my-learning');
     const bodyText = await page.locator('body').innerText();
-    const isWorking = bodyText.includes('log in') || bodyText.includes('aren\'t enrolled');
+    const isWorking = bodyText.toLowerCase().includes('log in') || bodyText.toLowerCase().includes('aren\'t enrolled');
     expect(isWorking).toBeTruthy();
   });
 });

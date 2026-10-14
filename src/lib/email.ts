@@ -1,217 +1,421 @@
 import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '465'),
-  secure: true, // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+export function getTransporter() {
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const port = parseInt(process.env.SMTP_PORT || '465');
+  const secure = port === 465;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS?.replace(/\s+/g, '');
 
-export const sendVerificationEmail = async (to: string, code: string) => {
-  // If SMTP is not configured or still using placeholders, we'll just log the code for local testing
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: {
+      user,
+      pass,
+    },
+    connectionTimeout: 10000,
+  });
+}
+
+const transporter = getTransporter();
+
+export function getSenderAddress(): string {
+  if (process.env.EMAIL_FROM) {
+    return process.env.EMAIL_FROM;
+  }
+  if (process.env.SMTP_USER) {
+    return `"GoLive Classes" <${process.env.SMTP_USER}>`;
+  }
+  return '"GoLive Classes" <noreply@goliveclasses.com>';
+}
+
+export async function verifyEmailTransport(): Promise<{ success: boolean; message: string }> {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS || process.env.SMTP_USER === 'your_email@gmail.com') {
+    return { success: false, message: 'SMTP credentials unconfigured or set to placeholder.' };
+  }
+  try {
+    const transport = getTransporter();
+    await transport.verify();
+    return { success: true, message: 'Gmail SMTP transport is verified and operational.' };
+  } catch (error: any) {
+    return { success: false, message: error.message || 'SMTP verification failed.' };
+  }
+}
+
+/**
+ * 1. Scholar Email Verification Code (OTP)
+ */
+export const sendVerificationEmail = async (to: string, code: string): Promise<boolean> => {
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS || process.env.SMTP_USER === 'your_email@gmail.com') {
     console.warn(`[DEVELOPMENT] SMTP not configured. Verification code for ${to} is: ${code}`);
-    return true; // Simulate success
+    return true;
   }
 
   const mailOptions = {
-    from: process.env.EMAIL_FROM || '"GoLive e-Learning" <noreply@golive.com>',
+    from: getSenderAddress(),
     to,
-    subject: 'Verify your email address',
+    subject: `${code} is your GoLive Classes verification code`,
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px;">
-        <h2 style="color: #333; text-align: center;">Verify Your Email</h2>
-        <p style="color: #555; font-size: 16px;">Hello,</p>
-        <p style="color: #555; font-size: 16px;">Thank you for registering. Please use the following 6-digit code to verify your email address:</p>
-        
-        <div style="background-color: #f4f4f4; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0;">
-          <h1 style="margin: 0; color: #2563eb; letter-spacing: 5px; font-size: 32px;">${code}</h1>
-        </div>
-        
-        <p style="color: #555; font-size: 14px;">This code will expire in 15 minutes.</p>
-        <p style="color: #555; font-size: 14px;">If you did not request this, please ignore this email.</p>
-        <hr style="border: none; border-top: 1px solid #eaeaea; margin: 20px 0;" />
-        <p style="color: #888; font-size: 12px; text-align: center;">&copy; ${new Date().getFullYear()} GoLive e-Learning. All rights reserved.</p>
-      </div>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin: 0; padding: 0; background-color: #F8F4EC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F8F4EC; padding: 32px 16px;">
+          <tr>
+            <td align="center">
+              <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 580px; background-color: #FAF7F0; border: 1px solid #E9DFCC; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(27, 46, 38, 0.04);">
+                <!-- Header -->
+                <tr>
+                  <td style="background-color: #24483C; padding: 32px 28px; text-align: center;">
+                    <h1 style="margin: 0; font-family: Georgia, 'Times New Roman', serif; color: #F8F4EC; font-size: 26px; font-weight: bold; letter-spacing: 0.5px;">
+                      GoLive<span style="color: #C96F4A;">Classes</span>
+                    </h1>
+                    <p style="margin: 6px 0 0 0; color: #DCE6D8; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600;">
+                      The Classical Cohort LMS
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                  <td style="padding: 36px 32px; color: #1B2E26;">
+                    <h2 style="margin: 0 0 16px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 22px; color: #24483C;">
+                      Confirm Your Scholar Account
+                    </h2>
+                    <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #3D5A4C;">
+                      Welcome to GoLive Classes. To complete your registration and activate your account, enter the following 6-digit verification code:
+                    </p>
+
+                    <!-- Code Card -->
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin: 28px 0;">
+                      <tr>
+                        <td align="center" style="background-color: #F8F4EC; border: 2px dashed #E9DFCC; border-radius: 12px; padding: 24px;">
+                          <div style="font-family: 'Courier New', Courier, monospace; font-size: 38px; font-weight: bold; letter-spacing: 8px; color: #24483C;">
+                            ${code}
+                          </div>
+                          <p style="margin: 8px 0 0 0; font-size: 12px; color: #6D8277; font-weight: 500;">
+                            Code expires in 15 minutes
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p style="margin: 0 0 12px 0; font-size: 13px; line-height: 1.5; color: #6D8277;">
+                      If you did not request this registration, please disregard this email. Your email address will remain unverified.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                  <td style="background-color: #F8F4EC; border-top: 1px solid #E9DFCC; padding: 20px 32px; text-align: center;">
+                    <p style="margin: 0; font-size: 12px; color: #6D8277;">
+                      &copy; ${new Date().getFullYear()} GoLive Classes Academy. All rights reserved.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
     `,
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    const transport = getTransporter();
+    await transport.sendMail(mailOptions);
     return true;
-  } catch (error) {
-    console.error('Error sending verification email:', error);
+  } catch (error: any) {
+    console.error('Error sending verification email:', error.message || error);
     return false;
   }
 };
 
-export const sendPasswordResetEmail = async (to: string, token: string) => {
+/**
+ * 2. Password Reset Request Email
+ */
+export const sendPasswordResetEmail = async (to: string, token: string): Promise<boolean> => {
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS || process.env.SMTP_USER === 'your_email@gmail.com') {
     console.warn(`[DEVELOPMENT] SMTP not configured. Password reset token for ${to} is: ${token}`);
     return true;
   }
 
-  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const resetUrl = `${appUrl}/reset-password?token=${token}`;
 
   const mailOptions = {
-    from: process.env.EMAIL_FROM || '"GoLive e-Learning" <noreply@golive.com>',
+    from: getSenderAddress(),
     to,
-    subject: 'Reset your password',
+    subject: 'Reset your GoLive Classes password',
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px;">
-        <h2 style="color: #333; text-align: center;">Reset Your Password</h2>
-        <p style="color: #555; font-size: 16px;">Hello,</p>
-        <p style="color: #555; font-size: 16px;">We received a request to reset your password. Click the button below to create a new one:</p>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${resetUrl}" style="background-color: #2563eb; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Reset Password</a>
-        </div>
-        
-        <p style="color: #555; font-size: 14px;">This link will expire in 1 hour.</p>
-        <p style="color: #555; font-size: 14px;">If you did not request this, please ignore this email and your password will remain unchanged.</p>
-        <hr style="border: none; border-top: 1px solid #eaeaea; margin: 20px 0;" />
-        <p style="color: #888; font-size: 12px; text-align: center;">&copy; ${new Date().getFullYear()} GoLive e-Learning. All rights reserved.</p>
-      </div>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin: 0; padding: 0; background-color: #F8F4EC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F8F4EC; padding: 32px 16px;">
+          <tr>
+            <td align="center">
+              <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 580px; background-color: #FAF7F0; border: 1px solid #E9DFCC; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(27, 46, 38, 0.04);">
+                <!-- Header -->
+                <tr>
+                  <td style="background-color: #24483C; padding: 32px 28px; text-align: center;">
+                    <h1 style="margin: 0; font-family: Georgia, 'Times New Roman', serif; color: #F8F4EC; font-size: 26px; font-weight: bold; letter-spacing: 0.5px;">
+                      GoLive<span style="color: #C96F4A;">Classes</span>
+                    </h1>
+                    <p style="margin: 6px 0 0 0; color: #DCE6D8; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600;">
+                      Security & Account Recovery
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                  <td style="padding: 36px 32px; color: #1B2E26;">
+                    <h2 style="margin: 0 0 16px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 22px; color: #24483C;">
+                      Password Reset Request
+                    </h2>
+                    <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #3D5A4C;">
+                      We received a request to reset the password for your GoLive Classes account. Click the button below to establish a new password:
+                    </p>
+
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin: 28px 0;">
+                      <tr>
+                        <td align="center">
+                          <a href="${resetUrl}" style="background-color: #C96F4A; color: #F8F4EC; padding: 14px 32px; font-size: 15px; font-weight: bold; text-decoration: none; border-radius: 10px; display: inline-block; box-shadow: 0 3px 8px rgba(201, 111, 74, 0.25);">
+                            Reset My Password &rarr;
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p style="margin: 0 0 8px 0; font-size: 13px; color: #6D8277;">
+                      This link will securely expire in <strong>1 hour</strong>.
+                    </p>
+                    <p style="margin: 0 0 12px 0; font-size: 13px; line-height: 1.5; color: #6D8277;">
+                      If you did not request this password reset, please ignore this email; your existing password will remain completely secure.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                  <td style="background-color: #F8F4EC; border-top: 1px solid #E9DFCC; padding: 20px 32px; text-align: center;">
+                    <p style="margin: 0; font-size: 12px; color: #6D8277;">
+                      &copy; ${new Date().getFullYear()} GoLive Classes Academy. All rights reserved.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
     `,
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    const transport = getTransporter();
+    await transport.sendMail(mailOptions);
     return true;
-  } catch (error) {
-    console.error('Error sending password reset email:', error);
+  } catch (error: any) {
+    console.error('Error sending password reset email:', error.message || error);
     return false;
   }
 };
 
-export const sendEnrollmentEmail = async (to: string, userName: string, courseTitle: string, courseId: string) => {
+/**
+ * 3. Course Enrollment Confirmation Email
+ */
+export const sendEnrollmentEmail = async (to: string, userName: string, courseTitle: string, courseId: string): Promise<boolean> => {
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS || process.env.SMTP_USER === 'your_email@gmail.com') {
     console.warn(`[DEVELOPMENT] SMTP not configured. Enrollment email for ${to} (Course: ${courseTitle}) would be sent here.`);
     return true;
   }
 
-  const courseUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/courses/${courseId}/play`;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const courseUrl = `${appUrl}/courses/${courseId}/play`;
 
   const mailOptions = {
-    from: process.env.EMAIL_FROM || '"GoLive Classes" <noreply@golive.com>',
+    from: getSenderAddress(),
     to,
-    subject: `You're Enrolled! Welcome to ${courseTitle}`,
+    subject: `Enrolled: Welcome to ${courseTitle} | GoLive Classes`,
     html: `
-      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 0; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
-        
-        <div style="background-color: #0f172a; padding: 30px; text-align: center;">
-          <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px;">GoLive Classes</h1>
-        </div>
-        
-        <div style="padding: 40px 30px;">
-          <h2 style="color: #0f172a; margin-top: 0; font-size: 22px;">Hi ${userName},</h2>
-          <p style="color: #475569; font-size: 16px; line-height: 1.6;">
-            Get ready to dive in! We are thrilled to confirm your enrollment in <strong>${courseTitle}</strong>. 
-          </p>
-          <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
-            Your course is now available in your dashboard, and you have lifetime access. You can start learning immediately by clicking the button below.
-          </p>
-          
-          <div style="text-align: center; margin: 40px 0;">
-            <a href="${courseUrl}" style="background-color: #10b981; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);">
-              Start Learning Now
-            </a>
-          </div>
-          
-          <h3 style="color: #0f172a; font-size: 18px; margin-top: 40px;">What's next?</h3>
-          <ul style="color: #475569; font-size: 15px; line-height: 1.6; padding-left: 20px;">
-            <li>Watch the introductory lectures to get familiar with the course.</li>
-            <li>Join the Q&A discussion board if you have any questions.</li>
-            <li>Complete all assignments to earn your certificate of completion!</li>
-          </ul>
-        </div>
-        
-        <div style="background-color: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
-          <p style="color: #64748b; font-size: 12px; margin: 0;">
-            Need help? Reply to this email or visit our support center.
-          </p>
-          <p style="color: #94a3b8; font-size: 12px; margin: 10px 0 0 0;">
-            &copy; ${new Date().getFullYear()} GoLive Classes. All rights reserved.
-          </p>
-        </div>
-      </div>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin: 0; padding: 0; background-color: #F8F4EC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F8F4EC; padding: 32px 16px;">
+          <tr>
+            <td align="center">
+              <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 580px; background-color: #FAF7F0; border: 1px solid #E9DFCC; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(27, 46, 38, 0.04);">
+                <!-- Header -->
+                <tr>
+                  <td style="background-color: #24483C; padding: 32px 28px; text-align: center;">
+                    <h1 style="margin: 0; font-family: Georgia, 'Times New Roman', serif; color: #F8F4EC; font-size: 26px; font-weight: bold; letter-spacing: 0.5px;">
+                      GoLive<span style="color: #C96F4A;">Classes</span>
+                    </h1>
+                    <p style="margin: 6px 0 0 0; color: #DCE6D8; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600;">
+                      Enrollment Confirmation
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                  <td style="padding: 36px 32px; color: #1B2E26;">
+                    <h2 style="margin: 0 0 16px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 22px; color: #24483C;">
+                      Welcome, ${userName}
+                    </h2>
+                    <p style="margin: 0 0 16px 0; font-size: 15px; line-height: 1.6; color: #3D5A4C;">
+                      Your enrollment in <strong>${courseTitle}</strong> is confirmed. You now have full lifetime access to all course modules, assignments, and curriculum resources.
+                    </p>
+
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin: 28px 0;">
+                      <tr>
+                        <td align="center">
+                          <a href="${courseUrl}" style="background-color: #24483C; color: #F8F4EC; padding: 14px 32px; font-size: 15px; font-weight: bold; text-decoration: none; border-radius: 10px; display: inline-block; box-shadow: 0 3px 8px rgba(36, 72, 60, 0.25);">
+                            Start Learning Now &rarr;
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <div style="background-color: #F8F4EC; border: 1px solid #E9DFCC; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+                      <h4 style="margin: 0 0 8px 0; color: #24483C; font-size: 14px;">Next Steps:</h4>
+                      <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #3D5A4C; line-height: 1.6;">
+                        <li>Review syllabus modules and lecture notes in your player.</li>
+                        <li>Participate in peer discussions and ask questions.</li>
+                        <li>Complete all coursework to receive your certificate of completion.</li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                  <td style="background-color: #F8F4EC; border-top: 1px solid #E9DFCC; padding: 20px 32px; text-align: center;">
+                    <p style="margin: 0; font-size: 12px; color: #6D8277;">
+                      &copy; ${new Date().getFullYear()} GoLive Classes Academy. All rights reserved.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
     `,
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    const transport = getTransporter();
+    await transport.sendMail(mailOptions);
     return true;
-  } catch (error) {
-    console.error('Error sending enrollment email:', error);
+  } catch (error: any) {
+    console.error('Error sending enrollment email:', error.message || error);
     return false;
   }
 };
 
-export const sendCourseRecommendationEmail = async (to: string, userName: string, viewedCourseTitle: string, recommendations: any[]) => {
+/**
+ * 4. Curated Course Recommendation Email
+ */
+export const sendCourseRecommendationEmail = async (
+  to: string,
+  userName: string,
+  viewedCourseTitle: string,
+  recommendations: any[]
+): Promise<boolean> => {
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS || process.env.SMTP_USER === 'your_email@gmail.com') {
-    console.warn(`[DEVELOPMENT] SMTP not configured. Recommendation email for ${to} based on viewing ${viewedCourseTitle} would be sent here.`);
+    console.warn(`[DEVELOPMENT] SMTP not configured. Recommendation email for ${to} would be sent here.`);
     return true;
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  
-  // Build the HTML for the recommended courses list
-  const recommendationsHtml = recommendations.map(course => `
-    <div style="margin-bottom: 20px; border-bottom: 1px solid #eaeaea; padding-bottom: 15px;">
-      <h3 style="color: #0f172a; margin: 0 0 5px 0;">${course.title}</h3>
-      <p style="color: #475569; font-size: 14px; margin: 0 0 10px 0;">Category: ${course.category}</p>
-      <a href="${appUrl}/courses/${course._id}" style="color: #10b981; text-decoration: none; font-weight: bold;">View Course &rarr;</a>
+
+  const recommendationsHtml = (recommendations || []).map(course => `
+    <div style="margin-bottom: 16px; border-bottom: 1px solid #E9DFCC; padding-bottom: 14px;">
+      <h4 style="color: #24483C; margin: 0 0 4px 0; font-size: 15px;">${course.title}</h4>
+      <p style="color: #6D8277; font-size: 12px; margin: 0 0 8px 0;">Category: ${course.category || 'General'}</p>
+      <a href="${appUrl}/courses/${course.id}" style="color: #C96F4A; font-size: 13px; font-weight: bold; text-decoration: none;">
+        View Syllabus &rarr;
+      </a>
     </div>
   `).join('');
 
   const mailOptions = {
-    from: process.env.EMAIL_FROM || '"GoLive Classes" <noreply@golive.com>',
+    from: getSenderAddress(),
     to,
-    subject: `Still thinking about ${viewedCourseTitle}?`,
+    subject: `Curated Curricula based on ${viewedCourseTitle}`,
     html: `
-      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 0; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
-        
-        <div style="background-color: #0f172a; padding: 30px; text-align: center;">
-          <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px;">GoLive Classes</h1>
-        </div>
-        
-        <div style="padding: 40px 30px;">
-          <h2 style="color: #0f172a; margin-top: 0; font-size: 22px;">Hi ${userName},</h2>
-          <p style="color: #475569; font-size: 16px; line-height: 1.6;">
-            We noticed you were checking out <strong>${viewedCourseTitle}</strong> recently! 
-          </p>
-          <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
-            If you're still on the fence, we thought you might also be interested in some of these highly-rated courses in the same category:
-          </p>
-          
-          <div style="background-color: #f8fafc; border-radius: 8px; padding: 20px; border: 1px solid #e2e8f0;">
-            ${recommendationsHtml}
-          </div>
-          
-          <div style="text-align: center; margin: 40px 0;">
-            <a href="${appUrl}/courses" style="background-color: #0f172a; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">
-              Explore All Courses
-            </a>
-          </div>
-        </div>
-        
-        <div style="background-color: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
-          <p style="color: #94a3b8; font-size: 12px; margin: 0;">
-            &copy; ${new Date().getFullYear()} GoLive Classes. All rights reserved.
-          </p>
-        </div>
-      </div>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin: 0; padding: 0; background-color: #F8F4EC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #F8F4EC; padding: 32px 16px;">
+          <tr>
+            <td align="center">
+              <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 580px; background-color: #FAF7F0; border: 1px solid #E9DFCC; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(27, 46, 38, 0.04);">
+                <tr>
+                  <td style="background-color: #24483C; padding: 32px 28px; text-align: center;">
+                    <h1 style="margin: 0; font-family: Georgia, 'Times New Roman', serif; color: #F8F4EC; font-size: 26px; font-weight: bold;">
+                      GoLive<span style="color: #C96F4A;">Classes</span>
+                    </h1>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 36px 32px; color: #1B2E26;">
+                    <h2 style="margin: 0 0 16px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 22px; color: #24483C;">
+                      Scholar Recommendations for ${userName}
+                    </h2>
+                    <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #3D5A4C;">
+                      Based on your recent interest in <em>${viewedCourseTitle}</em>, our faculty recommends these courses:
+                    </p>
+                    <div style="background-color: #F8F4EC; border: 1px solid #E9DFCC; border-radius: 10px; padding: 20px; margin: 20px 0;">
+                      ${recommendationsHtml}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="background-color: #F8F4EC; border-top: 1px solid #E9DFCC; padding: 20px 32px; text-align: center;">
+                    <p style="margin: 0; font-size: 12px; color: #6D8277;">
+                      &copy; ${new Date().getFullYear()} GoLive Classes Academy. All rights reserved.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
     `,
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    const transport = getTransporter();
+    await transport.sendMail(mailOptions);
     return true;
-  } catch (error) {
-    console.error('Error sending recommendation email:', error);
+  } catch (error: any) {
+    console.error('Error sending recommendation email:', error.message || error);
     return false;
   }
 };

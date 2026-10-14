@@ -49,13 +49,14 @@ export async function POST(req: Request) {
     }
 
     // Verify requested role matches actual role
-    const isRequestingAdmin = requestedRole === 'instructor';
-    const isActualAdmin = user.role === 'admin';
+    // Legitimate faculty/staff roles include both admin and superadmin
+    const isRequestingStaff = requestedRole === 'instructor' || requestedRole === 'admin' || requestedRole === 'superadmin';
+    const isActualStaff = user.role === 'admin' || user.role === 'superadmin';
     
-    if (isRequestingAdmin && !isActualAdmin) {
+    if (isRequestingStaff && !isActualStaff) {
       return NextResponse.json({ error: 'This account does not have Teacher privileges.' }, { status: 403 });
     }
-    if (!isRequestingAdmin && isActualAdmin) {
+    if (!isRequestingStaff && isActualStaff) {
       return NextResponse.json({ error: 'Please select the Teacher role to log in to your account.' }, { status: 403 });
     }
 

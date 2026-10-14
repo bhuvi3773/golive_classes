@@ -33,7 +33,7 @@ export default function UserManagementPage() {
         body: JSON.stringify({ isBlocked: !currentStatus })
       });
       if (res.ok) {
-        setUsers(users.map(u => u._id === userId ? { ...u, isBlocked: !currentStatus } : u));
+        setUsers(users.map(u => u.id === userId ? { ...u, isBlocked: !currentStatus } : u));
       }
     } catch (err) {
       console.error(err);
@@ -47,7 +47,7 @@ export default function UserManagementPage() {
         method: "DELETE"
       });
       if (res.ok) {
-        setUsers(users.filter(u => u._id !== userId));
+        setUsers(users.filter(u => u.id !== userId));
       }
     } catch (err) {
       console.error(err);
@@ -60,85 +60,91 @@ export default function UserManagementPage() {
   );
 
   return (
-    <div className="p-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">User Management</h1>
-        <p className="text-slate-500">View, block, or delete students and teachers across the platform.</p>
+    <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 text-[#1B2E26] w-full">
+      <div className="pb-4 border-b border-[#E9DFCC]">
+        <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Registry Administration</span>
+        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B2E26] tracking-tight">Scholar & Faculty Registry</h1>
+        <p className="text-[#556960] text-xs sm:text-sm mt-0.5">Audit account standing, manage credentials, and administer access permissions.</p>
       </div>
 
-      <div className="bg-[#12141f] rounded-xl border border-slate-200 overflow-hidden">
-        <div className="p-6 border-b border-slate-200 flex items-center justify-between gap-4">
-          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2 whitespace-nowrap">
-            <Users className="text-blue-500" /> Platform Members
+      <div className="bg-[#FAF7F0] rounded-2xl border border-[#E9DFCC] overflow-hidden shadow-sm">
+        <div className="p-4 sm:p-6 border-b border-[#E9DFCC] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-[#FAF7F0]">
+          <h2 className="font-serif text-lg sm:text-xl font-bold text-[#1B2E26] flex items-center gap-2 whitespace-nowrap">
+            <Users className="text-[#24483C]" size={20} /> Academy Members
           </h2>
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+          <div className="relative w-full md:max-w-md">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#556960]" size={16} />
             <input 
               type="text" 
-              placeholder="Search by name or email..." 
+              placeholder="Search by name or email address..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-100 border border-slate-200 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors text-slate-900"
+              className="w-full bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl pl-10 pr-4 py-2 text-xs text-[#1B2E26] focus:outline-none focus:border-[#24483C] transition-colors placeholder:text-[#556960]/60 shadow-inner"
             />
           </div>
         </div>
         
         {loading ? (
-          <div className="p-12 text-center text-slate-400">Loading users...</div>
+          <div className="p-8 sm:p-12 text-center text-[#556960] flex flex-col items-center">
+            <div className="w-8 h-8 border-3 border-[#24483C] border-t-transparent rounded-full animate-spin mb-3"></div>
+            Loading scholar records...
+          </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-100 border-b border-slate-200 text-slate-500">
+            <table className="w-full text-left text-xs min-w-[580px]">
+              <thead className="bg-[#F8F4EC] border-b border-[#E9DFCC] text-[#3D5A4C]">
                 <tr>
-                  <th className="px-6 py-4 font-semibold">User</th>
-                  <th className="px-6 py-4 font-semibold">Role</th>
-                  <th className="px-6 py-4 font-semibold">Status</th>
-                  <th className="px-6 py-4 font-semibold text-right">Actions</th>
+                  <th className="px-6 py-3.5 font-bold uppercase tracking-wider">Member Details</th>
+                  <th className="px-6 py-3.5 font-bold uppercase tracking-wider">Academic Role</th>
+                  <th className="px-6 py-3.5 font-bold uppercase tracking-wider">Standing</th>
+                  <th className="px-6 py-3.5 font-bold uppercase tracking-wider text-right">Administrative Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/10">
+              <tbody className="divide-y divide-[#E9DFCC]/60 text-[#1B2E26]">
                 {filteredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="p-8 text-center text-slate-400">No users found.</td>
+                    <td colSpan={4} className="p-8 text-center text-[#556960]">No records match your query.</td>
                   </tr>
                 ) : (
                   filteredUsers.map(user => (
-                    <tr key={user._id} className="hover:bg-slate-100 transition-colors">
+                    <tr key={user.id} className="hover:bg-[#F8F4EC] transition-colors">
                       <td className="px-6 py-4">
                         <div>
-                          <p className="font-bold text-slate-900">{user.name}</p>
-                          <p className="text-xs text-slate-400">{user.email}</p>
+                          <p className="font-serif font-bold text-sm text-[#1B2E26]">{user.name}</p>
+                          <p className="text-xs text-[#556960] font-mono">{user.email}</p>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-2 py-1 rounded text-xs font-bold ${
-                          user.role === 'admin' ? 'bg-violet-500/20 text-violet-400 border border-violet-500/30' : 'bg-emerald-100 text-emerald-600 border border-emerald-300'
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                          user.role === 'admin' ? 'bg-[#DCE6D8] text-[#24483C] border-[#24483C]/20' : 'bg-[#E9DFCC] text-[#556960] border-[#E9DFCC]'
                         }`}>
-                          {user.role === 'admin' ? 'Teacher' : 'Learner'}
+                          {user.role === 'admin' ? 'Faculty' : 'Scholar'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         {user.isBlocked ? (
-                          <span className="flex items-center gap-1 text-red-400 text-xs font-bold"><Ban size={12}/> Suspended</span>
+                          <span className="flex items-center gap-1.5 text-[#8B381A] text-xs font-semibold"><Ban size={14}/> Suspended</span>
                         ) : (
-                          <span className="flex items-center gap-1 text-green-400 text-xs font-bold"><CheckCircle size={12}/> Active</span>
+                          <span className="flex items-center gap-1.5 text-[#24483C] text-xs font-semibold"><CheckCircle size={14}/> Good Standing</span>
                         )}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-end gap-2">
                           <button 
-                            onClick={() => handleToggleBlock(user._id, !!user.isBlocked)}
-                            className={`px-3 py-1.5 rounded text-xs font-bold transition-colors flex items-center gap-1 ${
-                              user.isBlocked ? 'bg-green-600 hover:bg-green-500 text-white' : 'bg-yellow-600 hover:bg-yellow-500 text-white'
+                            onClick={() => handleToggleBlock(user.id, !!user.isBlocked)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors flex items-center gap-1.5 border shadow-sm ${
+                              user.isBlocked 
+                                ? 'bg-[#DCE6D8] hover:bg-[#24483C] hover:text-[#F8F4EC] text-[#24483C] border-[#24483C]/30' 
+                                : 'bg-[#FAF7F0] hover:bg-[#E9DFCC]/50 text-[#556960] border-[#E9DFCC]'
                             }`}
                           >
-                            <Ban size={14} /> {user.isBlocked ? 'Unblock' : 'Block'}
+                            <Ban size={13} /> {user.isBlocked ? 'Restore' : 'Suspend'}
                           </button>
                           <button 
-                            onClick={() => handleDelete(user._id)}
-                            className="px-3 py-1.5 bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white border border-red-600/30 rounded text-xs font-bold transition-colors flex items-center gap-1"
+                            onClick={() => handleDelete(user.id)}
+                            className="px-3 py-1.5 bg-[#C96F4A]/10 hover:bg-[#C96F4A]/20 text-[#8B381A] border border-[#C96F4A]/30 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors flex items-center gap-1.5"
                           >
-                            <Trash2 size={14} /> Delete
+                            <Trash2 size={13} /> Expel
                           </button>
                         </div>
                       </td>

@@ -68,41 +68,43 @@ export default function CourseDiscussions({ courseId, lectureId, currentUser }: 
     setIsReplying(false);
   };
 
-  if (loading) return <div className="p-6 text-slate-500">Loading discussions...</div>;
+  if (loading) return <div className="p-6 text-[#556960] text-sm">Loading academic discussions...</div>;
 
   return (
-    <div className="p-6">
-      <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2 mb-6">
-        <MessageCircle size={20} className="text-emerald-600" />
-        Q&A / Discussions
-      </h3>
+    <div className="p-6 text-[#1B2E26]">
+      <div className="flex items-center gap-2 mb-6">
+        <MessageCircle size={20} className="text-[#24483C]" />
+        <h3 className="font-serif text-xl font-bold text-[#1B2E26]">
+          Lecture Colloquium
+        </h3>
+      </div>
 
       {/* New Question Form */}
-      <form onSubmit={handlePost} className="mb-8 bg-slate-50 border border-slate-200 p-4 rounded-xl">
-        <h4 className="font-bold text-slate-900 mb-3">Ask a new question</h4>
+      <form onSubmit={handlePost} className="mb-8 bg-[#F8F4EC] border border-[#E9DFCC] p-5 rounded-xl shadow-sm">
+        <h4 className="font-serif text-sm font-bold text-[#1B2E26] mb-3">Initiate a Query or Discussion</h4>
         <input 
           type="text"
-          placeholder="Title (e.g. Need help with Docker installation)"
+          placeholder="Topic (e.g. Inquiring regarding asymptotic complexity)"
           value={newTitle}
           onChange={e => setNewTitle(e.target.value)}
-          className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:border-emerald-500"
+          className="w-full bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl px-3.5 py-2.5 text-xs mb-3 focus:outline-none focus:border-[#24483C] text-[#1B2E26] placeholder:text-[#556960]/60"
           required
         />
         <textarea
-          placeholder="Describe your question in detail..."
+          placeholder="Articulate your question or observation with context..."
           value={newText}
           onChange={e => setNewText(e.target.value)}
           rows={3}
-          className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:border-emerald-500"
+          className="w-full bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl px-3.5 py-2.5 text-xs mb-3 focus:outline-none focus:border-[#24483C] text-[#1B2E26] placeholder:text-[#556960]/60 resize-none"
           required
         ></textarea>
         <div className="flex justify-end">
           <button 
             type="submit" 
             disabled={isPosting}
-            className="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 disabled:opacity-50 transition-colors"
+            className="bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider flex items-center gap-2 disabled:opacity-50 transition-colors shadow-sm"
           >
-            {isPosting ? "Posting..." : <><Send size={16} /> Post Question</>}
+            {isPosting ? "Posting Query..." : <><Send size={14} /> Submit Query</>}
           </button>
         </div>
       </form>
@@ -110,88 +112,88 @@ export default function CourseDiscussions({ courseId, lectureId, currentUser }: 
       {/* Discussions List */}
       <div className="space-y-4">
         {discussions.length === 0 ? (
-          <div className="text-center py-8 text-slate-500 bg-white border border-slate-200 rounded-xl">
-            No questions asked yet for this lecture. Be the first!
+          <div className="text-center py-8 text-[#556960] bg-[#F8F4EC] border border-[#E9DFCC] rounded-xl text-sm">
+            No queries presented for this lecture yet. Be the first scholar to inquire!
           </div>
         ) : (
           discussions.map(discussion => (
-            <div key={discussion._id} className="bg-white border border-slate-200 rounded-xl overflow-hidden transition-all shadow-sm">
+            <div key={discussion.id} className="bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl overflow-hidden transition-all shadow-sm">
               <div 
-                className="p-4 cursor-pointer hover:bg-slate-50 flex items-start gap-4"
-                onClick={() => setExpandedId(expandedId === discussion._id ? null : discussion._id)}
+                className="p-4 cursor-pointer hover:bg-[#F8F4EC] flex items-start gap-4 transition-colors"
+                onClick={() => setExpandedId(expandedId === discussion.id ? null : discussion.id)}
               >
-                <div className="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center shrink-0 mt-1 overflow-hidden">
+                <div className="w-10 h-10 bg-[#DCE6D8] text-[#24483C] rounded-xl flex items-center justify-center shrink-0 mt-0.5 overflow-hidden">
                   {discussion.userId?.avatar ? (
                     <img src={discussion.userId.avatar} alt="avatar" className="w-full h-full object-cover" />
                   ) : (
-                    <User size={20} />
+                    <User size={18} />
                   )}
                 </div>
-                <div className="flex-1">
-                  <h4 className="font-bold text-slate-900 mb-1">{discussion.title}</h4>
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <span className="font-medium text-slate-700">{discussion.userId?.name || 'Anonymous'}</span>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-serif font-bold text-sm text-[#1B2E26] mb-1">{discussion.title}</h4>
+                  <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#556960]">
+                    <span className="font-semibold text-[#1B2E26]">{discussion.userId?.name || 'Anonymous Scholar'}</span>
                     {discussion.userId?.role === 'admin' || discussion.userId?.role === 'superadmin' ? (
-                      <span className="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-[10px] font-bold">INSTRUCTOR</span>
+                      <span className="bg-[#24483C] text-[#F8F4EC] px-2 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase">FACULTY</span>
                     ) : null}
                     <span>• {new Date(discussion.createdAt).toLocaleDateString()}</span>
                     <span>• {discussion.replies?.length || 0} replies</span>
                   </div>
                 </div>
-                <div className="shrink-0 text-slate-400">
-                  {expandedId === discussion._id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                <div className="shrink-0 text-[#556960]">
+                  {expandedId === discussion.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                 </div>
               </div>
 
-              {expandedId === discussion._id && (
-                <div className="border-t border-slate-100 p-4 bg-slate-50/50">
-                  <p className="text-slate-700 text-sm mb-6 whitespace-pre-wrap">{discussion.text}</p>
+              {expandedId === discussion.id && (
+                <div className="border-t border-[#E9DFCC] p-4 bg-[#F8F4EC]">
+                  <p className="text-[#1B2E26] text-xs mb-5 whitespace-pre-wrap leading-relaxed">{discussion.text}</p>
                   
                   {/* Replies */}
-                  <div className="space-y-4 ml-6 pl-4 border-l-2 border-slate-200 mb-6">
+                  <div className="space-y-3 ml-4 sm:ml-6 pl-3 sm:pl-4 border-l-2 border-[#E9DFCC] mb-5">
                     {discussion.replies?.map((reply: any, rIdx: number) => (
                       <div key={rIdx} className="flex gap-3">
-                        <div className="w-8 h-8 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center shrink-0 overflow-hidden">
+                        <div className="w-7 h-7 bg-[#E9DFCC] text-[#24483C] rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
                           {reply.userId?.avatar ? (
                             <img src={reply.userId.avatar} alt="avatar" className="w-full h-full object-cover" />
                           ) : (
-                            <User size={14} />
+                            <User size={13} />
                           )}
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2 text-xs mb-1">
-                            <span className="font-bold text-slate-900">{reply.userId?.name || 'Anonymous'}</span>
+                        <div className="flex-1">
+                          <div className="flex flex-wrap items-center gap-2 text-[11px] mb-0.5">
+                            <span className="font-bold text-[#1B2E26]">{reply.userId?.name || 'Scholar'}</span>
                             {reply.userId?.role === 'admin' || reply.userId?.role === 'superadmin' ? (
-                              <span className="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-[10px] font-bold">INSTRUCTOR</span>
+                              <span className="bg-[#24483C] text-[#F8F4EC] px-1.5 py-0.2 rounded text-[9px] font-bold uppercase">FACULTY</span>
                             ) : null}
-                            <span className="text-slate-400">• {new Date(reply.createdAt).toLocaleDateString()}</span>
+                            <span className="text-[#556960]">• {new Date(reply.createdAt).toLocaleDateString()}</span>
                           </div>
-                          <p className="text-slate-700 text-sm">{reply.text}</p>
+                          <p className="text-[#1B2E26] text-xs leading-relaxed">{reply.text}</p>
                         </div>
                       </div>
                     ))}
                   </div>
 
                   {/* Reply Form */}
-                  <div className="flex gap-3 ml-6 pl-4 border-l-2 border-slate-200">
-                    <div className="w-8 h-8 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center shrink-0 overflow-hidden">
-                      {currentUser?.avatar ? <img src={currentUser.avatar} className="w-full h-full object-cover" /> : <User size={14} />}
+                  <div className="flex gap-3 ml-4 sm:ml-6 pl-3 sm:pl-4 border-l-2 border-[#E9DFCC]">
+                    <div className="w-7 h-7 bg-[#DCE6D8] text-[#24483C] rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+                      {currentUser?.avatar ? <img src={currentUser.avatar} className="w-full h-full object-cover" /> : <User size={13} />}
                     </div>
                     <div className="flex-1 flex gap-2">
                       <input 
                         type="text" 
-                        placeholder="Add a reply..." 
+                        placeholder="Contribute a reply..." 
                         value={replyText}
                         onChange={e => setReplyText(e.target.value)}
-                        className="flex-1 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-emerald-500"
+                        className="flex-1 bg-[#FAF7F0] border border-[#E9DFCC] rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-[#24483C] text-[#1B2E26]"
                         onKeyDown={e => {
-                          if (e.key === 'Enter') handleReply(discussion._id);
+                          if (e.key === 'Enter') handleReply(discussion.id);
                         }}
                       />
                       <button 
                         disabled={isReplying}
-                        onClick={() => handleReply(discussion._id)}
-                        className="bg-slate-200 hover:bg-slate-300 text-slate-800 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                        onClick={() => handleReply(discussion.id)}
+                        className="bg-[#24483C] hover:bg-[#1B2E26] text-[#F8F4EC] px-3 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors disabled:opacity-50"
                       >
                         Reply
                       </button>

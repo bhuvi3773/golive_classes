@@ -13,7 +13,7 @@ export default function CoursePurchaseCard({ courseId, price, isPurchasedInitial
     fetch('/api/user/wishlist')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data) && data.some(c => c._id === courseId)) {
+        if (Array.isArray(data) && data.some(c => c.id === courseId)) {
           setInWishlist(true);
         }
       });
@@ -44,6 +44,22 @@ export default function CoursePurchaseCard({ courseId, price, isPurchasedInitial
       const res = await fetch('/api/auth/me', { cache: 'no-store' });
       const data = await res.json();
       if (data.user) {
+        // Direct free enrollment flow when price is exactly 0
+        if (price === 0) {
+          const enrollRes = await fetch(`/api/courses/${courseId}/enroll`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          const enrollData = await enrollRes.json();
+          if (enrollRes.ok) {
+            setIsPurchased(true);
+            router.push(`/courses/${courseId}/play`);
+            return;
+          } else {
+            alert(enrollData.error || "Enrollment failed. Please try again.");
+            return;
+          }
+        }
         router.push(`/checkout/${courseId}`);
       } else {
         router.push('/login');
@@ -55,27 +71,29 @@ export default function CoursePurchaseCard({ courseId, price, isPurchasedInitial
 
   return (
     <>
-      <div className="text-center mb-6 border-b border-slate-200 pb-6">
-        <span className="text-4xl font-extrabold text-slate-900">${price}</span>
+      <div className="text-center mb-6 border-b border-[#E9DFCC] pb-6">
+        <span className="text-4xl font-extrabold text-[#24483C]">
+          {price === 0 ? "Free" : `$${price}`}
+        </span>
       </div>
       
       {isPurchased ? (
         <Link href={`/courses/${courseId}/play`}>
-          <button className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-green-500/25 flex items-center justify-center gap-2">
+          <button className="w-full bg-[#24483C] hover:bg-[#19332A] text-[#F8F4EC] font-bold py-3.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
             <PlayCircle size={20} /> Continue Learning
           </button>
         </Link>
       ) : (
-        <div className="flex gap-2">
-          <button onClick={handleBuy} className="flex-1 bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-slate-900/20">
-            Buy Now
+        <div className="flex gap-2.5">
+          <button onClick={handleBuy} className="flex-1 bg-[#C96F4A] hover:bg-[#B25D39] text-[#FFFFFF] font-bold py-3.5 rounded-xl transition-all shadow-sm hover:-translate-y-0.5">
+            {price === 0 ? "Enroll Free" : "Enroll Now"}
           </button>
           <button 
             onClick={toggleWishlist}
-            className={`px-6 rounded-xl border flex items-center justify-center transition-colors ${inWishlist ? 'border-red-500 text-red-500 bg-red-500/10' : 'border-slate-200 hover:bg-slate-100 text-slate-500'}`}
+            className={`px-5 rounded-xl border flex items-center justify-center transition-colors ${inWishlist ? 'border-[#C96F4A] text-[#C96F4A] bg-[#C96F4A]/10' : 'border-[#E9DFCC] hover:bg-[#F4EFE6] text-[#72857C]'}`}
             title={inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
           >
-            <Heart size={24} fill={inWishlist ? "currentColor" : "none"} />
+            <Heart size={20} fill={inWishlist ? "currentColor" : "none"} />
           </button>
         </div>
       )}

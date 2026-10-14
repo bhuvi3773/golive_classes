@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getUserFromCookie } from '@/lib/auth';
 import prisma from "@/lib/prisma";
-import { ShieldCheck, CreditCard, Lock } from 'lucide-react';
+import { ShieldCheck, CreditCard, Lock, BookOpen } from 'lucide-react';
 import CheckoutForm from './CheckoutForm';
 
 export default async function CheckoutPage({ params }: { params: Promise<{ id: string }> }) {
@@ -19,44 +19,48 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#F8F4EC] flex items-center justify-center p-4 py-12">
       <div className="max-w-2xl w-full">
         
-        {/* Mock Payment Header */}
+        {/* Payment Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-200">
-            <Lock className="text-emerald-600 w-8 h-8" />
+          <div className="w-14 h-14 bg-[#EEF3EC] rounded-full flex items-center justify-center mx-auto mb-3 border border-[#DCE6D8]">
+            <Lock className="text-[#24483C] w-7 h-7" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Secure Checkout</h1>
-          <p className="text-slate-500">Complete your purchase to unlock full lifetime access.</p>
+          <span className="text-xs font-bold uppercase tracking-wider text-[#C96F4A]">Encounter Desk</span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1B2E26] mt-0.5 mb-1.5">Academic Enrollment & Checkout</h1>
+          <p className="text-[#4A5E54] text-sm">Complete your tuition payment to unlock immediate lifetime access.</p>
         </div>
 
-        {/* Order Summary & Mock Form */}
-        <div className="glass-card-light overflow-hidden border border-slate-200">
-          <div className="p-6 bg-slate-900 border-b border-slate-200 flex items-center gap-4">
-            {course.thumbnail ? (
-              <img src={course.thumbnail} alt={course.title} className="w-20 h-14 object-cover rounded shadow" />
-            ) : (
-              <div className="w-20 h-14 bg-blue-900/30 rounded flex items-center justify-center">
-                <ShieldCheck className="text-emerald-600" />
+        {/* Order Summary Card */}
+        <div className="editorial-card rounded-2xl overflow-hidden bg-[#FFFFFF] border border-[#E9DFCC] shadow-sm">
+          <div className="p-4 sm:p-6 bg-[#FDFCF9] border-b border-[#E9DFCC] flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="flex items-center gap-3.5 min-w-0">
+              {course.thumbnail ? (
+                <img src={course.thumbnail} alt={course.title} className="w-16 h-12 sm:w-20 sm:h-14 object-cover rounded-lg border border-[#E9DFCC] shadow-xs shrink-0" />
+              ) : (
+                <div className="w-16 h-12 sm:w-20 sm:h-14 bg-[#EEF3EC] rounded-lg border border-[#DCE6D8] flex items-center justify-center shrink-0">
+                  <BookOpen className="text-[#24483C]" size={22} />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <span className="text-[11px] font-bold text-[#C96F4A] uppercase tracking-wider">{course.category}</span>
+                <h3 className="text-[#1B2E26] font-bold text-sm sm:text-base truncate">{course.title}</h3>
               </div>
-            )}
-            <div className="flex-1">
-              <h3 className="text-slate-900 font-semibold line-clamp-1">{course.title}</h3>
-              <p className="text-slate-500 text-sm">{course.category}</p>
             </div>
-            <div className="text-right">
-              <div className="text-xl font-bold text-slate-900">${course.price}</div>
+            <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 pt-2 sm:pt-0 border-[#E9DFCC]">
+              <span className="text-xs text-[#72857C] block font-medium">Tuition</span>
+              <div className="text-xl font-extrabold text-[#24483C]">${course.price}</div>
             </div>
           </div>
 
-          <div className="p-8">
-            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 mb-8 flex items-start gap-3">
-              <CreditCard className="text-emerald-600 shrink-0 mt-0.5" />
+          <div className="p-4 sm:p-8">
+            <div className="bg-[#EEF3EC] border border-[#DCE6D8] rounded-xl p-3.5 sm:p-4 mb-6 sm:mb-8 flex items-start gap-3">
+              <CreditCard className="text-[#24483C] shrink-0 mt-0.5" size={20} />
               <div>
-                <h4 className="text-emerald-700 font-semibold mb-1">Razorpay Secure Checkout</h4>
-                <p className="text-sm text-emerald-700/80">
-                  You will be securely redirected to Razorpay to complete your purchase via UPI, Card, or NetBanking.
+                <h4 className="text-[#24483C] font-bold text-sm mb-1">Encrypted Gateway Processing</h4>
+                <p className="text-xs text-[#4A5E54] leading-relaxed">
+                  You will complete payment through Razorpay via UPI, NetBanking, or Debit/Credit Card with 256-bit SSL encryption.
                 </p>
               </div>
             </div>

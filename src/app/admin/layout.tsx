@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, FolderTree, BookOpen, Users } from "lucide-react";
+import { LayoutDashboard, FolderTree, BookOpen, Users, Settings, Rocket } from "lucide-react";
 import { getUserFromCookie } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
@@ -15,45 +15,46 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <p className="text-slate-500">Manage courses, categories, and users.</p>
+    <div className="space-y-6 text-[#1B2E26]">
+      <div className="pb-4 border-b border-[#E9DFCC]">
+        <span className="text-xs font-bold uppercase tracking-widest text-[#C96F4A]">Academic Administration</span>
+        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B2E26] tracking-tight">Faculty & Course Console</h1>
+        <p className="text-[#556960] text-xs sm:text-sm mt-0.5">Manage academic curricula, discipline categories, and live cohort schedules.</p>
       </div>
 
       {/* Admin Navigation */}
-      <div className="flex space-x-2 border-b border-slate-200 pb-2 overflow-x-auto">
-        <Link href="/admin" className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-t-lg transition-colors text-slate-900 border-b-2 border-blue-500">
-          <LayoutDashboard size={18} />
+      <div className="flex space-x-2 border-b border-[#E9DFCC] pb-2 overflow-x-auto scrollbar-none">
+        <Link href="/admin" className="flex items-center space-x-2 px-3.5 sm:px-4 py-2 sm:py-2.5 bg-[#24483C] text-[#F8F4EC] rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm shrink-0 whitespace-nowrap">
+          <LayoutDashboard size={15} />
           <span>Overview</span>
         </Link>
-        <Link href="/admin/categories" className="flex items-center space-x-2 px-4 py-2 hover:bg-slate-100 rounded-t-lg transition-colors text-slate-500 hover:text-slate-900">
-          <FolderTree size={18} />
+        <Link href="/admin/categories" className="flex items-center space-x-2 px-3.5 sm:px-4 py-2 sm:py-2.5 hover:bg-[#FAF7F0] rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors text-[#556960] hover:text-[#1B2E26] border border-transparent hover:border-[#E9DFCC] shrink-0 whitespace-nowrap">
+          <FolderTree size={15} />
           <span>Categories</span>
         </Link>
-        <Link href="/admin/courses" className="flex items-center space-x-2 px-4 py-2 hover:bg-slate-100 rounded-t-lg transition-colors text-slate-500 hover:text-slate-900">
-          <BookOpen size={18} />
-          <span>Courses</span>
+        <Link href="/admin/courses" className="flex items-center space-x-2 px-3.5 sm:px-4 py-2 sm:py-2.5 hover:bg-[#FAF7F0] rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors text-[#556960] hover:text-[#1B2E26] border border-transparent hover:border-[#E9DFCC] shrink-0 whitespace-nowrap">
+          <BookOpen size={15} />
+          <span>Curricula</span>
         </Link>
         {user.role === 'superadmin' && (
           <>
-            <Link href="/superadmin/users" className="flex items-center space-x-2 px-4 py-2 hover:bg-slate-100 rounded-t-lg transition-colors text-slate-500 hover:text-slate-900">
-              <Users size={18} />
+            <Link href="/superadmin/users" className="flex items-center space-x-2 px-3.5 sm:px-4 py-2 sm:py-2.5 hover:bg-[#FAF7F0] rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors text-[#556960] hover:text-[#1B2E26] border border-transparent hover:border-[#E9DFCC] shrink-0 whitespace-nowrap">
+              <Users size={15} />
               <span>Users & Sales</span>
             </Link>
-            <Link href="/superadmin/settings" className="flex items-center space-x-2 px-4 py-2 hover:bg-slate-100 rounded-t-lg transition-colors text-slate-500 hover:text-slate-900">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-settings"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            <Link href="/superadmin/settings" className="flex items-center space-x-2 px-3.5 sm:px-4 py-2 sm:py-2.5 hover:bg-[#FAF7F0] rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors text-[#556960] hover:text-[#1B2E26] border border-transparent hover:border-[#E9DFCC] shrink-0 whitespace-nowrap">
+              <Settings size={15} />
               <span>Settings</span>
             </Link>
           </>
         )}
-        <Link href="/admin/launches" className="flex items-center space-x-2 px-4 py-2 hover:bg-slate-100 rounded-t-lg transition-colors text-slate-500 hover:text-slate-900">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-rocket"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
-          <span>Launches</span>
+        <Link href="/admin/launches" className="flex items-center space-x-2 px-3.5 sm:px-4 py-2 sm:py-2.5 hover:bg-[#FAF7F0] rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors text-[#556960] hover:text-[#1B2E26] border border-transparent hover:border-[#E9DFCC] shrink-0 whitespace-nowrap">
+          <Rocket size={15} />
+          <span>Cohort Launches</span>
         </Link>
       </div>
 
-      <div className="pt-4">
+      <div className="pt-2">
         {children}
       </div>
     </div>
